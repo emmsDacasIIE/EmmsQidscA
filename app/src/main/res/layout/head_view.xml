@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parentLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!-- Header -->
+
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#0000" >
+
+            <FrameLayout
+                android:id="@+id/LeftButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true" >
+
+                <ImageView
+                    android:id="@+id/LeftImageView"
+                    android:layout_width="@dimen/titltbar_map_height"
+                    android:layout_height="@dimen/titltbar_map_height"
+                    android:layout_gravity="center"
+                   />
+
+                <TextView
+                    android:id="@+id/LeftTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/MainTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/titlebar_font_height" />
+
+            <RelativeLayout
+                android:layout_width="@dimen/titlebar_height"
+                android:layout_height="@dimen/titlebar_height"
+                android:layout_alignParentRight="true"
+                android:background="#0000"
+                android:clickable="true" >
+
+                <FrameLayout
+                    android:id="@+id/RightButton"
+                    android:layout_width="@dimen/titlebar_height"
+                    android:layout_height="@dimen/titlebar_height"
+                    android:clickable="true" >
+
+                    <ImageView
+                        android:id="@+id/RightImageView"
+                        android:layout_width="@dimen/titltbar_map_height"
+                        android:layout_height="@dimen/titltbar_map_height"
+                        android:layout_gravity="center"
+                        />
+
+                    <TextView
+                        android:id="@+id/RightTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:singleLine="true"
+                        android:text="应用"
+                        android:textColor="@color/black"
+                        android:textSize="16dp"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    
+    <!-- Header -->
+
+
+   
+</LinearLayout>

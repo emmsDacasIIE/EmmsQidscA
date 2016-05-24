@@ -1,0 +1,37 @@
+<resources>
+
+    <string name="title_activity_byod_register" translatable="false">自带设备注册</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email" translatable="false">中车AD域账户</string>
+    <string name="prompt_password" translatable="false">密码</string>
+    <string name="action_byod_register" translatable="false"><b>绑定</b></string>
+    <string name="action_sign_in_short" translatable="false">用户绑定</string>
+    <string name="action_forgot_password" translatable="false">找回密码</string>
+    <string name="login_progress_signing_in" translatable="false">正在绑定&#8230;</string>
+    <string name="login_progress_checking_binder" translatable="false">正在验证设备状态&#8230;</string>
+    <string name="login_progress_logging_in" translatable="false">正在登录&#8230;</string>
+    <string name="verify_progreess_verifying_device" translatable="false">正在验证设备&#8230;</string>
+    <string name="byod_device_registering" translatable="false">用户自带设备绑定中&#8230;</string>
+    <string name="error_invalid_email" translatable="false">邮箱地址不合法</string>
+    <string name="error_invalid_password" translatable="false">密码太短</string>
+    <string name="error_incorrect_password" translatable="false">密码错误</string>
+    <string name="error_field_required" translatable="false">请正确填写该项</string>
+    <string name="error_account_not_exist" translatable="false">非EMMS管理系统的合法用户，请联系管理员！</string>
+     <string name="error_account_frozen" translatable="false">用户被禁用</string>
+    <string name="error_verifyCode_too_short" translatable="false">设备验证码长度不能小于6</string>
+    <string name="error_device_not_exist" translatable="false">未绑定设备</string>
+    <string name="error_verify_code_error" translatable="false">设备验证码失败</string>
+    <string name="error_user_unable" translatable="false">用户无权使用本设备</string>
+    <string name="error_group_unable" translatable="false">用户所在的组无权使用本设备</string>
+    <string name="error_device_already_exist" translatable="false">设备已被其他人绑定</string>
+    <string name="error_cope_wait_auth" translatable="false">设备未授权，请等待管理员授权</string>
+    <string name="error_connection_server_error" translatable="false">网络或服务器错误导致无法认证设备，请稍候重试</string>
+	<string name="login_label_username">帐号</string>
+    <string name="login_label_password">密码</string>
+    <string name="login_label_signin">绑  定</string>
+    <string name="login_label_login">登  录</string>
+    <string name="login_status_logging_in">自带设备绑定中&#8230;</string>
+    <string name="login_username_hint">用户名或Email</string>
+    <string name="login_password_hint">密码</string>
+</resources>

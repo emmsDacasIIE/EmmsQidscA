@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/my_information_background"
+    android:orientation="vertical" >
+
+<ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="14dp"
+        android:paddingLeft="0dp"
+        android:visibility="visible">
+
+        <!-- 1. 第一组 layout，有头像//////////////////-->
+        <LinearLayout
+            android:id="@+id/layout_group1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:paddingLeft="0dp"
+            android:paddingTop="14dp">
+
+            <!-- 1.1. 头像-->
+            <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:id="@+id/myphoto_sublayout">
+
+            <cn.qdsc.msp.ui.qdlayout.RoundImageView
+                android:id="@+id/imageview_myphoto"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:gravity="center"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/msp_my_account_photo" />
+
+            </RelativeLayout>
+
+            <!-- 1.2. name-->
+            <TextView
+                android:id="@+id/textview_myname_lable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:gravity="center_vertical"
+
+                android:text="myname"
+                android:textSize="16sp" />
+
+            <!-- 1.3. 公司-->
+            <TextView
+                android:id="@+id/textview_mycompany_lable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:gravity="center_vertical"
+
+                android:text="myname"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+
+
+        <!-- 2. 电话//////////////////////////////////////////-->
+        <LinearLayout
+            android:id="@+id/layout_group2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:orientation="horizontal"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:id="@+id/layout_group21"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:orientation="vertical"
+                >
+                <include android:id="@+id/ll_tel_cell_number1" layout="@layout/layout_two_line"
+                    />
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="6dp"
+
+                    android:background="@color/my_information_background" />
+
+                <include android:id="@+id/ll_tel_cell_number2" layout="@layout/layout_two_line"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 3. email//////////////////////////////////////////-->
+        <LinearLayout
+            android:id="@+id/layout_group3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:orientation="horizontal"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:id="@+id/layout_group31"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+
+
+                android:orientation="vertical"
+                >
+
+                <include android:id="@+id/ll_emailid1" layout="@layout/layout_two_line"
+
+                    />
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="6dp"
+
+                    android:background="@color/my_information_background" />
+
+                <include android:id="@+id/ll_emailid2" layout="@layout/layout_two_line"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+
+            <!--  4. 地址/////////////////////////////////////////-->
+        <LinearLayout
+            android:id="@+id/layout_group4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:orientation="horizontal"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:id="@+id/layout_group41"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+
+                android:orientation="vertical"
+                >
+
+                <include android:id="@+id/ll_address" layout="@layout/layout_two_line"
+                    />
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
+
+</LinearLayout>

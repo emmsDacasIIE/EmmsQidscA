@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/main_layout"
+    android:background="@color/my_information_background">
+
+    <TextView
+        android:id="@+id/noAppText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_below="@+id/textview_line"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        android:text="nodata"/>
+
+    <LinearLayout
+        android:id="@+id/ll_compliance_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="0dp"
+
+        >
+
+    <cn.qdsc.msp.ui.qdlayout.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_below="@+id/textview_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_marginTop="5dp">
+
+        <ListView
+            android:id="@+id/pushmsgListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </cn.qdsc.msp.ui.qdlayout.RefreshableView>
+
+    </LinearLayout>
+
+    <include android:id="@+id/button_layout" layout="@layout/layout_bottom_button"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemContainer"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_marginTop="20dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    >
+
+    <ImageView
+        android:id="@+id/imageview_left"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@mipmap/unknown"
+        android:adjustViewBounds="true"
+        android:paddingLeft="4dp"
+        android:scaleType="fitCenter"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:duplicateParentState="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:id="@+id/layout1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/layout2">
+
+            <TextView
+                android:id="@+id/textview_title_name"
+                android:textSize="18sp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:duplicateParentState="true"
+                android:typeface="sans"
+                android:textColor="@color/listitem_text_major_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="title"
+                android:paddingBottom="4dp"
+                />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:paddingRight="10dp"
+
+
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_gravity="center_vertical"
+                android:max="100"
+                android:progress="0"
+                android:progressDrawable="@drawable/progressbar_download"
+                android:indeterminate="false"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/textview_mid_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:text="midtext"
+                android:paddingTop="4dp"
+
+                android:padding="1dp"
+                android:layout_gravity="center_vertical"
+
+                android:textColor="@color/listitem_text_mid_color"
+                android:textSize="@dimen/settings_middle_size"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:paddingTop="4dp"
+            android:id="@+id/minor_layout">
+
+        <TextView
+            android:id="@+id/textview_minor_title"
+            android:width="60dp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/listitem_text_minor_color"
+            android:textSize="@dimen/settings_minor_size"
+
+            android:ellipsize="end"
+            android:text="day before"
+            android:visibility="visible" />
+
+            <!-- 只有doc 收藏用 -->
+            <CheckBox
+                android:id="@+id/checkbox_fav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:paddingLeft="12dp"
+                android:layout_gravity="center"
+
+                style="@style/style_fav_checkbox"
+                android:checked="false"
+                android:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/itemCount"
+        style="@style/content_page_large_count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="aaaaa"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/button_layout">
+
+    <Button
+        android:id="@+id/right_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:duplicateParentState="true"
+        android:background="@drawable/button_positive"
+        android:text="下载"
+        android:visibility="visible"
+        />
+        <Button
+            android:id="@+id/btn_listitem_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:duplicateParentState="true"
+            android:background="@drawable/button_positive"
+            android:text="删除"
+            android:visibility="gone"
+            />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/chevron"
+        style="@style/list_item_chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:visibility="gone"/>
+
+</LinearLayout>

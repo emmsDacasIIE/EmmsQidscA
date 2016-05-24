@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#E0E0E0"
+    android:orientation="vertical"
+    android:paddingBottom="5dp" >
+
+    <LinearLayout
+        android:id="@+id/contactTelephone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" >
+
+        <TextView
+            android:id="@+id/contactTelephoneLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="电话："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#336598"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contactTelephoneTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#336598" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:gravity="right" >
+            >
+
+            <ImageView
+                android:id="@+id/contactTelephoneCallImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/dial" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactPhone1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" >
+
+        <TextView
+            android:id="@+id/contactPhone1Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机1："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#336598"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contactPhone1TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#336598" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:gravity="right" >
+            >
+
+            <ImageView
+                android:id="@+id/contactPhone1MsgImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/sms" />
+
+            <ImageView
+                android:id="@+id/contactPhone1CallImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/dial" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactPhone2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" >
+
+        <TextView
+            android:id="@+id/contactPhone2Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机2："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#336598"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contactPhone2TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#336598" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:gravity="right" >
+            >
+
+            <ImageView
+                android:id="@+id/contactPhone2MsgImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/sms" />
+
+            <ImageView
+                android:id="@+id/contactPhone2CallImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/dial" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactEmail1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" >
+
+        <TextView
+            android:id="@+id/contactEmail1Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="邮箱1："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#336598"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contactEmail1TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#336598" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:gravity="right" >
+            >
+
+            <ImageView
+                android:id="@+id/contactEmail1MsgImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/mail" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactEmail2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" >
+
+        <TextView
+            android:id="@+id/contactEmail2Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="邮箱2："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#336598"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contactEmail2TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#336598" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:gravity="right" >
+            >
+
+            <ImageView
+                android:id="@+id/contactEmail2MsgImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/mail" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactCompany"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" >
+
+        <TextView
+            android:id="@+id/contactCompanyLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="单位："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#336598"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contactCompanyTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#336598" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contactAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp" >
+
+        <TextView
+            android:id="@+id/contactAddressLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地址："
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#336598"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contactAddressTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#336598" />
+    </LinearLayout>
+
+</LinearLayout>

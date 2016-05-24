@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="cn.dacas.emmclient.DeviceAdminActivity" >
+
+    <item
+        android:id="@+id/action_list"
+        android:icon="@drawable/ic_action_overflow"
+        android:actionLayout="@layout/menu_badge"
+        android:orderInCategory="100"
+        android:title="@string/action_list"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/action_settings"
+                android:icon="@drawable/ic_action_settings"
+                android:title="@string/action_settings"/>
+            <item 
+                android:id="@+id/certificate_settings"
+                android:title="@string/cert_settings"
+                android:icon="@drawable/ic_cert_settings"/>
+        </menu>
+    </item>
+
+</menu>

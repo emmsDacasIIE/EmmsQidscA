@@ -1,0 +1,40 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- 通用标题栏 -->
+    <dimen name="titlebar_height">60dp</dimen>
+    <dimen name="titltbar_map_height">28dp</dimen>
+    <dimen name="titlebar_font_height">22dp</dimen>
+
+    <!-- 设置项title上部padding -->
+    <dimen name="titlebar_from_top_distinc">20dip</dimen>
+    <dimen name="titlebar_from_left_distinc">20dip</dimen>
+
+    <!-- 字体尺寸-->
+    <dimen name="tsize20">20sp</dimen>
+
+    <dimen name="shadow_width">15dp</dimen>
+    <dimen name="slidingmenu_offset">60dp</dimen>
+
+    <!-- 设置项字体的大小定义-->
+    <dimen name="settings_item_size">60dp</dimen>
+
+    <dimen name="settings_major_size">14sp</dimen>
+    <dimen name="settings_middle_size">12sp</dimen>
+    <dimen name="settings_minor_size">10sp</dimen>
+
+    <!-- msg item -->
+    <dimen name="msg_major_size">22sp</dimen>
+
+    <!-- pop menu -->
+    <dimen name="popmenu_width">100.0dip</dimen>
+    <dimen name="popmenu_yoff">5.0dip</dimen>
+
+    <!-- 模板页 -->
+    <dimen name="main_title_size">16sp</dimen>
+    <dimen name="main_menu_size">12sp</dimen>
+    <dimen name="main_network_size">12sp</dimen>
+    <dimen name="main_photo_size">36dp</dimen>
+</resources>

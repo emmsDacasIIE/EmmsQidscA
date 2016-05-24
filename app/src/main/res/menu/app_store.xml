@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="cn.dacas.emmclient.EmmClientMainActivity" >
+
+    <item
+        android:id="@+id/action_show_download"
+        android:icon="@drawable/rootblock_icon_download"
+        android:orderInCategory="1"
+        android:title="@string/_action_show_download"
+        app:showAsAction="always"/>
+    
+
+</menu>

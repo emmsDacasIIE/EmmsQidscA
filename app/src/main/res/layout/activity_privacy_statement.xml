@@ -1,0 +1,68 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_background"
+    android:orientation="vertical"
+    tools:context=".PrivacyStatementActivity" >
+
+    <LinearLayout
+        android:id="@+id/layout4webview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <WebView
+            android:id="@+id/webView1"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="2dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout4checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/checkBox1"
+            style="@style/style_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:ems="18"
+            android:text="@string/accept_terms"
+            android:textColor="@color/color_chexbox_privacy"
+            android:textSize="16sp"
+            android:checked="false" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout4button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/button_allow"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/button_positive"
+            android:onClick="allowPrivacy"
+            android:text="@string/next"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+    </RelativeLayout>
+
+
+
+</LinearLayout>

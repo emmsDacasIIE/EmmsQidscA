@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#88003366"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="#363433"
+        android:gravity="center"
+        android:text="@string/set_pattern"
+        android:textColor="#88d9d9d9"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/draw_pwd_title"
+        style="@style/textview"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:text="@string/please_set_pattern_1st"
+        android:textColor="#88d9d9d9"
+        android:textSize="22sp" />
+
+    <cn.dacas.emmclient.gesturelock.LocusPassWordView
+        android:id="@+id/mPassWordView"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/button_left"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="1dp"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:text="@string/deny"
+            android:textColor="#88d9d9d9"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/button_right"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="1dp"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:text="@string/go_on"
+            android:textColor="#88d9d9d9"
+            android:visibility="invisible"/>
+    </LinearLayout>
+
+</LinearLayout>

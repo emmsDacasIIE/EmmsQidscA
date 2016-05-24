@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@mipmap/msp_wallpaper_me"
+    >
+
+    <LinearLayout
+        android:id="@+id/layout_main_head"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="36dp" >
+
+        <!-- 1. head layout -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <cn.qdsc.msp.ui.qdlayout.RoundImageView
+                android:id="@+id/imageview_myphoto"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:gravity="center"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/msp_my_account_photo" />
+
+            <ImageView
+                android:id="@+id/imageview_myphoto"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@mipmap/msp_home_me" />
+
+                <LinearLayout
+                    android:id="@+id/ll_username_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="20dp">
+
+                    <TextView
+                        android:id="@+id/textview_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xiao Zhang: "
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textview_phone_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="2dp"
+                        android:text="13912345678"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+        <!-- 2. settings && about layout -->
+
+        <LinearLayout
+            android:id="@+id/ll_settings"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="30dp"
+            android:paddingTop="100dp" >
+
+            <ImageView
+                android:id="@+id/imageview_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:src="@mipmap/msp_me_settings" />
+
+            <TextView
+                android:id="@+id/textview_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:text="@string/my_settings" />
+
+            <ImageView
+                android:id="@+id/imageView_settings_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="30dp"
+                android:src="@mipmap/msp_right_arrow_white" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/gray" />
+
+    <LinearLayout
+        android:id="@+id/ll_about"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="30dp"
+        android:paddingTop="30dp" >
+
+        <ImageView
+            android:id="@+id/imageview_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:src="@mipmap/msp_me_about" />
+
+        <TextView
+            android:id="@+id/textview_about"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:paddingLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:text="@string/my_about" />
+
+        <ImageView
+            android:id="@+id/imageView_about_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingRight="30dp"
+            android:src="@mipmap/msp_right_arrow_white" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/gray" />
+
+        <!-- 3. quit button layout -->
+
+    <LinearLayout
+        android:id="@+id/ll_exit_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="25dp"
+        android:gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+
+        <Button
+            android:id="@+id/button_exitLogin"
+            android:layout_width="260dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/shape_my_exit_login"
+            android:text="@string/exit_login"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+
+
+
+
+
+</LinearLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/listLayout"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:padding="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/major_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxWidth="50dp"
+            android:minWidth="50dp"
+            android:visibility="gone"
+            />
+
+        <LinearLayout
+            android:id="@+id/top_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/major_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="lanngngn"
+                android:textColor="@color/listitem_text_major_color"
+                android:textSize="@dimen/settings_major_size" />
+                 />
+
+            <TextView
+                android:id="@+id/minor_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="wonn"
+                android:textColor="@color/listitem_text_minor_color"
+                android:textSize="@dimen/settings_minor_size"
+                android:visibility="visible"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="6dp"
+            android:gravity="right|center_vertical"
+            android:orientation="vertical"
+            android:id="@+id/image_right_layout">
+            <ImageView
+                android:id="@+id/minor_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxWidth="30dp"
+                android:maxHeight="30dp"
+                android:src="@mipmap/msp_right_arrow_gray"
+                android:visibility="gone"
+                />
+
+            <CheckBox
+                android:id="@+id/checkBox"
+                style="@style/switch_reboot_style"
+                android:layout_marginRight="6dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:checked="false"
+                android:visibility="visible"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

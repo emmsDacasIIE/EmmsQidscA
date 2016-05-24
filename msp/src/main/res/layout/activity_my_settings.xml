@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/my_information_background"
+    android:orientation="vertical" >
+
+
+
+    <!-- 1. my settings layout -->
+    <LinearLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:layout_marginTop="14dp"
+        >
+
+        <!-- 1.1 privacy settings  layout -->
+        <LinearLayout
+            android:id="@+id/ll_privacy_settings"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/imageview_privacy_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:src="@mipmap/setting_privacy_icon" />
+
+            <TextView
+                android:id="@+id/textview_privacy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/my_private_settings" />
+
+            <ImageView
+                android:id="@+id/imageView_privacy_settings_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="20dp"
+                android:src="@mipmap/msp_right_arrow_gray" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/item_line_color" />
+
+        <!-- 1.2 compliance(合规)  layout -->
+        <LinearLayout
+            android:id="@+id/ll_compliance_info"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="0dp"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/imageview_compliance_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:src="@mipmap/setting_security_icon" />
+
+            <TextView
+                android:id="@+id/textview_compliance_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/my_privacy_detail_info" />
+
+            <ImageView
+                android:id="@+id/imageView_compliance_info_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="20dp"
+                android:src="@mipmap/msp_right_arrow_gray" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/item_line_color" />
+
+        <!-- 1.3 hand paaword  layout -->
+        <LinearLayout
+            android:id="@+id/ll_hand_password"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="0dp"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/imageview_hand_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:src="@mipmap/setting_handpass_icon" />
+
+            <TextView
+                android:id="@+id/textview_hand_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/my_hand_password" />
+
+            <ImageView
+                android:id="@+id/imageView_hand_password_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="20dp"
+                android:src="@mipmap/msp_right_arrow_gray" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/item_line_color" />
+
+        <!-- 1.4 float button  layout -->
+        <LinearLayout
+            android:id="@+id/ll_float"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="0dp"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/imageview_float"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:src="@mipmap/setting_flow_icon" />
+
+            <TextView
+                android:id="@+id/textview_float"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/my_float" />
+
+            <ImageView
+                android:id="@+id/imageView_float_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="20dp"
+                android:src="@mipmap/msp_right_arrow_gray" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/item_line_color" />
+
+        <!-- 1.4 float button  layout -->
+        <LinearLayout
+            android:id="@+id/ll_backup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/imageview_bakcup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:src="@mipmap/settings_backup" />
+
+            <TextView
+                android:id="@+id/textview_backup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="备份恢复" />
+
+            <ImageView
+                android:id="@+id/imageView_backup_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingRight="20dp"
+                android:src="@mipmap/msp_right_arrow_gray" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

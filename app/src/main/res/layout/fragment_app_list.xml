@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/rootblock_sub_bg"
+    tools:context="cn.dacas.emmclient.mam.AppListFragment" >
+
+    <TextView
+        android:id="@+id/noAppText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <cn.dacas.emmclient.mam.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ListView
+            android:id="@+id/pushAppsListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </cn.dacas.emmclient.mam.RefreshableView>
+
+</RelativeLayout>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="dcsServer">
+        <!-- MsgPush -->
+        <item>159.226.94.159:3544</item> 
+       <!--  WebService -->
+        <item>159.226.94.159:8443</item>
+       <!--  Forward -->
+        <item>159.226.94.159:3546</item>
+       <!--  Map -->
+        <item>159.226.94.159:3000</item>
+       <!--  Update -->
+        <item>159.226.94.159:8080</item>
+    </array>
+    <array name="nancheServer">
+        <item>emms.csrcqsf.com:43544</item>
+        <item>emms.csrcqsf.com:47836</item>
+        <item>emms.csrcqsf.com:43546</item>
+        <item>emms.csrcqsf.com:45326</item>
+        <item>emms.csrcqsf.com:45478</item>
+    </array>
+     <array name="localServer">
+        <item>159.226.94.159:3544</item>
+        <item>192.168.0.152:8443</item>
+        <item>159.226.94.159:3546</item>
+        <item>159.226.94.159:3000</item>
+        <item>192.168.0.152:8080</item>
+    </array>
+    <array name="qdscServer">
+        <item>159.226.94.159:3544</item>
+        <item>192.168.0.152:8443</item>
+        <item>159.226.94.159:3546</item>
+        <item>159.226.94.159:3000</item>
+        <item>192.168.0.152:8080</item>
+    </array>
+
+</resources>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+
+    android:background="@color/my_information_background"
+    android:orientation="vertical"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:orientation="vertical">
+
+            <!-- 1. 第一组 layout-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            >
+            <include android:id="@+id/ll_app_detail" layout="@layout/msp_list_item_app1"/>
+
+
+        </LinearLayout>
+
+        <!-- 2. 第二组 -->
+        <LinearLayout
+            android:id="@+id/layout_group2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingLeft="0dp"
+            android:layout_marginTop="20dp"
+            android:paddingTop="20dp">
+
+            <TextView
+                android:id="@+id/app_func_lableText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:textColor="@color/listitem_text_major_color"
+                android:textSize="22sp"
+                android:text="@string/app_function_introduce"
+
+                />
+
+            <TextView
+                android:id="@+id/app_func"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="6dp"
+                android:textColor="@color/listitem_text_major_color"
+                android:textSize="18sp"
+                android:text="Android App"
+                android:background="@color/white"
+                />
+        </LinearLayout>
+
+        <!-- 2. 第三组 -->
+        <LinearLayout
+            android:id="@+id/layout_group3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingLeft="0dp"
+            android:layout_marginTop="20dp"
+            android:paddingTop="20dp">
+
+            <TextView
+                android:id="@+id/app_detail_lableText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:textColor="@color/listitem_text_major_color"
+                android:textSize="22sp"
+                android:text="@string/app_detail_info"
+                />
+
+            <TextView
+                android:id="@+id/app_detail_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="6dp"
+                android:textColor="@color/listitem_text_major_color"
+                android:textSize="18sp"
+                android:text="content"
+                />
+        </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/my_information_background"
+
+    android:scrollbars="vertical"
+
+    tools:context="cn.qdsc.msp.ui.fragment.DocListFragment" >
+
+    <LinearLayout
+        android:id="@+id/search_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!-- 下面这个LinearLayout是为了去edit焦点-->
+        <LinearLayout
+            android:id="@+id/linearLayout_focus"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px"/>
+
+        <cn.qdsc.msp.ui.qdlayout.SearchView
+            android:id="@+id/main_search_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+        </cn.qdsc.msp.ui.qdlayout.SearchView>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textview_line"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/search_layout"
+        android:background="@color/textview_line_dfdfdf" />
+
+    <TextView
+        android:id="@+id/noAppText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_below="@id/search_layout"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <!-- ptr:ptrAnimationStyle="flip"  flip:翻转  rotate:旋转 -->
+    <!-- ptr:ptrShowIndicator="true"  右上角 右下角出现箭头 -->
+
+
+    <cn.qdsc.msp.ui.qdlayout.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_below="@id/textview_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
+
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/pullDocsListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+
+
+    </cn.qdsc.msp.ui.qdlayout.RefreshableView>
+
+</RelativeLayout>

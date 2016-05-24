@@ -1,0 +1,293 @@
+<resources>
+
+    <string name="app_name" translatable="false">MSP</string>
+    <string name="action_settings">系统设置</string>
+    <string name="cert_settings">证书管理</string>
+    <string name="action_list">设置</string>
+    <string name="_content_management">内容管理</string>
+    <string name="action_logout">用户登出</string>
+    <string name="_user_management">用户管理</string>
+    <string name="_device_management">设备管理</string>
+    <string name="_device_info">设备信息</string>
+    <string name="_current_user">账户信息</string>
+    <string name="set_verifyCode_label">请输入管理员分发的企业设备验证码</string>
+    <string name="set_verifyCode_button_text">登录</string>
+    <string name="set_verifyCode_edit_text">设备验证码</string>
+    <string name="title_activity_set_pin">企业设备注册</string>
+    <string name="title_activity_user_info">账户信息</string>
+    <string name="title_activity_auto_cope_register">自带设备注册</string>
+    <string name="_loggedInAccountText">账户信息</string>
+    <string name="_editPinButton">修改Pin码</string>
+    <string name="_logOutButton">注销</string>
+    <string name="title_activity_user_management">用户管理</string>
+    <string name="title_activity_device_management">设备管理</string>
+    <string name="title_activity_device_info">设备信息</string>
+    <string name="title_activity_show_info">查看信息</string>
+    <string name="title_device_msg_section">企业消息</string>
+    <string name="title_device_info_section">设备配置</string>
+    <string name="title_operation_log_section">操作日志</string>
+    <string name="title_corp_contacts_section">企业通讯录</string>
+    <string name="title_individual_contacts_section">个人备份恢复</string>
+    <string name="title_msg_transactions_section">企业消息</string>
+    <string name="title_msg_contacts_section">企业通讯录</string>
+    <string name="title_activity_msg_show_details">会话记录</string>
+    <string name="_sendCorpMsgButton">发送消息</string>
+    <string name="title_activity_send_corp_msg">企业内部消息</string>
+    <string name="_logged_in_account">账户信息</string>
+    <string name="add_contacts">添加好友</string>
+    <string name="about_me">账户</string>
+    <string name="up_one_level">..(返回上一级目录)</string>
+    <string name="current_dir">.(刷新)</string>
+    <string name="strFilePath">文件路径</string>
+    <string name="strPermissionDeny">无权限访问该目录</string>
+    <string name="title_activity_filter_manager">选择文件</string>
+    <string name="_back_home">返回首页</string>
+    <string name="_set_verifyCode_edit_new">请输入新的pin码</string>
+    <string name="reset_password_warning">        将设备锁屏密码设置为 \"%1$s\""</string>
+    <string name="reset_password_ok">请勿忘记</string>
+    <string name="add_admin_extra_app_text">      请激活设备管理器，否则，客户端将无法提供服务！</string>
+    <string name="admin_receiver_status">设备管理器: %1$s</string>
+    <string name="admin_receiver_status_enabled">激活</string>
+    <string name="admin_receiver_status_disabled">未激活</string>
+    <string name="admin_receiver_status_pw_changed">密码更改</string>
+    <string name="admin_receiver_status_pw_failed">密码错误</string>
+    <string name="admin_receiver_status_pw_succeeded">密码成功</string>
+    <string name="admin_receiver_status_disable_warning">        取消激活将导致企业移动管理客户端无法正常使用！</string>
+    <string name="expiration_status_none">None</string>
+    <string name="expiration_status_past">密码%1$s之前失效</string>
+    <string name="expiration_status_future">密码将在%1$s后失效</string>
+    <string name="title_activity_set_device_mode">请选择设备类型</string>
+    <string name="_byod_check">自带设备注册</string>
+    <string name="_cope_check">企业设备注册</string>
+    <string name="_confirm_text">确定</string>
+    <string name="_device_name">设备名</string>
+    <string name="soft_update_no">已经是最新版本</string>
+    <string name="soft_update_title">软件更新</string>
+    <string name="soft_update_info">检测到新版本，立即更新吗</string>
+    <string name="soft_update_updatebtn">更新</string>
+    <string name="soft_update_later">稍后更新</string>
+    <string name="soft_updating">正在更新</string>
+    <string name="soft_update_cancel">取消</string>
+    <string name="app_download_title">应用下载</string>
+    <string name="app_download_info">是否立即下载应用</string>
+    <string name="app_donwload_btn">下载</string>
+    <string name="app_download_later">稍候下载</string>
+    <string name="app_downloading">正在下载</string>
+    <string name="app_download_cancel">取消</string>
+    <string name="file_download_title">文件下载</string>
+    <string name="file_download_info">是否立即下载文件</string>
+    <string name="file_donwload_btn">下载</string>
+    <string name="file_download_later">稍候下载</string>
+    <string name="file_downloading">正在下载</string>
+    <string name="file_download_cancel">取消</string>
+    <string name="title_corp_file_history">文件推送日志</string>
+    <string name="title_corp_file_mng">企业文件管理</string>
+    <string name="title_push_apps">应用推送日志</string>
+    <string name="_app_management">应用管理</string>
+    <string name="title_app_blk_list">应用黑名单</string>
+    <string name="title_app_store">应用商店</string>
+    <string name="_web_app">web应用</string>
+    <string name="_corp_app">企业内部应用</string>
+    <string name="title_activity_corp_app_list">企业内部应用</string>
+    <string name="title_activity_new_main">企业移动管理</string>
+    <string name="action_advice">意见反馈</string>
+    <string name="action_search">搜索</string>
+    <string name="title_activity_device_msg">设备消息</string>
+    <string name="title_activity_push_apps">应用推送</string>
+    <string name="title_activity_app_store">应用商店</string>
+    <string name="title_activity_corp_files">企业文件</string>
+    <string name="title_activity_advice">意见反馈</string>
+    <string name="_advice_send">发送</string>
+    <string name="title_advice">意见反馈</string>
+    <string name="_add_contact">添加联系人</string>
+    <string name="_action_refresh">刷新</string>
+    <string name="_action_show_download">下载列表</string>
+    <string name="title_activity_backup">个人备份恢复</string>
+    <string name="search_label">搜索</string>
+    <string name="search_hint">搜索</string>
+    <string name="_loading">加载</string>
+    <string name="no_data">未接收到企业消息</string>
+    <string name="_action_config_perm">隐私设置</string>
+    <string name="title_activity_policy_attention">策略状态</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_bind_user">BindUserActivity</string>
+    <string name="_action_user_info">用户信息</string>
+    <string name="plz_draw_code">Please draw your code</string>
+    <string name="pwd_setted">手势密码设置成功!</string>
+    <string name="pwd_correct">Your password is correct.</string>
+    <string name="title_activity_privacy_statement">PrivacyStatementActivity</string>
+    <string name="allow">确定</string>
+    <string name="deny">取消</string>
+    <string name="privacy_statement">隐私协议</string>
+    <string name="bind_user">绑定责任人</string>
+    <string name="ip_settings">IP设置</string>
+    <string name="bind">绑定</string>
+    <string name="accept_terms">同意以上隐私声明条款</string>
+    <string name="user_login">用户登录</string>
+    <string name="title_activity_user_login">UserLoginActivity</string>
+    <string name="title_activity_set_pattern_lock">SetPatternLockActivity</string>
+    <string name="set_pattern">手势设置</string>
+    <string name="please_set_pattern_1st">请输入新手势密码</string>
+    <string name="please_set_pattern_2nd">请再次输入,以验证密码</string>
+    <string name="please_unlock">请解锁</string>
+    <string name="wrong_pwd_retry">密码错误，请重试:</string>
+    <string name="please_retry">两次输入密码不一致，请重新输入</string>
+    <string name="go_on">继续</string>
+    <string name="retry">重试</string>
+    <string name="new_pattern">您的新手势密码</string>
+    <string name="title_activity_unlock">UnlockActivity</string>
+    <string name="change_unlock_type">切换登录方式</string>
+    <string name="change_user">切换用户</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings1">Settings1Activity</string>
+    <string name="title_activity_ip_settings">IpSettingsActivity</string>
+    <string name="title_activity_certificate_settings">CertificateSettingsActivity</string>
+
+    <!-- add new -->
+    <string name="input_password">请输入密码</string>
+    <string name="input_account">请输入帐号</string>
+    <string name="next">下一步</string>
+    <string name="login">登录</string>
+    <string name="prompt_setting_device_user">是否设置你为此设备的责任人？</string>
+    <string name="prompt_default_setting_text1">系统已经默认设置您的%s帐号为此设备的责任人</string>
+    <string name="prompt_btn_yes">是</string>
+    <string name="prompt_btn_no">否</string>
+    <string name="modify_service_info">更改服务器信息</string>
+    <string name="service">服务器</string>
+    <string name="cancel">取消</string>
+    <string name="privacy_checkbox_prompt">需要勾选同意隐私协议</string>
+
+    <string name="loading">加载中......</string>
+
+
+    <string name="title_applist">应用商店</string>
+    <string name="title_security_doc">安全文件</string>
+    <string name="title_security_contacts">安全通讯录</string>
+    <string name="title_contacts">通讯录</string>
+    <string name="title_security_msg">消息</string>
+    <string name="title_backup_and_restore">个人备份恢复</string>
+
+    <string name="security_work_area">安全工作区</string>
+    <string name="my_about">关于</string>
+    <string name="account_information">帐号信息</string>
+    <string name="confirm_send">确认发送</string>
+
+    <!-- 我的.设置 -->
+    <string name="my_settings">设置</string>
+    <string name="my_private_settings">隐私设置</string>
+    <string name="my_privacy_detail_info">合规详情</string>
+    <string name="my_hand_password">手势密码</string>
+    <string name="my_float">悬浮按钮</string>
+    <string name="my_is_float">启用悬浮</string>
+
+    <string name="my_photo">头像</string>
+    <string name="my_name">姓名</string>
+    <string name="my_account">帐号</string>
+    <string name="my_group">所属组</string>
+    <string name="my_email">邮箱</string>
+    <string name="my_tel_number">电话</string>
+    <string name="my_role">角色</string>
+    <string name="my_duty">是否责任人</string>
+
+
+    <string name="used_hand_pass">启用手势密码</string>
+    <string name="modify_hand_pass">修改手势密码</string>
+    <string name="forget_hand_pass">忘记手势密码</string>
+
+
+    <string name="completed">完成</string>
+
+    <!-- 我的.设置.子项-->
+    <string name="hardware_info">硬件信息</string>
+    <string name="hardware_info_detail">（设备型号、屏幕、处理器等）</string>
+    <string name="system_info">系统信息</string>
+    <string name="system_info_detail">（操作系统、内核、基带等）</string>
+    <string name="location_info">位置信息</string>
+    <string name="location_info_detail">（网络、GPS定位等）</string>
+    <string name="network_info">网络信息</string>
+    <string name="network_info_detail">（网络运营商、wifi等）</string>
+    <string name="app_service_info">应用和服务列表</string>
+    <string name="app_service_info_detail">（应用名称、版本号、运行内存等）</string>
+
+
+    <!-- 我的.关于 -->
+    <string name="my_system_info">系统信息</string>
+    <string name="my_check_update_version">检测更新</string>
+    <string name="my_feedback">我要反馈</string>
+    <string name="software_version">版本号</string>
+    <string name="what_to_say">说点什么吧！</string>
+    <string name="input_max_size">200个字以内</string>
+
+    <!-- 退出登录 -->
+    <string name="exit_login">退出登录</string>
+
+    <!-- search-->
+    <string name="input_search_key">请输入关键字</string>
+
+    <!-- 通讯录-->
+    <string name="edit">编辑</string>
+    <string name="telphone_number1">电话1</string>
+    <string name="telphone_number2">电话2</string>
+    <string name="email1">邮箱1</string>
+    <string name="email2">邮箱2</string>
+    <string name="address">联系地址</string>
+
+    <string name="contacts_no_text">通讯录为空，点击刷新！</string>
+
+    <!--camera -->
+    <string name="my_takepic">拍照</string>
+    <string name="my_photo_choice">从相册中选取照片</string>
+
+    <!--合规性页面-->
+    <string name="compliance_rank_1">赞,太棒了!你居然做到了</string>
+    <string name="compliance_rank_2">你做的很好，只需要一点就能更好</string>
+    <string name="compliance_rank_3">违规较严重，建议立即处理</string>
+    <string name="compliance_rank_4">亲，你有太多不合规，建议及时处理</string>
+
+    <!-- doc  -->
+    <string name="delete_prompt">提示</string>
+    <string name="exit">退出</string>
+    <string name="delete_prompt_content">确定要删除么？</string>
+
+    <string name="file_list_nodata">文件列表为空，点击刷新！</string>
+    <string name="file_list_load_fail">文件加载失败，点击刷新！</string>
+
+
+
+    <string name="network_disconnected">无法连接服务器，请检查您的网络设置</string>
+    <!-- 时间显示 -->
+    <string name="time_befor" translatable="false">%1$s前</string>
+    <string name="time_minute" translatable="false">"分钟"</string>
+    <string name="time_hour" translatable="false">"小时"</string>
+    <string name="time_day" translatable="false">"天"</string>
+    <string name="time_month" translatable="false">"个月"</string>
+    <string name="time_year" translatable="false">"年"</string>
+    <string name="time_unknow_error" translatable="false">未知时间</string>
+
+    <string name="msg_detail">消息详情</string>
+
+    <!-- 应用-->
+    <string name="app_detail_title">应用详情</string>
+    <string name="app_function_introduce">功能介绍</string>
+    <string name="app_detail_info">信息</string>
+
+
+    <!-- 桌面应用 -->
+    <string name="appName_backupAndRestore">备份恢复</string>
+
+    <string name="msg_choice_all">全 选</string>
+    <string name="msg_not_choice_all">返 选</string>
+    <string name="msg_delete">删 除</string>
+    <string name="msg_delete_confirm">确 定</string>
+    <string name="msg_delete_cancel">取 消</string>
+
+    <string name="msg_delete_confirm_prompt">确认删除所选的消息？</string>
+    <string name="doc_delete_confirm_prompt">确认要删除该文件？</string>
+    <string name="home_exit_login_prompt">确认要退出登录吗？</string>
+
+
+</resources>

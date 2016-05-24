@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "cn.qdsc.msp"
+        minSdkVersion 16
+        targetSdkVersion 22
+        versionCode 23
+        versionName "3.0.1"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+//    repositories {
+//        flatDir {
+//            dirs 'libs'
+//        }
+//    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'com.daimajia.numberprogressbar:library:1.2@aar'
+    compile files('libs/httpmime-4.2.5.jar')
+    compile project(':qdSlidemenuLib')
+    compile project(':dynamicgrid')
+    compile project(':listviewlibrary')
+    compile project(':mspsdk')
+    /* compile(name: 'mspsdk', ext: 'aar')*/
+    //compile files('libs/swipemenulistview.jar')
+    //compile files('libs/android-support-v4.jar')
+    compile project(':qdpulltorefreshswipmenulistview')
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="doc_menu">
+        <item>全部</item>
+        <item>已下载</item>
+        <item>未下载</item>
+        <item>已收藏</item>
+    </string-array>
+    
+    <string-array name="app_menu">
+        <item>全部</item>
+        <item>待下载</item>
+        <item>待安装</item>
+        <item>已安装</item>
+        <item>待更新</item>
+    </string-array> 
+    
+
+    
+</resources>

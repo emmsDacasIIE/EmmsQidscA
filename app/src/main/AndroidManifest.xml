@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.dacas.emmclient"
+    android:versionCode="300000008"
+    android:versionName="3.0.0.0.008">
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="22" />
+
+    <!-- Allows access to the Download Manager -->
+    <permission
+        android:name="cn.dacas.permission.ACCESS_DOWNLOAD_MANAGER"
+        android:label="@string/permlab_downloadManager"
+        android:protectionLevel="normal" />
+
+    <!-- Allows advanced access to the Download Manager -->
+    <permission
+        android:name="cn.dacas.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED"
+        android:label="@string/permlab_downloadManagerAdvanced"
+        android:protectionLevel="normal" />
+
+    <!-- Allows to send broadcasts on download completion -->
+    <permission
+        android:name="cn.dacas.permission.SEND_DOWNLOAD_COMPLETED_INTENTS"
+        android:label="@string/permlab_downloadCompletedIntent"
+        android:protectionLevel="normal" />
+
+    <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 这个权限用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- 用于读取手机当前的状态 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 访问网络，网络定位需要上网 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 允许应用读取低级别的系统日志文件 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="cn.dacas.permission.ACCESS_DOWNLOAD_MANAGER" />
+    <uses-permission android:name="cn.dacas.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED" />
+    <uses-permission android:name="cn.dacas.permission.SEND_DOWNLOAD_COMPLETED_INTENTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".main.EmmClientApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/emmclient_ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="lCHCeUDBbGFcZb1MNqwlkzyG" />
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="55e51776e0f55a83e3001184" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="DCS" />
+
+        <activity
+            android:name=".ui.AppStartActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Anim_style2">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".mdm.MDMService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="cn.dacas.emmclient.mdm.MDMService" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".worker.DeviceAdminWorker$NetworkStateReceiver">
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+                <!-- <action android:name="android.net.wifi.WIFI_STATE_CHANGED" /> -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".worker.DeviceAdminWorker$DeviceAdminSampleReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin_sample" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".worker.PkgChangedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".worker.QdscReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.PACKAGE_RESTARTED" />
+                <action android:name="cn.dacas.intent.action.SERVICE_RESTART" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".webapp.WebAppActivity"
+            android:label="@string/_web_app"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="cn.dacas.emmclient.webapp" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".webapp.CreateShortCutActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.NewMainActivity"
+            android:label="@string/title_activity_new_main"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.DeviceMessageActivity"
+            android:icon="@drawable/rootblock_icon_msg"
+            android:label="@string/title_activity_device_msg"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mam.AppStoreActivity"
+            android:icon="@drawable/rootblock_icon_appstore"
+            android:label="@string/title_activity_app_store"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mcm.DocActivity"
+            android:icon="@drawable/document1"
+            android:label="@string/title_activity_corp_files"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mcm.ContactActivity"
+            android:icon="@drawable/video"
+            android:label="@string/title_corp_contacts_section"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.AdviceActivity"
+            android:icon="@drawable/rootblock_icon_advice"
+            android:label="@string/title_activity_advice"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="cn.dacas.providers.downloads.ui.DownloadList"
+            android:icon="@drawable/rootblock_icon_download"
+            android:screenOrientation="portrait" />
+
+        <provider
+            android:name="cn.dacas.providers.downloads.DownloadProvider"
+            android:authorities="cn.dacas.downloads" />
+
+        <service android:name="cn.dacas.providers.downloads.DownloadService" />
+
+        <receiver
+            android:name="cn.dacas.providers.downloads.DownloadReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="emmclient.intent.action.DOWNLOAD_COMPLETE" />
+                <action android:name="emmclient.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".mcm.BackupActivity"
+            android:icon="@drawable/rootblock_icon_backup"
+            android:label="@string/title_activity_backup"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PolicyAttentionActivity"
+            android:icon="@drawable/rootblock_icon_attention_color"
+            android:label="@string/title_activity_policy_attention"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.BindUserActivity"
+            android:label="@string/title_activity_bind_user"
+            android:screenOrientation="portrait"
+            android:theme="@style/acvivity_include_header" />
+
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+
+        <activity
+            android:name=".ui.ExitFromSettings"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyDialogStyleBottom" />
+        <activity
+            android:name=".ui.PrivacyStatementActivity"
+            android:label="@string/title_activity_privacy_statement"
+            android:screenOrientation="portrait"
+            android:theme="@style/acvivity_include_header" />
+        <activity
+            android:name=".ui.UserLoginActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/acvivity_include_header" />
+        <activity
+            android:name=".gesturelock.GestureLockActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Anim_style2" />
+        <activity
+            android:name=".gesturelock.UnlockActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Anim_style2" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".ui.NewMainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.NewMainActivity" />
+        </activity>
+        <activity
+            android:name=".ui.CertificateSettingsActivity"
+            android:label="@string/title_activity_certificate_settings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.BinderSelectorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/acvivity_include_header" />
+        <activity android:name=".ui.QdscFormalActivity" />
+        <activity android:name=".ui.QdscGuideActivity"></activity>
+    </application>
+
+</manifest>
