@@ -52,6 +52,7 @@ import cn.qdsc.msp.controller.ControllerListener;
 import cn.qdsc.msp.controller.McmController;
 import cn.qdsc.msp.core.EmmClientApplication;
 import cn.qdsc.msp.manager.AddressManager;
+import cn.qdsc.msp.manager.UrlManager;
 import cn.qdsc.msp.model.CheckAccount;
 import cn.qdsc.msp.model.McmContactsModel;
 import cn.qdsc.msp.ui.contacts.CharacterParser;
@@ -610,13 +611,12 @@ public class ExpandableContactsFragment extends BaseFragment  implements Control
 			//String url = "https://" + ip + "/api/v1/user/dirs/" + m.id + "?uuid=" + PhoneInfoExtractor.getIMEI(mContext);
 //			CheckAccount account = CheckAccount.getCheckAccountInstance(mContext.getApplicationContext());
 //			final String urlP = NetworkDef.parseAddress(url) + "&access_token="+ account.getAccessToken();
-			String url = "https://" + ip + "/api/v1/user/dirs/" + m.id; // + "?access_token=" + PhoneInfoExtractor.getIMEI(mContext);
+			String url = UrlManager.getWebServiceUrl()+"/user/dirs/" + m.id; // + "?access_token=" + PhoneInfoExtractor.getIMEI(mContext);
 
 
 			CheckAccount account = CheckAccount.getCheckAccountInstance(mContext.getApplicationContext());
 
 			final String urlP = url + "?access_token="+ PrefUtils.getUserToken().getAccessToken() + "&uuid=" + PhoneInfoExtractor.getIMEI(mContext);
-
 
 			mDownloadUrl.add(urlP);
 		}

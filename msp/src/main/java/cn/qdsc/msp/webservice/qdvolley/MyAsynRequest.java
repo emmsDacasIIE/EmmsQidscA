@@ -7,7 +7,7 @@ import com.android.volley.VolleyError;
 
 import java.util.Map;
 
-
+import cn.qdsc.msp.manager.UrlManager;
 /**
  * Created by lenovo on 2015-11-2.
  */
@@ -25,7 +25,8 @@ public abstract  class MyAsynRequest<T> extends Request<T> {
 
     public MyAsynRequest(int method, String url, int type, Response.Listener<T> listener, Response.ErrorListener errorListener)
     {
-        super(method, UpdateTokenRequest.BuildUrl(url, type), errorListener);
+        // UpdateTokenRequest(url, type)
+        super(method, UrlManager.BuildWebServiceUrl(url, type), errorListener);
         mMethod=method;
         mUrl=url;
         mType=type;
@@ -36,7 +37,9 @@ public abstract  class MyAsynRequest<T> extends Request<T> {
 
 
     public MyAsynRequest(int method, String url, int type,  Map<String, String> map, Response.Listener<T> listener, Response.ErrorListener errorListener) {
-        super(method, UpdateTokenRequest.BuildUrl(url, type), errorListener);
+
+        // UpdateTokenRequest(url, type)
+        super(method, UrlManager.BuildWebServiceUrl(url, type), errorListener);
         mMethod=method;
         mUrl=url;
         mType=type;

@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import cn.qdsc.msp.core.EmmClientApplication;
+import cn.qdsc.msp.manager.UrlManager;
 import cn.qdsc.msp.util.QDLog;
 
 
@@ -34,7 +35,8 @@ public class MyJsonArrayRequest extends  MyAsynRequest<JSONArray> {
 
     @Override
     protected void retry() {
-        JsonArrayRequest newRequest = new JsonArrayRequest(mMethod, UpdateTokenRequest.BuildUrl(mUrl, mType), mListener, mErrorListener);
+        //更新Token后重新请求
+        JsonArrayRequest newRequest = new JsonArrayRequest(mMethod, UrlManager.BuildWebServiceUrl(mUrl, mType), mListener, mErrorListener);
         EmmClientApplication.mVolleyQueue.add(newRequest);
     }
 

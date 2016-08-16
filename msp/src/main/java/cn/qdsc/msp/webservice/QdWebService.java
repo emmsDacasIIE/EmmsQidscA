@@ -16,6 +16,7 @@ import java.util.Map;
 
 import cn.qdsc.msp.core.EmmClientApplication;
 import cn.qdsc.msp.manager.AddressManager;
+import cn.qdsc.msp.manager.UrlManager;
 import cn.qdsc.msp.model.DeviceModel;
 import cn.qdsc.msp.model.MamAppInfoModel;
 import cn.qdsc.msp.model.McmMessageModel;
@@ -32,7 +33,8 @@ import cn.qdsc.msp.webservice.qdvolley.UpdateTokenRequest;
 public class QdWebService {
 
     public static void fetchUserToken(final String username,final String password,final Response.Listener<TokenModel> listener,Response.ErrorListener errorListener) {
-        final String url = "https://" + AddressManager.getAddrWebservice() + "/api/v1/oauth/token";
+        //final String url = "https://" + AddressManager.getAddrWebservice() + "/api/v1/oauth/token";
+        final String url = UrlManager.getTokenServiceUrl() + "/oauth/token";
         StringRequest requestApplyToken = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -145,7 +147,7 @@ public class QdWebService {
 
     public static void getAppList(final Response.Listener<ArrayList<MamAppInfoModel>> listener, final Response.ErrorListener errorListener) {
         String url = "/user/apps?platforms=ANDROID";
-        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(com.android.volley.Request.Method.GET, url, UpdateTokenRequest.TokenType.USER,
+        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(Request.Method.GET, url, UpdateTokenRequest.TokenType.USER,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -165,7 +167,7 @@ public class QdWebService {
     public static void getMessageList(final Response.Listener<ArrayList<McmMessageModel>> listener,Response.ErrorListener errorListener) {
         int maxId= PrefUtils.getMsgMaxId();
         String url = "/client/devices/" + EmmClientApplication.mPhoneInfoExtractor.getIMEI() +"/messages?message_id=" + maxId;
-        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(com.android.volley.Request.Method.GET, url, UpdateTokenRequest.TokenType.DEVICE,
+        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(Request.Method.GET, url, UpdateTokenRequest.TokenType.DEVICE,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

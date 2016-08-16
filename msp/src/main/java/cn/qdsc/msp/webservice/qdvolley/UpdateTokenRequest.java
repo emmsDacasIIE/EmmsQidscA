@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 import cn.qdsc.msp.core.EmmClientApplication;
 import cn.qdsc.msp.manager.AddressManager;
+import cn.qdsc.msp.manager.UrlManager;
 import cn.qdsc.msp.util.PrefUtils;
 import cn.qdsc.msp.util.QDLog;
 
@@ -32,7 +33,8 @@ public class UpdateTokenRequest {
 
     public static String BuildUrl(String apiUrl,int type)
     {
-        String baseUrl="https://"+ AddressManager.getAddrWebservice()+"/api/v1";
+        String baseUrl= UrlManager.getTokenServiceUrl();
+        //"https://"+ AddressManager.getAddrWebservice()+"/api/v1";
         String token=null;
         if (type== UpdateTokenRequest.TokenType.USER)
             token = PrefUtils.getUserToken().getAccessToken();
@@ -40,6 +42,7 @@ public class UpdateTokenRequest {
             token = PrefUtils.getDeviceToken().getAccessToken();
         else token=null;
         if (token==null) return baseUrl+apiUrl;
+
         Pattern p = Pattern.compile("\\?\\S*=");
         Matcher m = p.matcher(apiUrl);
         if (m.find()) {
@@ -59,7 +62,7 @@ public class UpdateTokenRequest {
         else if (mType== TokenType.DEVICE) rToken= PrefUtils.getDeviceToken().getRefreshToken();
         String refreshUrl=null;
         if (mType== TokenType.DEVICE && rToken==null)
-            refreshUrl= "https://" + AddressManager.getAddrWebservice() + "/api/v1/oauth/token?" +
+            refreshUrl= UrlManager.getTokenServiceUrl() + "/oauth/token?" +
                     "grant_type=client_credentials&client_id=2b5a38705d7b3562655925406a652e65&client_secret=234f523128212d6e70634446224c2a48";
         else {
 //            refreshUrl="https://" + NetworkDef.getAvailableWebServiceIp() + "/api/v1/oauth/token?"+
@@ -68,7 +71,7 @@ public class UpdateTokenRequest {
                 errorListener.onErrorResponse(new VolleyError());
                 return;
             }
-            refreshUrl = "https://" + AddressManager.getAddrWebservice() + "/api/v1/oauth/token?"+
+            refreshUrl = UrlManager.getTokenServiceUrl() + "/oauth/token?"+
                     "grant_type=password&client_id=302a7d556175264c7e5b326827497349&client_secret=4770414c283a20347c7b553650425773&username="+
                     EmmClientApplication.mCheckAccount.getCurrentName()+"&password="+EmmClientApplication.mCheckAccount.getCurrentPassword();
         }

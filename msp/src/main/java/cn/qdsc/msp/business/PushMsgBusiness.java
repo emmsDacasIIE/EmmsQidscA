@@ -35,10 +35,10 @@ public class PushMsgBusiness extends BaseBusiness {
 
     public void getMessageFromServer(int maxId) {
         final BusinessListener.BusinessType businessType = BusinessListener.BusinessType.BusinessType_MessageList;
-//        String url = "/user/apps?platforms=ANDROID";
+        //String url = "/user/apps?platforms=ANDROID";
         String url = "/client/devices/" + PhoneInfoExtractor.getIMEI(mContext) +"/messages?message_id=" + maxId;
         QDLog.i(TAG,"getMessageFromServer========url=====" + url);
-        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(com.android.volley.Request.Method.GET, url, UpdateTokenRequest.TokenType.DEVICE,
+        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(Request.Method.GET, url, UpdateTokenRequest.TokenType.DEVICE,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

@@ -3,6 +3,7 @@ package cn.qdsc.msp.business;
 import android.content.Context;
 
 import com.android.volley.NetworkError;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
@@ -30,7 +31,7 @@ public class McmBusiness extends BaseBusiness {
     public void getDocListFromServer() {
         final BusinessListener.BusinessType businessType = BusinessListener.BusinessType.BusinessType_DocList;
         String url = "/user/docs";
-        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(com.android.volley.Request.Method.GET, url, UpdateTokenRequest.TokenType.USER,
+        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(Request.Method.GET, url, UpdateTokenRequest.TokenType.USER,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -60,7 +61,7 @@ public class McmBusiness extends BaseBusiness {
     public void getContactListFromServer() {
         final BusinessListener.BusinessType businessType = BusinessListener.BusinessType.BusinessType_ContactsList;
         String url = "/user/dirs";
-        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(com.android.volley.Request.Method.GET, url, UpdateTokenRequest.TokenType.USER,
+        MyJsonArrayRequest jsonArrayRequest = new MyJsonArrayRequest(Request.Method.GET, url, UpdateTokenRequest.TokenType.USER,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

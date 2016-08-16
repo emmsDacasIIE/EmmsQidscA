@@ -27,12 +27,13 @@ public class AddressManager {
 	 * @return
 	 */
 	public static String getAddrFile(int type) {
+		String path = UrlManager.getWebServicePath();
 		if (type == 1) {
-			return "http://"+ADDR_WEBSERVICE.split(":")[0]+":8085/api/v1/user/apps";
+			return "http://"+ADDR_WEBSERVICE.split(":")[0]+":8085"+path+"/user/apps";
 		}else if (type == 2) {
-			return "http://"+ADDR_WEBSERVICE.split(":")[0]+":8085/api/v1/user/docs";
+			return "http://"+ADDR_WEBSERVICE.split(":")[0]+":8085"+path+"/user/docs";
 		}else if (type == 3) {
-			return "https://"+ADDR_WEBSERVICE.split(":")[0]+":8443/api/v1/apps/icon";
+			return "https://"+ADDR_WEBSERVICE.split(":")[0]+":8443"+path+"/apps/icon";
 		}
 		else {
 			return "";

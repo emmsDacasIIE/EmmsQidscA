@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.qdsc.msp.core.EmmClientApplication;
+import cn.qdsc.msp.manager.UrlManager;
 import cn.qdsc.msp.webservice.QdParser;
 import cn.qdsc.msp.webservice.qdvolley.LicenceError;
 import cn.qdsc.msp.event.MessageEvent;
@@ -134,7 +135,8 @@ public class ActivateDevice {
      */
     public void reportDevice(final String email, final String password, final Response.Listener<Void> listener, final Response.ErrorListener errorListener) {
         final String ip = AddressManager.getAddrWebservice();
-        JsonObjectRequest requestAppleyDeviceToken=new JsonObjectRequest(Request.Method.POST, "https://" + ip + "/api/v1/oauth/token?" +
+        //"https://" + ip + "/api/v1/oauth/token?"
+        JsonObjectRequest requestAppleyDeviceToken=new JsonObjectRequest(Request.Method.POST, UrlManager.getTokenServiceUrl() + "/oauth/token?" +
                 "grant_type=client_credentials&client_id=2b5a38705d7b3562655925406a652e65&client_secret=234f523128212d6e70634446224c2a48",
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -145,7 +147,7 @@ public class ActivateDevice {
                             errorListener.onErrorResponse(new ParseError());
                             return;
                         }
-                        StringRequest requestApplyUserToken = new StringRequest(Request.Method.POST, "https://" + ip + "/api/v1/oauth/token",
+                        StringRequest requestApplyUserToken = new StringRequest(Request.Method.POST, UrlManager.getTokenServiceUrl() + "/oauth/token",
                                 new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String response) {
@@ -157,7 +159,7 @@ public class ActivateDevice {
                                                 map.put("name", PhoneInfoExtractor.getDeviceManufacturer()+"-"+PhoneInfoExtractor.getDeviceModel());
                                                 JSONObject params=new JSONObject(map);
                                                 JsonObjectRequest requestAddDevice = new JsonObjectRequest(Request.Method.POST,
-                                                        "https://" + ip + "/api/v1/user/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "?access_token=" + token,params,
+                                                        UrlManager.getWebServiceUrl() + "/user/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "?access_token=" + token,params,
                                                         new Response.Listener<JSONObject>() {
                                                             @Override
                                                             public void onResponse(JSONObject resultAddDevice) {
