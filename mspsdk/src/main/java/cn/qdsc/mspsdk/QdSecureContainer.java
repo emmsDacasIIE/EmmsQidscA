@@ -31,6 +31,7 @@ import cn.qdsc.utils.PKCS5Padding;
 import cn.qdsc.utils.PrefUtils;
 
 /**
+ * VPN逻辑类；
  * Created by jzhou on 2015-11-26.
  */
 public class QdSecureContainer implements IVpnDelegate {

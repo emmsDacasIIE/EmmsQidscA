@@ -164,14 +164,14 @@
     <color name="text_color_pressed">#ffffff</color>
 
     <!-- 自定义-->
-    <color name="color_titlebar_tint">#1bc9d1</color><!--titlebar 背景色 -->
+    <color name="color_titlebar_tint">#EE3B3B</color><!--titlebar 背景色 #1bc9d1 EE3B3B-->
     <color name="color_background">#f2f2f2</color><!--主页面背景色 -->
-    <color name="color_button_login">#63d8dd</color><!--button色 -->
-    <color name="color_button_press">#19b5be</color><!--button色 -->
+    <color name="color_button_login">#EE3B3B</color><!--button色 63d8dd DC143C-->
+    <color name="color_button_press">#DC143C</color><!--button色 19b5be FF0000-->
     <color name="color_chexbox_privacy">#3b3b3b</color><!--button色 -->
 
-    <color name="color_button_press_default_red">#ff7c7c</color><!--button"否",默认红色 -->
-    <color name="color_button_press_eb6262">#eb6262</color><!--button"否",默认红色 -->
+    <color name="color_button_press_default_red">#C9C9C9</color><!--button"否",默认红色 -->
+    <color name="color_button_press_eb6262">#C9C9C9</color><!--button"否",默认红色 -->
 
 
     <!-- 3.0.1 版本的color定义-->

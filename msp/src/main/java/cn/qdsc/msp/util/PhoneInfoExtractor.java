@@ -46,7 +46,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
-/*
+/**
+ * 提取手机信息逻辑类；
  * 静态的信息直接存放在类定义中，动态的数据或读写时间耗时的数据每次都要重新获取
  */
 public class PhoneInfoExtractor {

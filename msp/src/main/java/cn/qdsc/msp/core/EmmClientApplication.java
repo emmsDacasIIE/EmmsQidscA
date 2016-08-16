@@ -63,9 +63,7 @@ public class EmmClientApplication extends Application {
 	public static UserModel mUserModel = null;
 	public static boolean isFloating=false;
 
-
-
-    @Override
+	@Override
 	public void onCreate() {
 		super.onCreate();
 		mContext=EmmClientApplication.this;

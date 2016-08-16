@@ -86,7 +86,7 @@ public class AddressManager {
 	}
 
 	public static void initIpSettings() {
-		ADDR_BDMAP="159.226.94.159:3000";
+		ADDR_BDMAP="159.226.94.159:3000";//
 		ADDR_FORWARD=PrefUtils.getAddrForward();
 		ADDR_MSG=PrefUtils.getAddrMsg();
 		ADDR_WEBSERVICE=PrefUtils.getAddrWebservice();

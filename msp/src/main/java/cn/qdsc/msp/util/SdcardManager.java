@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SD卡管理工具类
+ * SD卡管理工具类，静态类；
  * 主要功能包括获取内置外置SD卡路径，内置位置SD卡状态、路径，内置位置SD卡总大小，已用大小，剩余可用大小
  * @author xiecl
  *

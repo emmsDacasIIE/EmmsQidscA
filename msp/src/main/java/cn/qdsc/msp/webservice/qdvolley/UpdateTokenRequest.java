@@ -35,9 +35,9 @@ public class UpdateTokenRequest {
         String baseUrl="https://"+ AddressManager.getAddrWebservice()+"/api/v1";
         String token=null;
         if (type== UpdateTokenRequest.TokenType.USER)
-            token= PrefUtils.getUserToken().getAccessToken();
+            token = PrefUtils.getUserToken().getAccessToken();
         else if (type== UpdateTokenRequest.TokenType.DEVICE)
-            token=PrefUtils.getDeviceToken().getAccessToken();
+            token = PrefUtils.getDeviceToken().getAccessToken();
         else token=null;
         if (token==null) return baseUrl+apiUrl;
         Pattern p = Pattern.compile("\\?\\S*=");

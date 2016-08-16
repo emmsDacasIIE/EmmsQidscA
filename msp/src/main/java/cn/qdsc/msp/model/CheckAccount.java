@@ -10,6 +10,9 @@ import cn.qdsc.msp.security.AESUtil;
 import cn.qdsc.msp.util.PrefUtils;
 import de.greenrobot.event.EventBus;
 
+/**
+ * 检查账户是否登陆
+ */
 public class CheckAccount {
 	private static final String TAG = "CheckAccount";
 	private static CheckAccount mCheckAccount = null;

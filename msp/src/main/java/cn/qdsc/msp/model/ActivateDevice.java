@@ -27,6 +27,7 @@ import cn.qdsc.msp.util.PhoneInfoExtractor;
 import cn.qdsc.msp.util.PrefUtils;
 import de.greenrobot.event.EventBus;
 
+/** 绑定负责任人逻辑类*/
 public class ActivateDevice {
     /*
      * singleton
@@ -88,6 +89,7 @@ public class ActivateDevice {
     private String deviceBinder;
     private String binderName;
     private String binderHash;
+    /**标志位，设备是否绑定正确的负责人*/
     private boolean deviceReported = false;
     private boolean deviceAuthorized = false;
 
@@ -127,7 +129,7 @@ public class ActivateDevice {
         return deviceType;
     }
 
-    /*
+    /**
      * 绑定设备责任人/验证当前责任人是否正确
      */
     public void reportDevice(final String email, final String password, final Response.Listener<Void> listener, final Response.ErrorListener errorListener) {

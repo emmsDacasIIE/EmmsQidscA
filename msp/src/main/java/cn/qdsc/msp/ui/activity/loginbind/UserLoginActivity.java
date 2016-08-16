@@ -49,7 +49,7 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
     private static boolean isLogining = false;
 
     private LinearLayout mMainLayout = null;
-//    private FrameLayout mSubFrameLayout = null;
+     //private FrameLayout mSubFrameLayout = null;
     private LinearLayout mServerAddressLayout = null;
     private RelativeLayout mlogin_form = null;
     private static final String defaultPort="8443";

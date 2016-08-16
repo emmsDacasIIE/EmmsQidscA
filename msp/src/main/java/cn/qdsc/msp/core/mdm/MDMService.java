@@ -61,9 +61,9 @@ import cn.qdsc.msp.webservice.qdvolley.MyJsonObjectRequest;
 import cn.qdsc.msp.webservice.qdvolley.UpdateTokenRequest;
 import de.greenrobot.event.EventBus;
 
-;
-
-
+/**
+ * 设备管理服务
+ */
 public class MDMService extends Service implements ControllerListener {
 
     private static final String TAG = "MDMService";
@@ -184,7 +184,6 @@ public class MDMService extends Service implements ControllerListener {
 
     private void startForwarding(final String email) {
         // TODO Auto-generated method stub
-        MDMService.this.email = email;
         MDMService.this.email = email;
         mMcmController.startForwarding(email);
 
@@ -807,7 +806,7 @@ public class MDMService extends Service implements ControllerListener {
         return jsonObject.toString();
     }
 
-    /*
+    /**
      * 上传设备基本信息
      */
     private void updateDeviceInfo() {

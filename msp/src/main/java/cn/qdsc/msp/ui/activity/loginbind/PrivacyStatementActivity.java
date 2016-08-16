@@ -12,9 +12,7 @@ import android.widget.Toast;
 import cn.qdsc.msp.R;
 import cn.qdsc.msp.ui.activity.base.BaseSlidingFragmentActivity;
 
-/**
- * 隐私协议--登录绑定时用
- */
+/** 隐私协议--登录绑定时用*/
 public class PrivacyStatementActivity extends BaseSlidingFragmentActivity {
 	private WebView mWebView;
 	private CheckBox mCheckBox;
@@ -64,7 +62,7 @@ public class PrivacyStatementActivity extends BaseSlidingFragmentActivity {
 		mWebView = (WebView) findViewById(R.id.webView1);
 		mWebView.getSettings().setSupportZoom(true);
 		mWebView.getSettings().setTextSize(WebSettings.TextSize.LARGER);
-		mWebView.loadUrl("file:///android_asset/privacy_context.html");
+		mWebView.loadUrl("file:///android_asset/privacy_context.html");//隐私协议的内容
 		mCheckBox = (CheckBox) findViewById(R.id.checkBox1);
 		mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override

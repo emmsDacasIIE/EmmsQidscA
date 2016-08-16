@@ -17,6 +17,9 @@ import cn.qdsc.msp.model.TokenModel;
 import cn.qdsc.msp.security.AESUtil;
 import cn.qdsc.msp.webservice.QdParser;
 
+/**
+ * Util class for SharedPreferences
+ */
 public class PrefUtils {
 	//apps
 	public static final String PREF_NAME = "PREF";
