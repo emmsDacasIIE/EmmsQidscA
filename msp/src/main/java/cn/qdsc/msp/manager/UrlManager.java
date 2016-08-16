@@ -8,19 +8,23 @@ package cn.qdsc.msp.manager;
 public class UrlManager {
     public static int HTTPS = 0;
     public static int HTTP = 1;
+    static String authIp = AddressManager.getAddrWebservice().split(":")[0];
     static String authPort = AddressManager.getAddrWebservice().split(":")[1];
+    static String WebServicePath ="";
+    static String AuthPath = "";
     static String[] protType= {"https://","http://"};
-    public static String getWebServerUrl(int type){
+
+    public static String getWebSeviceUrl(int type){
         if(type> protType.length-1)
             type = 0;
-        return protType[type]+AddressManager.getAddrWebservice();
+        return protType[type]+AddressManager.getAddrWebservice()+WebServicePath;
     }
 
-    public static String getWebServerUrl(){
-        return protType[0]+AddressManager.getAddrWebservice();
+    public static String getWebServiceUrl(){
+        return protType[0]+AddressManager.getAddrWebservice()+WebServicePath;
     }
 
-    public static String getWebServerUrlWithAuthPort(){
-        return protType[0]+(AddressManager.getAddrWebservice().split(":")[0]+authPort);
+    public static String getWebServiceUrlWithAuthPort(){
+        return protType[0]+(authIp+authPort)+AuthPath;
     }
 }
