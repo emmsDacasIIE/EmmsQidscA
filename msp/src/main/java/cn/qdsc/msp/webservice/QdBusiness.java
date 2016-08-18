@@ -18,10 +18,13 @@ import de.greenrobot.event.EventBus;
 public class QdBusiness {
 
     public static void login(final String username,final String password,final Response.Listener<DeviceModel> listener, final Response.ErrorListener errorListener) {
+        //向Oauth服务器索取userToken
         QdWebService.fetchUserToken(username, password, new Response.Listener<TokenModel>() {
             @Override
             public void onResponse(TokenModel response) {
+                //保存UserToken
                 PrefUtils.putUserToken(response);
+                //用该Token登陆，如果发现Token过期，将自动触发updateToken
                 QdWebService.login(new Response.Listener<DeviceModel>() {
                     @Override
                     public void onResponse(DeviceModel response) {

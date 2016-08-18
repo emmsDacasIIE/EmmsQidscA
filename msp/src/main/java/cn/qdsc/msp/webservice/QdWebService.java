@@ -34,7 +34,7 @@ public class QdWebService {
 
     public static void fetchUserToken(final String username,final String password,final Response.Listener<TokenModel> listener,Response.ErrorListener errorListener) {
         //final String url = "https://" + AddressManager.getAddrWebservice() + "/api/v1/oauth/token";
-        final String url = UrlManager.getTokenServiceUrl() + "/oauth/token";
+        final String url = UrlManager.getTokenServiceUrl();
         StringRequest requestApplyToken = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -59,16 +59,25 @@ public class QdWebService {
         EmmClientApplication.mVolleyQueue.add(requestApplyToken);
     }
 
+    /**
+     * 使用用户的Token登陆，如果Token过期，将自动更新token
+     * @param listener
+     * @param errorListener
+     */
     public static void login(final Response.Listener<DeviceModel> listener,Response.ErrorListener errorListener) {
-        MyJsonObjectRequest requestLogin = new MyJsonObjectRequest(Request.Method.POST, "/user/devices/" + EmmClientApplication.mPhoneInfoExtractor.getIMEI()+"/login",
-                UpdateTokenRequest.TokenType.USER, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                DeviceModel device=QdParser.parseDevice(response);
-                if (listener!=null)
-                    listener.onResponse(device);
-            }
-        }, errorListener);
+        MyJsonObjectRequest requestLogin = new MyJsonObjectRequest(
+                Request.Method.POST,
+                "/user/devices/" + EmmClientApplication.mPhoneInfoExtractor.getIMEI()+"/login",
+                UpdateTokenRequest.TokenType.USER,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        DeviceModel device=QdParser.parseDevice(response);
+                        if (listener!=null)
+                            listener.onResponse(device);
+                    }
+                },
+                errorListener);
         EmmClientApplication.mVolleyQueue.add(requestLogin);
     }
 

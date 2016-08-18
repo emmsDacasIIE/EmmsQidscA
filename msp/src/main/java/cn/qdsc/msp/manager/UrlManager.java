@@ -21,7 +21,7 @@ public class UrlManager {
     static String tokenIp = AddressManager.getAddrWebservice().split(":")[0];
     static String tokenPort = AddressManager.getAddrWebservice().split(":")[1];
     static String WebServicePath ="/api/v1";
-    static String tokenPath = "/api/v1";
+    static String tokenPath = "/api/v1/oauth/token";
     static String[] protocols = {"https://","http://"};
 
     public static String getWebSeviceUrl(int type){
@@ -36,7 +36,8 @@ public class UrlManager {
 
     public static String getWebServiceUrlWithPort(String port){
         return protocols[0]
-                +AddressManager.getAddrWebservice().split(":")[0]+":"
+                +AddressManager.getAddrWebservice().split(":")[0]
+                +":"
                 +port
                 +WebServicePath;
     }

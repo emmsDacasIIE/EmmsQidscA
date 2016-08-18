@@ -136,34 +136,40 @@ public class ActivateDevice {
     public void reportDevice(final String email, final String password, final Response.Listener<Void> listener, final Response.ErrorListener errorListener) {
         final String ip = AddressManager.getAddrWebservice();
         //"https://" + ip + "/api/v1/oauth/token?"
-        JsonObjectRequest requestAppleyDeviceToken=new JsonObjectRequest(Request.Method.POST, UrlManager.getTokenServiceUrl() + "/oauth/token?" +
-                "grant_type=client_credentials&client_id=2b5a38705d7b3562655925406a652e65&client_secret=234f523128212d6e70634446224c2a48",
+        //请求设备Token
+        JsonObjectRequest requestAppleyDeviceToken=new JsonObjectRequest(Request.Method.POST, UrlManager.getTokenServiceUrl() +
+                "?grant_type=client_credentials&client_id=2b5a38705d7b3562655925406a652e65&client_secret=234f523128212d6e70634446224c2a48",
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            //保存设备token
                             PrefUtils.putDeviceToken(QdParser.parseToken(response));
                         } catch (Exception e) {
                             errorListener.onErrorResponse(new ParseError());
                             return;
                         }
-                        StringRequest requestApplyUserToken = new StringRequest(Request.Method.POST, UrlManager.getTokenServiceUrl() + "/oauth/token",
+                        //请求用户token getParam函数已经被override
+                        StringRequest requestApplyUserToken = new StringRequest(Request.Method.POST, UrlManager.getTokenServiceUrl(),
                                 new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String response) {
                                         try {
                                             JSONObject resultApplyToken = new JSONObject(response);
+                                            //如果返回access_token
                                             if (resultApplyToken.has("access_token")) {
                                                 String token = resultApplyToken.getString("access_token");
                                                 Map<String, String> map = new HashMap<>();
+                                                //map := name : 生产厂商-设备型号
                                                 map.put("name", PhoneInfoExtractor.getDeviceManufacturer()+"-"+PhoneInfoExtractor.getDeviceModel());
                                                 JSONObject params=new JSONObject(map);
+                                                //将设备和责任人进行绑定，在服务器端添加设备
                                                 JsonObjectRequest requestAddDevice = new JsonObjectRequest(Request.Method.POST,
                                                         UrlManager.getWebServiceUrl() + "/user/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "?access_token=" + token,params,
                                                         new Response.Listener<JSONObject>() {
                                                             @Override
                                                             public void onResponse(JSONObject resultAddDevice) {
-                                                                try {
+                                                                try {//绑定责任人成功，已添加设备
                                                                     setDeviceReported(true);
                                                                     setDeviceBinder(email);
                                                                     setBinderName(resultAddDevice.getString("owner_name"));
@@ -175,7 +181,7 @@ public class ActivateDevice {
                                                                 }
                                                             }
                                                         }, new Response.ErrorListener() {
-                                                    @Override
+                                                    @Override //绑定责任人失败
                                                     public void onErrorResponse(VolleyError error) {
                                                         if (error.networkResponse!=null && error.networkResponse.statusCode==403) {
                                                             if (errorListener!=null)
@@ -190,7 +196,7 @@ public class ActivateDevice {
                                                             errorListener.onErrorResponse(error);
                                                     }
                                                 }){
-                                                    @Override
+                                                    @Override //AddDevice
                                                     public Map getHeaders() {
                                                         HashMap headers = new HashMap();
                                                         headers.put("Accept", "application/json");
@@ -205,13 +211,13 @@ public class ActivateDevice {
                                         }
                                     }
                                 }, new Response.ErrorListener() {
-                            @Override
+                            @Override //获取UserToken失败
                             public void onErrorResponse(VolleyError error) {
                                 if (errorListener!=null)
                                     errorListener.onErrorResponse(error);
                             }
                         }) {
-                            @Override
+                            @Override //requestApplyUserToken
                             protected Map<String, String> getParams() {
                                 Map<String, String> params = new HashMap<String, String>();
                                 params.put("username", email);
@@ -225,12 +231,12 @@ public class ActivateDevice {
                         EmmClientApplication.mVolleyQueue.add(requestApplyUserToken);
                     }
                 }, new Response.ErrorListener() {
-            @Override
+            @Override //获得DeviceToken失败
             public void onErrorResponse(VolleyError error) {
                 if (errorListener!=null)
                     errorListener.onErrorResponse(error);
             }
-        });
+        });//End requestAppleyDeviceToken
         requestAppleyDeviceToken.setRetryPolicy(new DefaultRetryPolicy(5000, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         EmmClientApplication.mVolleyQueue.add(requestAppleyDeviceToken);
     }
