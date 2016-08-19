@@ -36,11 +36,6 @@ import cn.qdsc.msp.util.QDLog;
 import cn.qdsc.msp.util.SdcardManager;
 import cn.qdsc.mspsdk.QdSecureContainer;
 
-//
-//import cn.dacas.emmclient.mdm.MDMService;
-//import cn.dacas.emmclient.security.ssl.SslHttpStack;
-//import cn.dacas.emmclient.util.NetworkDef;
-//import cn.dacas.emmclient.worker.PolicyManager;
 
 public class EmmClientApplication extends Application {
 

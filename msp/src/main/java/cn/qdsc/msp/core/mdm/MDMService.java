@@ -121,6 +121,7 @@ public class MDMService extends Service implements ControllerListener {
 
     private DeviceAdminMonitor mMonitor;
 
+    //接收EventBus发生的消息
     public void onEventBackgroundThread(MessageEvent event) {
         switch (event.type) {
             case MessageEvent.Event_StartTransaction:
@@ -217,19 +218,21 @@ public class MDMService extends Service implements ControllerListener {
         mMsgListener.setContext(mContext);
         mMsgListener.setHandler(uiHandler);
 
+        //baidulocation init
         mLocationClient = new LocationClient(
                 MDMService.this.getApplicationContext());
         mMyLocationListener = new MyLocationListener();
         mLocationClient.registerLocationListener(mMyLocationListener);
-
+        //配置定位SDK模式
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
         option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
         option.setScanSpan(60 * 1000);// 设置发起定位请求的间隔时间为1分钟
+        option.setOpenGps(true);//设置开启GPS
         option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
         option.setNeedDeviceDirect(true);// 返回的定位结果包含手机机头的方向
-
         mLocationClient.setLocOption(option);
+
         forward = new IForward();
         EventBus.getDefault().register(this);
 
@@ -880,9 +883,10 @@ public class MDMService extends Service implements ControllerListener {
         EmmClientApplication.mVolleyQueue.add(request);
     }
 
+    //设置监听器
     public class MyLocationListener implements BDLocationListener {
-
         @Override
+        //接收异步返回的定位结果
         public void onReceiveLocation(BDLocation location) {
             // Receive Location
             curLocation = location;
