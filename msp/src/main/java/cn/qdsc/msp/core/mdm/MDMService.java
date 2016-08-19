@@ -145,6 +145,11 @@ public class MDMService extends Service implements ControllerListener {
         }
     }
 
+    /**
+     * 上传位置服务，
+     * 如果needLoaction()=true 开始定位，并立即要求获得定位，
+     * 否者就停止
+     */
     private void uploadLocation() {
         if (needLoaction()) {
             mLocationClient.start();
@@ -190,14 +195,21 @@ public class MDMService extends Service implements ControllerListener {
 
     }
 
+    /**
+     * 判断当前是否需要定位
+     * @return
+     */
     private boolean needLoaction() {
         String account = CheckAccount.getCheckAccountInstance(mContext)
                 .getCurrentAccount();
+        //没有登录时，不需要定位
         if (account == null || account.equals(""))
             return false;
         String device_type = EmmClientApplication.mActivateDevice.getDeviceType();
+        //设备没有类型的时候不需要定位
         if (device_type == null || device_type.equals(""))
             return false;
+        //未知设备类型且设置不允许定位的，不定位
         if (device_type.equals("BYOD") || device_type.equals("UNKNOWN")) {
             SharedPreferences settings = mContext.getSharedPreferences(
                     PREF_NAME, 0);
@@ -219,19 +231,22 @@ public class MDMService extends Service implements ControllerListener {
         mMsgListener.setHandler(uiHandler);
 
         //baidulocation init
-        mLocationClient = new LocationClient(
-                MDMService.this.getApplicationContext());
         mMyLocationListener = new MyLocationListener();
-        mLocationClient.registerLocationListener(mMyLocationListener);
+        mLocationClient = new LocationService(getApplication(),mMyLocationListener).getLocationClient();
+
+        //mLocationClient = new LocationClient(MDMService.this.getApplicationContext());
+        //mMyLocationListener = new MyLocationListener();
+        //mLocationClient.registerLocationListener(mMyLocationListener);
+
         //配置定位SDK模式
-        LocationClientOption option = new LocationClientOption();
+        /*LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
         option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
         option.setScanSpan(60 * 1000);// 设置发起定位请求的间隔时间为1分钟
         option.setOpenGps(true);//设置开启GPS
         option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
         option.setNeedDeviceDirect(true);// 返回的定位结果包含手机机头的方向
-        mLocationClient.setLocOption(option);
+        mLocationClient.setLocOption(option);*/
 
         forward = new IForward();
         EventBus.getDefault().register(this);
@@ -831,11 +846,11 @@ public class MDMService extends Service implements ControllerListener {
     }
 
     /**
-     *
+     *上传定位信息
      */
     private void updateLocationInfo() {
         final PhoneInfoExtractor mPhoneInfoExtractor=EmmClientApplication.mPhoneInfoExtractor;
-
+        //访问Web服务器，汇报地址，没有响应函数
         MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT, "/client/devices/" + mPhoneInfoExtractor.getIMEI(mContext) + "/locations",
                 UpdateTokenRequest.TokenType.DEVICE, null, null) {
             @Override
@@ -848,9 +863,11 @@ public class MDMService extends Service implements ControllerListener {
             @Override
             public byte[] getBody() {
                 Map<String, String> map = new HashMap<>();
-                Timestamp timeStamp = new Timestamp(EmmClientApplication.mActivateDevice.lastOnlineTime);// 获取系统当前时间
+                // 获取系统当前时间
+                Timestamp timeStamp = new Timestamp(EmmClientApplication.mActivateDevice.lastOnlineTime);
                 String onlineTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                         .format(timeStamp);
+                //加入定位信息
                 map.put("lng", String.valueOf(curLocation.getLongitude()));
                 map.put("lat", String.valueOf(curLocation.getLatitude()));
 
@@ -887,10 +904,15 @@ public class MDMService extends Service implements ControllerListener {
         EmmClientApplication.mVolleyQueue.add(request);
     }
 
-    //设置监听器
+    /**
+     * 自定义定位监听类，设置在收到定位信息后，如何做
+     */
     public class MyLocationListener implements BDLocationListener {
+        /**
+         * 异步收到定位信息，更新当前定位，将定位信息上传给服务器
+         * @param location
+         */
         @Override
-        //接收异步返回的定位结果
         public void onReceiveLocation(BDLocation location) {
             // Receive Location
             curLocation = location;
