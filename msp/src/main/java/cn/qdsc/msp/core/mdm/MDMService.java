@@ -830,8 +830,12 @@ public class MDMService extends Service implements ControllerListener {
         EmmClientApplication.mVolleyQueue.add(request);
     }
 
+    /**
+     *
+     */
     private void updateLocationInfo() {
         final PhoneInfoExtractor mPhoneInfoExtractor=EmmClientApplication.mPhoneInfoExtractor;
+
         MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT, "/client/devices/" + mPhoneInfoExtractor.getIMEI(mContext) + "/locations",
                 UpdateTokenRequest.TokenType.DEVICE, null, null) {
             @Override
