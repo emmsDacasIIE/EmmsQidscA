@@ -8,9 +8,14 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import cn.qdsc.msp.model.MamAppInfoModel;
 import cn.qdsc.msp.model.TokenModel;
@@ -50,12 +55,20 @@ public class PrefUtils {
 	private static final String ADDR_FORWARD="FORWARDADDRESS";
 	private static final String ADDR_UPDATE="UPDATEADDRESS";
 
+	static String[] addressList = {
+			"192.168.151.137:8443", //ADDR_WEBSERVICE
+			"192.168.151.175:3544",//ADDR_MSG
+			"192.168.0.23:43546",//ADDR_FORWARD
+			"192.168.151.137:8080" //ADDR_UPDATE
+	};
+
     public static void setAddrWebservice(String addr) {
         spHelper.putString(ADDR_WEBSERVICE,addr);
     }
 
     public static String getAddrWebservice() {
-        return  spHelper.getString(ADDR_WEBSERVICE,"192.168.0.22:8443");
+        //return  spHelper.getString(ADDR_WEBSERVICE,"192.168.0.22:8443");
+		return  spHelper.getString(ADDR_WEBSERVICE,addressList[0]);
     }
 
 	public static void setAddrMsg(String addr) {
@@ -63,7 +76,8 @@ public class PrefUtils {
 	}
 
 	public static String getAddrMsg() {
-		return  spHelper.getString(ADDR_MSG,"192.168.0.23:43544");
+		//return  spHelper.getString(ADDR_MSG,"192.168.0.23:43544");
+		return  spHelper.getString(ADDR_MSG,addressList[1]);
 	}
 
 	public static void setAddrForward(String addr) {
@@ -71,7 +85,8 @@ public class PrefUtils {
 	}
 
 	public static String getAddrForward() {
-		return  spHelper.getString(ADDR_FORWARD,"192.168.0.23:43546");
+		//return  spHelper.getString(ADDR_FORWARD,"192.168.0.23:43546");
+		return  spHelper.getString(ADDR_FORWARD,addressList[2]);
 	}
 
 
@@ -80,7 +95,8 @@ public class PrefUtils {
 	}
 
 	public static String getAddrUpdate() {
-		return spHelper.getString(ADDR_UPDATE, "192.168.0.22:8080");
+		//return spHelper.getString(ADDR_UPDATE, "192.168.0.22:8080");
+		return spHelper.getString(ADDR_UPDATE, addressList[3]);
 	}
 
 
