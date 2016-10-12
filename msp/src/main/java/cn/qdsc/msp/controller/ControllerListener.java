@@ -7,5 +7,5 @@ import cn.qdsc.msp.business.BusinessListener;
  */
 public interface ControllerListener {
 
-    public void OnNotify(BusinessListener.BusinessResultCode resCode, BusinessListener.BusinessType type, Object data1, Object data2);
+    void OnNotify(BusinessListener.BusinessResultCode resCode, BusinessListener.BusinessType type, Object data1, Object data2);
 }

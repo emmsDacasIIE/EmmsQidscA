@@ -83,13 +83,11 @@ public class McmController extends BaseController  implements BusinessListener {
     /**
      * 需要实现的接口，来自BusinessListener.
      */
-
     @Override
     public void onBusinessResultJsonArray(BusinessResultCode resCode, BusinessType type, JSONArray data1, Object obj2) {
         QDLog.i(TAG,"onBusinessResultJsonArray==resCode=" +resCode );
         QDLog.i(TAG,"onBusinessResultJsonArray=BusinessType==" +type );
         QDLog.i(TAG,"onBusinessResultJsonArray==data1=" +data1 );
-
 
         //请求结果
         if (type == BusinessType.BusinessType_DocList) {

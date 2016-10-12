@@ -181,42 +181,44 @@ public class ActivateDevice {
                                                                 }
                                                             }
                                                         }, new Response.ErrorListener() {
-                                                    @Override //绑定责任人失败
-                                                    public void onErrorResponse(VolleyError error) {
-                                                        if (error.networkResponse!=null && error.networkResponse.statusCode==403) {
-                                                            if (errorListener!=null)
-                                                                errorListener.onErrorResponse(new LicenceError());
-                                                        }
-                                                        else if (error.networkResponse!=null && error.networkResponse.statusCode==422) {
-                                                            setDeviceReported(true);
-                                                            if (listener!=null)
-                                                                listener.onResponse(null);
-                                                        }
-                                                        else if (errorListener!=null)
-                                                            errorListener.onErrorResponse(error);
-                                                    }
-                                                }){
-                                                    @Override //AddDevice
-                                                    public Map getHeaders() {
-                                                        HashMap headers = new HashMap();
-                                                        headers.put("Accept", "application/json");
-                                                        headers.put("Content-Type", "application/json; charset=UTF-8");
-                                                        return headers;
-                                                    }
-                                                } ;
+                                                                @Override //绑定责任人失败
+                                                                public void onErrorResponse(VolleyError error) {
+                                                                    if (error.networkResponse!=null && error.networkResponse.statusCode==403) {
+                                                                        if (errorListener!=null)
+                                                                            errorListener.onErrorResponse(new LicenceError());
+                                                                    }
+                                                                    else if (error.networkResponse!=null && error.networkResponse.statusCode==422) {
+                                                                        setDeviceReported(true);
+                                                                        if (listener!=null)
+                                                                            listener.onResponse(null);
+                                                                    }
+                                                                    else if (errorListener!=null)
+                                                                        errorListener.onErrorResponse(error);
+                                                                }
+                                                            }){
+                                                                @Override //AddDevice
+                                                                public Map getHeaders() {
+                                                                    HashMap headers = new HashMap();
+                                                                    headers.put("Accept", "application/json");
+                                                                    headers.put("Content-Type", "application/json; charset=UTF-8");
+                                                                    return headers;
+                                                                }
+                                                            };
                                                 EmmClientApplication.mVolleyQueue.add(requestAddDevice);
                                             }
                                         } catch (JSONException e) {
                                             errorListener.onErrorResponse(new ParseError());
                                         }
                                     }
-                                }, new Response.ErrorListener() {
-                            @Override //获取UserToken失败
-                            public void onErrorResponse(VolleyError error) {
-                                if (errorListener!=null)
-                                    errorListener.onErrorResponse(error);
-                            }
-                        }) {
+                                },
+                                new Response.ErrorListener() {
+                                    @Override //获取UserToken失败
+                                    public void onErrorResponse(VolleyError error) {
+                                        if (errorListener!=null)
+                                            errorListener.onErrorResponse(error);
+                                    }
+                                })
+                        {
                             @Override //requestApplyUserToken
                             protected Map<String, String> getParams() {
                                 Map<String, String> params = new HashMap<String, String>();

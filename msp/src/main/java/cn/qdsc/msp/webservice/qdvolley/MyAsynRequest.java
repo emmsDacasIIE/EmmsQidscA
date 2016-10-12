@@ -19,13 +19,16 @@ public abstract  class MyAsynRequest<T> extends Request<T> {
     protected Response.ErrorListener mErrorListener;
     protected int mType;
 
-
-
-
-
+    /**
+     * 重新定义异步请求的构造器
+     * @param method
+     * @param url
+     * @param type
+     * @param listener
+     * @param errorListener
+     */
     public MyAsynRequest(int method, String url, int type, Response.Listener<T> listener, Response.ErrorListener errorListener)
     {
-        // UpdateTokenRequest(url, type)
         super(method, UrlManager.BuildWebServiceUrl(url, type), errorListener);
         mMethod=method;
         mUrl=url;
@@ -63,7 +66,6 @@ public abstract  class MyAsynRequest<T> extends Request<T> {
     }
 
     abstract  protected void retry();
-
 
     //处理token过期的情况
     @Override

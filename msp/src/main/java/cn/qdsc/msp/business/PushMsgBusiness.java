@@ -28,11 +28,8 @@ public class PushMsgBusiness extends BaseBusiness {
     }
 
     /**
-     *
      * from MDMService,获取消息列表
      */
-
-
     public void getMessageFromServer(int maxId) {
         final BusinessListener.BusinessType businessType = BusinessListener.BusinessType.BusinessType_MessageList;
         //String url = "/user/apps?platforms=ANDROID";
@@ -75,7 +72,6 @@ public class PushMsgBusiness extends BaseBusiness {
     /**
      * from MDMService, 暂时没用到，而是用的MDMService的downloadDeviceInfo
      */
-    //
     public void downloadDeviceInfo() {
         final BusinessListener.BusinessType businessType = BusinessListener.BusinessType.BusinessType_getCommands;
         String url = "/client/devices/" + PhoneInfoExtractor.getIMEI(mContext);

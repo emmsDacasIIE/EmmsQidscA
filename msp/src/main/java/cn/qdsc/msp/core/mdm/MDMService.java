@@ -301,7 +301,8 @@ public class MDMService extends Service implements ControllerListener {
                                 .getSystemService(Context.NOTIFICATION_SERVICE);
                         Intent notificationIntent = new Intent(
                                 mContext.getApplicationContext(),
-//                                DeviceMessageActivity.class); // 点击该通知后要跳转的Activity
+                                //点击该通知后要跳转的Activity
+                                //DeviceMessageActivity.class);
                                 NewMainActivity.class);
                         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         notificationIntent.putExtra("FromMsg", true);
@@ -695,7 +696,6 @@ public class MDMService extends Service implements ControllerListener {
                     getMessages();
                 }
             }
-
         };
 
         public void registerBoradcastReceiver() {
@@ -1008,10 +1008,10 @@ public class MDMService extends Service implements ControllerListener {
             //save data
             saveUnreadCount(m.id);
 
-            //send action
+            //send action好像并没有什么用
             mMsgListener.notifyDataChange(GlobalConsts.NEW_MESSAGE);
 
-            //send msg
+            //send msg 发出消息，显示通知
             sendMsg(m.content);
 
         }

@@ -264,7 +264,7 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 		public void handleMessage(Message msg) {
 //			mProgressDlg = ProgressDialog.show(rootView.getContext(), "加载中",
 //					"正在刷新消息列表...", true, false);
-
+			//getMsgListFromServer();
 			getMsgListFromDB();
 			showMessageList();
 		}
@@ -333,12 +333,11 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 	private BroadcastReceiver mBroadcastReciver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
 			if (BroadCastDef.OP_MSG.equals(intent.getAction())) {
 				QDLog.i(TAG,"registerMReceiver=====================");
 				getMsgListFromDB();
 				showMessageList();
-//				MsgListFragment.this.getLoaderManager().restartLoader(0, null, MsgListFragment.this);
+				//MsgListFragment.this.getLoaderManager().restartLoader(0, null, MsgListFragment.this);
 			}
 		}
 	};
@@ -361,8 +360,6 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 			do {
 				//需要格式化time
 				String time = mCursor.getString(timeIdx);
-
-
 				mResultArrayList
 						.add(new McmMessageModel(mCursor.getInt(idIdx),
 								mCursor.getString(subjectIdx),
@@ -370,19 +367,14 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 								time,
 								mCursor.getInt(readedIdx),
 								false
-
 						));
-
-
 			} while (mCursor.moveToNext());
 			allList.addAll(mResultArrayList);
 			mCursor.close();
 		}
 	}
 
-	//    /**
-//     * 获取搜索结果data和adapter
-//     */
+	/*** 获取搜索结果data和adapter*/
 	private void getResultData(String text) {
 		if (allList.size() <= 0) {
 			return;
@@ -528,19 +520,20 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 //		refreshableView.finishRefreshing();
 	}
 
-
-	////////////数据库方式/////////////
+	/**
+	 * 从数据库获得消息列表
+	 * @return 消息列表
+     */
 	private List<McmMessageModel> getMsgListFromDB() {
-
 //		if (mProgressDlg!=null) {
 //			mProgressDlg.dismiss();
 //		}
 
 //		testData();
-
 		loadAdapterData();
-		if (true ) return null;
+		return null;
 
+		/** this part doesn't work!
 		List<McmMessageModel> modelList = new ArrayList<McmMessageModel>();
 		Cursor mCursor = EmmClientApplication.mDatabaseEngine.getAllMessageData();
 		if ((mCursor != null) && (mCursor.getCount() > 0)) {
@@ -561,16 +554,12 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 			} while (mCursor.moveToNext());
 			mCursor.close();
 		}
-
-		return modelList;
-
-
-
+		return modelList;*/
 	}
 
-	///////////////////////message////////
-	////////////////接收消息/////////
-
+	/**
+	 * 从服务器获取消息列表
+	 */
 	private void getMsgListFromServer() {
 		final int maxId = PrefUtils.getMsgMaxId();
 
@@ -618,15 +607,12 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 		int length = mResultArrayList.size();
 		if (length <= 0) {
 			noTextView.setVisibility(View.VISIBLE);
-
 			try {
 				Thread.sleep(300);
 			}catch (Exception e) {
-
 			}
 			noTextView.setText("消息为空，点击刷新！");
 			refreshableView.setVisibility(View.GONE);
-
 			mButtonLayout.setVisibility(View.GONE);
 //			((MdmMsgListActivity)mActivity).setHeaderText("");
 
@@ -658,7 +644,7 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 			//send action
 			notifyDataChange(GlobalConsts.NEW_MESSAGE);
 
-			//send msg
+			//send msg 没有实际用处
 			sendMsg(m.content);
 		}
 

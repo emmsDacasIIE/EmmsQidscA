@@ -66,10 +66,11 @@ public interface BusinessListener {
      * @param data1
      * @param obj2
      */
+    void onBusinessResultJsonArray(BusinessResultCode resCode,BusinessType type, JSONArray data1, Object obj2);
 //    public void onBusinessResultStr(BusinessResultCode resCode,BusinessType type, String data1, Object obj2);
 //    public void onBusinessResultObj(BusinessResultCode resCode,BusinessType type, Object data1, Object obj2);
-    public void onBusinessResultJsonObj(BusinessResultCode resCode,BusinessType type, JSONObject data1, Object obj2);
-    public void onBusinessResultJsonArray(BusinessResultCode resCode,BusinessType type, JSONArray data1, Object obj2);
+     void onBusinessResultJsonObj(BusinessResultCode resCode,BusinessType type, JSONObject data1, Object obj2);
+
 
     //备用: 由VolleyError抛出的异常，暂时不用。
     //public void onBusinessResultError(BusinessResultCode resCode,BusinessType type, VolleyError data1, Object obj2);
