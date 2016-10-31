@@ -747,9 +747,9 @@ public class DocListFragment_bak extends BaseFragment implements ControllerListe
                     if (state.equals("下载") ) {
 
                         try {
-                            String url = AddressManager.getAddrFile(2)+"/" + URLEncoder.encode(docItem.fileName, "UTF-8");
-                            showNoticeDialog(docItem.fileName,url);
-                        } catch (UnsupportedEncodingException e) {
+                            //String url = AddressManager.getAddrFile(2)+"/" + URLEncoder.encode(docItem.fileName, "UTF-8");
+                            showNoticeDialog(docItem.fileName,docItem.url);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else if (state.equals("打开")) {

@@ -19,7 +19,7 @@ public class MySettingsActivity extends BaseSlidingFragmentActivity {
     private LinearLayout mLinearLayout1 = null;
     private LinearLayout mLinearLayout2 = null;
     private LinearLayout mLinearLayout3 = null;
-    private LinearLayout mLinearLayout4 = null;
+    //private LinearLayout mLinearLayout4 = null;
     private LinearLayout mLinearLayout5=null;
 
     @Override
@@ -65,7 +65,7 @@ public class MySettingsActivity extends BaseSlidingFragmentActivity {
         mLinearLayout1 = (LinearLayout)findViewById(R.id.ll_privacy_settings);
         mLinearLayout2 = (LinearLayout)findViewById(R.id.ll_compliance_info);
         mLinearLayout3 = (LinearLayout)findViewById(R.id.ll_hand_password);
-        mLinearLayout4 = (LinearLayout)findViewById(R.id.ll_float);
+        //mLinearLayout4 = (LinearLayout)findViewById(R.id.ll_float);
         mLinearLayout5= (LinearLayout)findViewById(R.id.ll_backup);
 
 
@@ -98,14 +98,14 @@ public class MySettingsActivity extends BaseSlidingFragmentActivity {
             }
         });
 
-        mLinearLayout4.setOnClickListener(new View.OnClickListener() {
+        /*mLinearLayout4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(mContext, MyFloatActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         mLinearLayout5.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -70,7 +70,6 @@ public abstract class BaseSlidingFragmentActivity extends SlidingFragmentActivit
 		Image_Text_Text,
 		Image_Text_Image,
 		Image_Text_Image_Image
-
 	}
 
 	HearderView_Style mHearderView_Style;
@@ -151,6 +150,7 @@ public abstract class BaseSlidingFragmentActivity extends SlidingFragmentActivit
 		mLeftHeaderView = (HeaderView) findViewById(R.id.leftHeaderView);
 		mMiddleHeaderView = (HeaderView) findViewById(R.id.middleHeaderView);
 		mRightHeaderView = (HeaderView) findViewById(R.id.rightHeaderView);
+		mRightHeaderView.setVisibility(View.GONE);
 
 		mSubRightHeaderView = (HeaderView) findViewById(R.id.sub_rightHeaderView);
 		mSubRightHeaderView.setVisibility(View.GONE);

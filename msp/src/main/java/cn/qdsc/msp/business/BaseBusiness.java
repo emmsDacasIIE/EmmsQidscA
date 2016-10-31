@@ -16,7 +16,7 @@ public class BaseBusiness {
     Context mContext;
     BusinessListener mBusinessListener;
 
-//    public static RequestQueue mVolleyQueue = Volley.newRequestQueue(EmmClientApplication.getContext(),new SslHttpStack(false));
+    //public static RequestQueue mVolleyQueue = Volley.newRequestQueue(EmmClientApplication.getContext(),new SslHttpStack(false));
 
     public BaseBusiness(Context context, BusinessListener bListener) {
         mContext = context;

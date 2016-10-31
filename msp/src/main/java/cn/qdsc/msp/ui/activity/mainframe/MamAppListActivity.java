@@ -184,11 +184,11 @@ public class MamAppListActivity extends BaseSlidingFragmentActivity {
 
     //////popup menu /////
     private void initPopMenu() {
-        String[] arr = this.getResources().getStringArray(R.array.app_menu);
+        String[] arr = this.getResources().getStringArray(R.array.app_delete_menu);
         popMenu = new PopMenu(this,arr);
 
         //pop menu event
-        popMenu.setOnItemClickListener(new PopMenu.OnItemClickListener() {
+        /*popMenu.setOnItemClickListener(new PopMenu.OnItemClickListener() {
 
             @Override
             public void onItemClick(int index) {
@@ -213,10 +213,7 @@ public class MamAppListActivity extends BaseSlidingFragmentActivity {
                         mAppListFragment.getResultDataByStatus(index);
                         break;
                     case 4:
-
                         break;
-
-
                     default:
                         break;
                 }
@@ -224,8 +221,31 @@ public class MamAppListActivity extends BaseSlidingFragmentActivity {
 
             }
 
-        });
+        });*/
+        popMenu.setOnItemClickListener(new PopMenu.OnItemClickListener() {
 
+            @Override
+            public void onItemClick(int index) {
+
+                switch (index) {
+                    case 0:
+                        //All
+                        mAppListFragment.deleteAPK(0);
+                        mAppListFragment.showAppList(true);
+                        Toast.makeText(getApplicationContext(),"已删除所有已下载的安装包",Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        // installed
+                        mAppListFragment.deleteAPK(1);
+                        mAppListFragment.showAppList(true);
+                        Toast.makeText(getApplicationContext(),"已删除所有已安装的安装包",Toast.LENGTH_SHORT).show();
+                    default:
+                        break;
+                }
+
+            }
+
+        });
         setOnClickRight("", new OnRightListener() {
             @Override
             public void onClick() {

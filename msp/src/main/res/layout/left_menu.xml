@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="@mipmap/msp_wallpaper_me"
+    android:background="@color/left_menu_background"
     >
 
     <LinearLayout
@@ -44,7 +44,7 @@
                         android:id="@+id/textview_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Xiao Zhang"
+                        android:text=""
                         android:textColor="@color/white"
                         android:textSize="18sp" />
 
@@ -53,7 +53,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="2dp"
-                        android:text="13912345678"
+                        android:text=""
                         android:textColor="@color/white"
                         android:textSize="18sp" />
                 </LinearLayout>

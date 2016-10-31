@@ -142,7 +142,7 @@ public class AppStartActivity extends Activity {
 
 			@Override
 			public void run() {
-				mBackgroundDrawable = BitMapUtil.getDrawableByZoom(AppStartActivity.this, R.mipmap.csr_qd);
+				mBackgroundDrawable = BitMapUtil.getDrawableByZoom(AppStartActivity.this, R.mipmap.csr_zc);
 //				mRelativeLayout.setBackground(mBackgroundDrawable);
 				Message msg = new Message();
 				msg.what = 2;

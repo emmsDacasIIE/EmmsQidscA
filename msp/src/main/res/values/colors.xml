@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#EE3B3B</color><!--3F51B5-->
+    <color name="colorPrimaryDark">#B2EE3B3B</color><!--303F9F-->
     <color name="colorAccent">#FF4081</color>
 
     <color name="white">#FFFFFF</color>
@@ -209,7 +209,16 @@
     <color name="msg_prompt_title_color">#424242</color>
     <color name="msg_confirm_color">#1AC7CE</color>
     <color name="msg_cancel_color">#FF7B7B</color>
+    <color name="left_menu_background">#878787</color>
 
+    <!--GestureLock-->
+    <color name="gesture_lock_errorColor">#B2EE3B3B</color>
+    <color name="gesture_lock_outterErrorColor">#EE3B3B</color>
 
+    <color name="gesture_lock_selectedColor">#B2FFA500</color>
+    <color name="gesture_lock_outterSelectedColor">#FFA500</color>
+
+    <color name="gesture_lock_dotColor">#B2708090</color>
+    <color name="gesture_lock_outterDotColor">#708090</color>
 
 </resources>

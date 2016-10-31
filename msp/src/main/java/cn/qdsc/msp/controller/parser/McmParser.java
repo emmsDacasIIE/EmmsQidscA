@@ -30,14 +30,12 @@ public class McmParser extends BaseParser{
 
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
-
                 JSONObject json = (JSONObject) jsonArray.get(i);
-                McmDocInfoModel item = new McmDocInfoModel();
 
+                McmDocInfoModel item = new McmDocInfoModel();
                 item.fileId = json.getString("id");
                 item.fileName = json.getString("file_name");
-
-                item.url = json.getString("file_path");
+                item.url = json.getString("url");
                 item.fileRecvTime =  json.getString("updated_at");//   "updated_at";
 
                 itemList.add(item);

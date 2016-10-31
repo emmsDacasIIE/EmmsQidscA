@@ -52,6 +52,7 @@ public class GlobalConsts {
     public static final String App_Icon_Url = "App_Icon_Url";
     public static final String Pkg_Name = "Pkg_Name";
     public static final String App_File_Name = "App_File_Name";
+    public static final String App_Download_Url = "App_Download_Url";
 
 
 }

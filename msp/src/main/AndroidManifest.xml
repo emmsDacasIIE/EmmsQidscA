@@ -5,8 +5,9 @@
     <uses-sdk
         android:minSdkVersion="17"
         android:targetSdkVersion="22" />
-    android:versionCode="301000023"
-    android:versionName="3.0.1.0.023">
+    <!-- 版本号(3->4)-->
+    android:versionCode="401000023"
+    android:versionName="4.0.1.0.023">
 
     <!-- 权限 -->
 
@@ -248,6 +249,29 @@
                 <action android:name="cn.dacas.intent.action.SERVICE_RESTART" />
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="org.eclipse.paho.android.service.MqttService">
+        </service>
+        <receiver android:name="cn.dacas.emmclient.msgpush.PushMsgReceiver">
+            <intent-filter>
+                <action android:name="cn.qdsc.msp.MsgPush.ERROR"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="cn.qdsc.msp.MsgPush.RECEIVE_MESSAGE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="cn.qdsc.msp.MsgPush.RECEIVE_NOTIFICATION"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="cn.qdsc.msp.MsgPush.CONNECTION_ERROR"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="cn.qdsc.msp.MsgPush.CONNECTION_OK"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="cn.qdsc.msp.MsgPush.CLEAR_MSG_NOTIFICATION"/>
             </intent-filter>
         </receiver>
 

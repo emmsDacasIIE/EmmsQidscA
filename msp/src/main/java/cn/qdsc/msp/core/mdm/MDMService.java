@@ -5,12 +5,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Bundle;
@@ -25,22 +23,19 @@ import com.android.volley.Response;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.baidu.location.LocationClientOption.LocationMode;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
-import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.dacas.emmclient.msgpush.MsgPushListener;
-import cn.dacas.emmclient.msgpush.RegMsgPush;
+import cn.dacas.emmclient.msgpush.PushMsgReceiver;
+import cn.dacas.emmclient.msgpush.MsgListener;
+import cn.dacas.pushmessagesdk.PushMsgManager;
 import cn.qdsc.msp.business.BusinessListener;
 import cn.qdsc.msp.controller.ControllerListener;
 import cn.qdsc.msp.controller.McmController;
@@ -48,9 +43,11 @@ import cn.qdsc.msp.core.EmmClientApplication;
 import cn.qdsc.msp.core.forward.IForward;
 import cn.qdsc.msp.core.mam.MApplicationManager;
 import cn.qdsc.msp.event.MessageEvent;
+import cn.qdsc.msp.manager.UrlManager;
 import cn.qdsc.msp.model.ActivateDevice;
 import cn.qdsc.msp.model.CheckAccount;
 import cn.qdsc.msp.model.McmMessageModel;
+import cn.qdsc.msp.ui.activity.mainframe.MsgDetailActivity;
 import cn.qdsc.msp.ui.activity.mainframe.NewMainActivity;
 import cn.qdsc.msp.util.BroadCastDef;
 import cn.qdsc.msp.util.GlobalConsts;
@@ -59,6 +56,7 @@ import cn.qdsc.msp.util.PrefUtils;
 import cn.qdsc.msp.util.QDLog;
 import cn.qdsc.msp.webservice.qdvolley.MyJsonObjectRequest;
 import cn.qdsc.msp.webservice.qdvolley.UpdateTokenRequest;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -66,7 +64,7 @@ import de.greenrobot.event.EventBus;
  */
 public class MDMService extends Service implements ControllerListener {
 
-    private static final String TAG = "MDMService";
+    public static final String TAG = "MDMService";
     private static Context mContext;
     private ActivateDevice activate;
 
@@ -82,45 +80,51 @@ public class MDMService extends Service implements ControllerListener {
 
     private MsgListener mMsgListener;
 
-    private static final int PUSH_MSG = 3;
-    private static final int ERASE_CORP = 4;
-    private static final int ERROR_FORMAT = 5;
-    private static final int ERASE_ALL = 6;
-    private static final int FACTORY = 7;
-    private static final int ERROR_MSG_SERVER = 8;
-    private static final int PUSH_APP = 9;
-    private static final int PUSH_FILE = 10;
-    private static final int REFRESH_ALL = 11;
-    private static final int DEVICE_TYPE = 12;
+    public interface CommdCode{
+        int ENFORCE = 1;
+        // 提示用户选项
+        int WARN = 2;
+        int PUSH_MSG = 3;
+        int ERASE_CORP = 4;
+        int ERROR_FORMAT = 5;
+        int ERASE_ALL = 6;
+        int FACTORY = 7;
+        int ERROR_MSG_SERVER = 8;
+        int PUSH_APP = 9;
+        int PUSH_FILE = 10;
+        int REFRESH_ALL = 11;
+        int DEVICE_TYPE = 12;
 
-    private static final int AUTH_STATE_CHANGE = 1010;// 授权状态改变
-    private static final int OP_CAMERA = 1030;
-    private static final int OP_PUSH_MSG = 1055;
-    private static final int OP_WIFI_CONFIG = 1020;
-    private static final int OP_SET_MUTE = 1025;
-    private static final int OP_LOCK_KEY = 1035;
-    private static final int OP_LOCK = 1036; // 锁屏
-    private static final int OP_REFRESH = 1045;
-    private static final int OP_ERASE_CORP = 1050;
-    private static final int OP_ERASE_ALL = 1060;
-    private static final int OP_FACTORY = 1065;
-    private static final int OP_POLICY1 = 1070;
-    private static final int OP_POLICY2 = 1075;
-    private static final int OP_PUSH_FILE = 1080; // fileUrlList以,分割
-    private static final int OP_CHANGE_DEVICE_TYPE = 1015; // 设备类型改变
-    private static final int DELETE_DEVICE = 1090; // 服务器端删除设备
-    private static final int NEW_COMMANDS = 1111;// 新指令
+        int AUTH_STATE_CHANGE = 1010;// 授权状态改变
+        int OP_CAMERA = 1030;
+        int OP_PUSH_MSG = 1055;
+        int OP_WIFI_CONFIG = 1020;
+        int OP_SET_MUTE = 1025;
+        int OP_LOCK_KEY = 1035;
+        int OP_LOCK = 1036; // 锁屏
+        int OP_REFRESH = 1045;
+        int OP_ERASE_CORP = 1050;
+        int OP_ERASE_ALL = 1060;
+        int OP_FACTORY = 1065;
+        int OP_POLICY1 = 1070;
+        int OP_POLICY2 = 1075;
+        int OP_PUSH_FILE = 1080; // fileUrlList以,分割
+        int OP_CHANGE_DEVICE_TYPE = 1015; // 设备类型改变
+        int DELETE_DEVICE = 1090; // 服务器端删除设备
+        int NEW_COMMANDS = 1111;// 新指令
+    }
 
     public static final String PREF_NAME = "APP_CAPA";
     public static final String DEVICE = "deviceType";
 
-    // 强制实施选项
-    private static final int ENFORCE = 1;
-    // 提示用户选项
-    private static final int WARN = 2;
-
     private DeviceAdminMonitor mMonitor;
 
+    PushMsgManager pushMsgManager;
+
+
+    public MsgListener getmMsgListener() {
+        return mMsgListener;
+    }
     //接收EventBus发生的消息
     public void onEventBackgroundThread(MessageEvent event) {
         switch (event.type) {
@@ -160,10 +164,10 @@ public class MDMService extends Service implements ControllerListener {
     }
 
     private void startTransaction(final String owner) {
-//        if (MDMService.this.owner!=null) return;
+        //if (MDMService.this.owner!=null) return;
         Log.d("MDMService", "start transaction");
         updateDeviceInfo();
-//        uploadLocation();
+        //uploadLocation();
         MDMService.this.owner = owner;
         startMsgPush();
         // 1）每次注册成功，都向服务器询问当前策略
@@ -172,13 +176,33 @@ public class MDMService extends Service implements ControllerListener {
         mMonitor.startScanPolicy();
     }
 
+    /**
+     * init RegMsgPush, -> init PushMsgManager
+     */
     private void startMsgPush() {
+        if(ActivateDevice.online || mMsgListener.isWorking())
+            return;
         String ip = cn.qdsc.msp.manager.AddressManager.getAddrMsg();
-        RegMsgPush sub = new RegMsgPush();
+        //RegMsgPush sub = new RegMsgPush();
         Log.d("MDMService", "MsgPush reg to " + ip);
         QDLog.writeMsgPushLog("try to connect to" + ip);
-        sub.init(PhoneInfoExtractor.getIMEI(mContext), mMsgListener,
-                new String[]{ip});
+        String imei = PhoneInfoExtractor.getIMEI(mContext);
+        Log.d(TAG, "IMEI: "+imei);
+        //sub.init(PhoneInfoExtractor.getIMEI(mContext), mMsgListener, new String[]{ip});
+
+        //Init PushMsgManager
+        pushMsgManager = new PushMsgManager(getApplicationContext(), UrlManager.getMsgPushUrl());
+        PushMsgReceiver.setMsgListener(mMsgListener);
+        try {
+            pushMsgManager.registerPush(
+                    UrlManager.getRegMsgPushUrl(),// Web adder
+                    "046e2930-7cc2-4398-9b1c-65852317de29",// client_id
+                    "6668b6a3-8486-4165-a418-374194ad47d3");// client_secret
+            pushMsgManager.addFullTopicToLists(imei,PushMsgManager.CommCodeType.NET_GetAliase);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -213,7 +237,7 @@ public class MDMService extends Service implements ControllerListener {
         if (device_type.equals("BYOD") || device_type.equals("UNKNOWN")) {
             SharedPreferences settings = mContext.getSharedPreferences(
                     PREF_NAME, 0);
-            if (settings.getBoolean("allowLocationInfo", false) == false)
+            if (!settings.getBoolean("allowLocationInfo", false))
                 return false;
         }
         return true;
@@ -226,27 +250,29 @@ public class MDMService extends Service implements ControllerListener {
 
         activate = EmmClientApplication.mActivateDevice;
 
-        mMsgListener = new MsgListener();
-        mMsgListener.setContext(mContext);
-        mMsgListener.setHandler(uiHandler);
+        //////初始化Controller
+        mMcmController = new McmController(mContext,this);
+
+        mMsgListener = new MsgListener(mContext,uiHandler,mMcmController);
 
         //baidulocation init
         mMyLocationListener = new MyLocationListener();
         mLocationClient = new LocationService(getApplication(),mMyLocationListener).getLocationClient();
 
-        //mLocationClient = new LocationClient(MDMService.this.getApplicationContext());
-        //mMyLocationListener = new MyLocationListener();
-        //mLocationClient.registerLocationListener(mMyLocationListener);
-
-        //配置定位SDK模式
-        /*LocationClientOption option = new LocationClientOption();
-        option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
-        option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-        option.setScanSpan(60 * 1000);// 设置发起定位请求的间隔时间为1分钟
-        option.setOpenGps(true);//设置开启GPS
-        option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
-        option.setNeedDeviceDirect(true);// 返回的定位结果包含手机机头的方向
-        mLocationClient.setLocOption(option);*/
+        /**
+         * mLocationClient = new LocationClient(MDMService.this.getApplicationContext());
+         * mMyLocationListener = new MyLocationListener();
+         * mLocationClient.registerLocationListener(mMyLocationListener);
+         * 配置定位SDK模式
+         * LocationClientOption option = new LocationClientOption();
+         * option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
+         * option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
+         * option.setScanSpan(60 * 1000);// 设置发起定位请求的间隔时间为1分钟
+         * option.setOpenGps(true);//设置开启GPS
+         * option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
+         * option.setNeedDeviceDirect(true);// 返回的定位结果包含手机机头的方向
+         * mLocationClient.setLocOption(option);
+         */
 
         forward = new IForward();
         EventBus.getDefault().register(this);
@@ -258,12 +284,6 @@ public class MDMService extends Service implements ControllerListener {
         if (owner != null) {
             startTransaction(owner);
         }
-
-        //////初始化Controller
-        mMcmController = new McmController(mContext,this);
-
-
-
     }
 
     @Override
@@ -289,7 +309,7 @@ public class MDMService extends Service implements ControllerListener {
             AlertDialog alertDialog = null;
 
             switch (code) {
-                case PUSH_MSG:
+                case CommdCode.PUSH_MSG:
                     String content = null;
                     if (bd != null) {
                         content = (String) bd.getCharSequence("msg");
@@ -303,7 +323,7 @@ public class MDMService extends Service implements ControllerListener {
                                 mContext.getApplicationContext(),
                                 //点击该通知后要跳转的Activity
                                 //DeviceMessageActivity.class);
-                                NewMainActivity.class);
+                                MsgDetailActivity.class);
                         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         notificationIntent.putExtra("FromMsg", true);
                         int unreadCount = PrefUtils.getMsgUnReadCount();
@@ -332,8 +352,8 @@ public class MDMService extends Service implements ControllerListener {
                         notificationManager.notify(0, notification);
                     }
                     break;
-                case FACTORY:
-                    if (msg.arg2 == ENFORCE) {
+                case CommdCode.FACTORY:
+                    if (msg.arg2 == CommdCode.ENFORCE) {
                         DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(false);
                     } else {
                         builder = new AlertDialog.Builder(mContext);
@@ -369,8 +389,8 @@ public class MDMService extends Service implements ControllerListener {
                         alertDialog.show();
                     }
                     break;
-                case ERASE_ALL:
-                    if (msg.arg2 == ENFORCE) {
+                case CommdCode.ERASE_ALL:
+                    if (msg.arg2 == CommdCode.ENFORCE) {
                         DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(true);
                     } else {
                         builder = new AlertDialog.Builder(mContext);
@@ -407,8 +427,8 @@ public class MDMService extends Service implements ControllerListener {
                     }
 
                     break;
-                case ERASE_CORP:
-                    if (msg.arg2 == ENFORCE) {
+                case CommdCode.ERASE_CORP:
+                    if (msg.arg2 == CommdCode.ENFORCE) {
                         new Thread(new Runnable() {
                             public void run() {
 //                                EmmClientApplication.mDb.clearCorpData();
@@ -448,7 +468,7 @@ public class MDMService extends Service implements ControllerListener {
                         alertDialog.show();
                     }
                     break;
-                case ERROR_FORMAT:
+                case CommdCode.ERROR_FORMAT:
                     builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("格式错误");
                     builder.setMessage("来自消息推送服务器的消息格式不合法！");
@@ -467,7 +487,7 @@ public class MDMService extends Service implements ControllerListener {
                             (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                     alertDialog.show();
                     break;
-                case ERROR_MSG_SERVER:
+                case CommdCode.ERROR_MSG_SERVER:
                     builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("服务器错误");
                     builder.setMessage("无法连接消息推送服务器!");
@@ -486,18 +506,18 @@ public class MDMService extends Service implements ControllerListener {
                             (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                     alertDialog.show();
                     break;
-                case REFRESH_ALL:
+                case CommdCode.REFRESH_ALL:
                     updateDeviceInfo();
                     break;
-                case AUTH_STATE_CHANGE:
+                case CommdCode.AUTH_STATE_CHANGE:
 //                    DisableTask dt1 = new DisableTask(MDMService.this);
 //                    dt1.execute(DisableTask.AUTH_STATE_CHANGE);
                     break;
-                case DELETE_DEVICE:
+                case CommdCode.DELETE_DEVICE:
 //                    DisableTask dt2 = new DisableTask(MDMService.this);
 //                    dt2.execute(DisableTask.DELETE_DEVICE);
                     break;
-                case DEVICE_TYPE:
+                case CommdCode.DEVICE_TYPE:
                     downloadDeviceInfo();
                     break;
                 default:
@@ -519,12 +539,23 @@ public class MDMService extends Service implements ControllerListener {
     }
 
 
-    public class MsgListener implements MsgPushListener {
+
+    /**
+     * The constructor of MsgListener,
+     * in which, a method "registerBroadcastReceiver" is called
+     * to register a broadcastReceiver with filter "GET_MESSAGE".
+     */
+    /*public class MsgListener extends BroadcastReceiver implements MsgPushListener {
         private Handler hdler = null;
         private Context ctxt = null;
 
         public MsgListener() {
-            registerBoradcastReceiver();
+            registerBroadcastReceiver();
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
         }
 
         public void setHandler(Handler handler) {
@@ -575,7 +606,6 @@ public class MDMService extends Service implements ControllerListener {
                     break;
                 case OP_PUSH_MSG:
                     getMessages();
-
                     break;
                 case OP_SET_MUTE:
                     String stateMute = jsonObject.getString("state");
@@ -619,8 +649,6 @@ public class MDMService extends Service implements ControllerListener {
                         handlerMsg.arg2 = option.equals("enforce") ? ENFORCE : WARN;
                         hdler.sendMessage(handlerMsg);
                         EmmClientApplication.mDatabaseEngine.eraseCorp(OP_ERASE_CORP);
-
-//
                     }
                     notifyDataChange(BroadCastDef.OP_LOG);
                     break;
@@ -633,7 +661,6 @@ public class MDMService extends Service implements ControllerListener {
                         handlerMsg.arg2 = option.equals("enforce") ? ENFORCE : WARN;
                         hdler.sendMessage(handlerMsg);
                         EmmClientApplication.mDatabaseEngine.eraseDeviceAllData(OP_ERASE_ALL);
-
                     }
 //                    notifyDataChange(BroadCastDef.OP_LOG);
                     break;
@@ -698,7 +725,7 @@ public class MDMService extends Service implements ControllerListener {
             }
         };
 
-        public void registerBoradcastReceiver() {
+        public void registerBroadcastReceiver() {
             IntentFilter myIntentFilter = new IntentFilter();
             myIntentFilter.addAction(GlobalConsts.GET_MESSAGE);
             // 注册广播
@@ -715,7 +742,6 @@ public class MDMService extends Service implements ControllerListener {
 
         private void getCommands() {
             QDLog.i(TAG,"========getCommands function==========");
-
             mMcmController.FetchMessageCommand();
 
         }
@@ -737,7 +763,7 @@ public class MDMService extends Service implements ControllerListener {
             EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_OnlineState, params));
         }
 
-    }
+    }*/
 
     private String getDeviceInfoDetail() {
         JSONObject jsonObject = new JSONObject();
@@ -971,7 +997,6 @@ public class MDMService extends Service implements ControllerListener {
                     case BusinessType_startForwarding:
                         if (data1 != null) {
                             HashMap<Integer, String> map = (HashMap<Integer, String>) data1;
-
                             forward.addMapping(map);
                             return;
                         }
@@ -996,8 +1021,6 @@ public class MDMService extends Service implements ControllerListener {
         }
 
         for (int i = modelList.size() -1; i >= 0;i--) {
-
-
             McmMessageModel m = modelList.get(i);
             QDLog.i(TAG, "UpdateMessageList=============" + m.content);
             QDLog.i(TAG, "UpdateMessageList=============" + m.title);
@@ -1012,10 +1035,10 @@ public class MDMService extends Service implements ControllerListener {
             mMsgListener.notifyDataChange(GlobalConsts.NEW_MESSAGE);
 
             //send msg 发出消息，显示通知
-            sendMsg(m.content);
+            //mMsgListener.sendMsg(m.content);
 
         }
-//        sendBroadcast
+        //sendBroadcast
         QDLog.i(TAG, "UpdateMessageList======OP_MSG=======" + BroadCastDef.OP_MSG);
         mMsgListener.notifyDataChange(BroadCastDef.OP_MSG);
 
@@ -1050,26 +1073,5 @@ public class MDMService extends Service implements ControllerListener {
         PrefUtils.putMsgMaxId(mId);
         PrefUtils.putMsgUnReadCount(unreadCount+1);
     }
-
-    //send handler msg
-    private void sendMsg(String msg) {
-        Handler handler = mMsgListener.getHandler();
-        QDLog.i(TAG,"sendMsg =========="+msg);
-        if (handler != null) {
-            QDLog.i(TAG,"sendMsg ======111===="+msg);
-            Bundle bundle = new Bundle();
-            bundle.putCharSequence("msg", msg);
-            Message handlerMsg = Message.obtain();
-            handlerMsg.arg1 = PUSH_MSG;
-            handlerMsg.setData(bundle);
-            handler.sendMessageAtFrontOfQueue(handlerMsg);
-        }
-    }
-
-//    private void notifyDataChange(String action) {
-//        Intent intent = new Intent();
-//        intent.setAction(action);
-//        context.sendBroadcast(intent);
-//    }
 
 }

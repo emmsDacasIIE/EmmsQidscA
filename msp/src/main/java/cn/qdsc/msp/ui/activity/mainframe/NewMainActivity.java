@@ -48,7 +48,7 @@ import de.greenrobot.event.EventBus;
  * 主页的Activity
  * 参考资料：SwitchFragment
  */
-//        SlidingFragmentActivity
+//SlidingFragmentActivity
 //BaseFragmentActivity
 
 public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMainPageChangedListener {
@@ -56,12 +56,9 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     private static final String TAG = "NewMainActivity";
 
     private static boolean isFirstCreated = true;
-
     private static final int Handler_Flag_StartActivity = 1;
     private static final int Handler_Flag_Timer = 2;
-
     private static final int Handler_Flag_ExitActivity = 3;
-
     private static int UpdateLockTwice = 0;
 
     LinearLayout layout_info_network;
@@ -104,7 +101,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
         initOnClickEvent();
 
-        initPopMenu();
+        //initPopMenu();
 
         emailStr =  getIntent().getStringExtra("email");
 
@@ -261,8 +258,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     }
 
     private void gotoComplianceActivity() {
-        mContext.startActivity(
-                new Intent(mContext, ComplianceActivity.class));
+        //mContext.startActivity(new Intent(mContext, ComplianceActivity.class));
     }
 
     ////handler///
@@ -276,16 +272,14 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
                 for (int i = 0; i< homeList.size();i++) {
                     String pkg = homeList.get(i);
                     AppManager.startAPP(mContext,pkg);
-
                     break;
                 }
                 finish();
             }
 
             else {
-
                 //update right image
-                updateRightImage();
+                //updateRightImage();
             }
 
         }
@@ -335,9 +329,9 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
         mMiddleHeaderView.setText(mContext.getString(R.string.security_work_area));
         mRightHeaderView.setImageView(R.mipmap.msp_titlebar_right_icon);
+        mRightHeaderView.setVisibility(View.GONE);
 
-        mSubRightHeaderView.setVisibility(View.VISIBLE);
-
+        mSubRightHeaderView.setVisibility(View.GONE);
         mSubRightHeaderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

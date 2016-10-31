@@ -29,6 +29,11 @@ public class MApplicationManager {
 
 	private Context context = null;
 
+	/**
+	 * get an instance of Class ApplicationManager
+	 * @param context Context
+	 * @return an instance
+     */
 	public static MApplicationManager getApplicationManager(Context context) {
 		if (myActivityManager == null) {
 			myActivityManager = new MApplicationManager(context);
@@ -36,6 +41,12 @@ public class MApplicationManager {
 		return myActivityManager;
 	}
 
+	/**
+	 * Constructor:
+	 * 1. getApplicationContext from context
+	 * 2. call getAllInstalledPkgs() to get info about all Packages installed;
+	 * @param context Context
+     */
 	private MApplicationManager(Context context) {
 		this.context = context.getApplicationContext();
 		getAllInstalledPkgs();
@@ -47,7 +58,9 @@ public class MApplicationManager {
 	private List<AppInfo> allPackages = null;
 	private List<RunningServiceInfo> runningServices = null;
 
-	// 获取服务列表
+	/**
+	 * set List<RunningServiceInfo> runningServices
+	 */
 	public void getRunningServices() {
 		if (runningServices == null) {
 			if (activityManager == null) {
@@ -58,6 +71,10 @@ public class MApplicationManager {
 		}
 	}
 
+	/**
+	 * set [Field] allPackages
+	 * @return a list of AppInfo, with content Info of all installed Packages
+     */
 	public List<AppInfo> getAllInstalledPkgs() {
 		if (allPackages == null) {
 			List<PackageInfo> tmpPackages;
@@ -79,7 +96,7 @@ public class MApplicationManager {
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						noSuchMethod = true;
+						noSuchMethod = true; //No such a method is called getPackageSizeInfo in Class PackageManager
 					}
 				}
 
@@ -138,7 +155,8 @@ public class MApplicationManager {
 		context.startActivity(intent);
 	}
 
-	/*
+	/**
+	 * if packageName is in the list allPackages, it will be removed;
 	 * 每次开机过程，只运行一次读取安装应用列表的操作
 	 */
 	public void appRemoved(String packageName) {
@@ -154,6 +172,10 @@ public class MApplicationManager {
 		}
 	}
 
+	/**
+	 * add info about packageName into allPackages
+	 * @param packageName
+     */
 	public void appAdded(String packageName) {
 		// 在需要的时候会重新从系统读取安装应用列表
 		if (packageManager == null) {
@@ -166,7 +188,6 @@ public class MApplicationManager {
 			try {
 				queryPacakgeSize(app);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			app.setAppLabel(packageManager.getApplicationLabel(
@@ -174,10 +195,8 @@ public class MApplicationManager {
 			app.setAppIcon(app.getPkgInfo().applicationInfo
 					.loadIcon(packageManager));
 
-			// TODO：设置应用的其他属性
 			allPackages.add(app);
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -188,6 +207,12 @@ public class MApplicationManager {
 		super.finalize();
 	}
 
+	/**
+	 * get Info about App Size
+	 * In this method, the method getPackageSizeInfo in Class PackageManager will be invoked by Reflect!
+	 * @param appInfo AppInfo
+	 * @throws Exception
+     */
 	public void queryPacakgeSize(AppInfo appInfo) throws Exception {
 		if ((appInfo == null) || (appInfo.getPkgInfo() == null)
 				|| (appInfo.getPkgInfo().packageName == null)) {
@@ -213,20 +238,26 @@ public class MApplicationManager {
 			}
 		} else {
 			try {
+				//reflect the method getPackageSizeInfo in Class PackageManager
 				Method getPackageSizeInfo = packageManager.getClass()
 						.getDeclaredMethod("getPackageSizeInfo", String.class,
 								int.class, IPackageStatsObserver.class);
+				//a sub class of IPackageStatsObserver
 				PkgSizeObserver pkgSizeObserver = new PkgSizeObserver();
 				pkgSizeObserver.setAppInfo(appInfo);
 				getPackageSizeInfo.invoke(packageManager,
-						appInfo.getPkgInfo().packageName,
-						android.os.Process.myUid() / 100000, pkgSizeObserver);
+						appInfo.getPkgInfo().packageName,//String
+						android.os.Process.myUid() / 100000, //int
+						pkgSizeObserver);// IPackageStatsObserver
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
 	}
 
+	/**
+	 * to set appInfo about size, like cacheSize, codeSize, dataSize;
+	 */
 	public class PkgSizeObserver extends IPackageStatsObserver.Stub {
 		private AppInfo appInfo = null;
 
@@ -246,6 +277,11 @@ public class MApplicationManager {
 	}
 
 	//将当前安装的应用程序打包成JSON字符串，在MDMService的getDeviceInfoDetail上传到服务器
+
+	/**
+	 * make the list allPackages into JsonArray Format
+	 * @return JsonArray
+     */
 	public String getAppsInJson() {
 		JSONObject jsonApps = new JSONObject();
 		JSONArray appArray = new JSONArray();

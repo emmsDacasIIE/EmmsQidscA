@@ -101,18 +101,16 @@ public class MenuLeftFragment extends BaseFragment
 		mMyPhotoImageView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(mContext, MyInformationActivity.class);
+				//Intent intent = new Intent();
+				//intent.setClass(mContext, MyInformationActivity.class);
+				//QDLog.i(TAG, "onNotify ============MyInformationActivity===");
+				//startActivity(intent);
 
-				QDLog.i(TAG, "onNotify ============MyInformationActivity===");
 //				Bundle bundle = new Bundle();
 //				bundle.putString(IntentConts.Fish_Detail_Pid, pidString);
 //				bundle.putInt(IntentConts.Msg_Source, IntentConts.Home_FishDetail);
 //				bundle.putSerializable(IntentConts.Fish_Detail, (Serializable) fishPic);
-
 //				intent.putExtras(bundle);
-				startActivity(intent);
-
 			}
 		});
 

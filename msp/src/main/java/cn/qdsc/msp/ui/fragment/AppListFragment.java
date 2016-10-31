@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ import cn.qdsc.msp.util.PhoneInfoExtractor;
 import cn.qdsc.msp.util.PrefUtils;
 import cn.qdsc.msp.util.QDLog;
 import cn.qdsc.msp.webservice.QdWebService;
+import cn.qdsc.mspsdk.QdSecureContainer;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -309,7 +311,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
         });
     }
 
-    private void showAppList(boolean isNetworkOK) {
+    public void showAppList(boolean isNetworkOK) {
         int length = pushAppsArrayList.size();
         if (length <= 0) {
             noAppText.setVisibility(View.VISIBLE);
@@ -327,7 +329,6 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
 
         //下面这个，不用也可以lizhongyi
         mSearchAdapter.notifyDataSetChanged();
-
     }
 
 
@@ -474,7 +475,22 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
         noticeDialog.show();
     }
 
-
+    /**
+     * delete APK
+     * @param type 0: all; 1: installed
+     */
+    public void deleteAPK(int type){
+        for (MamAppInfoModel model :allAppList) {
+            try {
+                if(type == 0)
+                    EmmClientApplication.mSecureContainer.delete(model.file_name);
+                else if ((type == 1) && AppManager.checkInstallResult(mContext,model.pkgName))
+                    EmmClientApplication.mSecureContainer.delete(model.file_name);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     //////adapter///////////////
      public class SearchAdapter extends CommonAdapter<MamAppInfoModel> {
 
@@ -519,7 +535,13 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                                 e.printStackTrace();
                             }
                             break;
-                        case Open:
+                        case Open:{
+                            try {
+                                EmmClientApplication.mSecureContainer.delete(model.file_name);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                         case LowVersion:
                             PackageManager pm = mContext.getPackageManager();
                             Intent intent = new Intent();
@@ -543,9 +565,9 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                         case Update:
                         case StartDownload:
                             try {
-                                String url = AddressManager.getAddrFile(1) + "/" + URLEncoder.encode(model.file_name, "UTF-8");
-                                showNoticeDialog(model.appName,model.file_name, url);
-                            } catch (UnsupportedEncodingException e) {
+                                //String url = AddressManager.getAddrFile(1) + "/" + URLEncoder.encode(model.file_name, "UTF-8");
+                                showNoticeDialog(model.appName,model.file_name, model.url);
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                     }
@@ -584,6 +606,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                     bundle.putString(GlobalConsts.App_Icon_Url, model.iconUrl);
                     bundle.putString(GlobalConsts.Pkg_Name, model.pkgName);
                     bundle.putString(GlobalConsts.App_File_Name,model.file_name);
+                    bundle.putString(GlobalConsts.App_Download_Url,model.url);
 
                     QDLog.println(TAG, model.iconUrl);
 

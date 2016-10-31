@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.qdsc.msp.R;
+
 public class LocusPassWordView extends View {
 	private float width = 0;
 	private float height = 0;
@@ -42,12 +44,12 @@ public class LocusPassWordView extends View {
 	private Paint errorPaint;
 	private Paint normalPaint;
 	private final int strokeWidth = 1;
-	private final int errorColor = 0xffea0945;
-	private final int selectedColor = 0xff0596f6;
-	private final int outterSelectedColor = 0xff8cbad8;
-	private final int outterErrorColor = 0xff901032;
-	private final int dotColor = 0x88d9d9d9;
-	private final int outterDotColor = 0x00929292;
+	private final int errorColor = getResources().getColor(R.color.gesture_lock_errorColor) ;//0xffea0945;
+	private final int selectedColor = getResources().getColor(R.color.gesture_lock_selectedColor);//0xff0596f6;
+	private final int outterSelectedColor = getResources().getColor(R.color.gesture_lock_outterSelectedColor);//0xff8cbad8;
+	private final int outterErrorColor = getResources().getColor(R.color.gesture_lock_outterErrorColor);//0xff901032;
+	private final int dotColor = getResources().getColor(R.color.gesture_lock_dotColor);//0x88d9d9d9;
+	private final int outterDotColor = getResources().getColor(R.color.gesture_lock_outterDotColor);//0x00929292;
 
 	public LocusPassWordView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -311,9 +313,6 @@ public class LocusPassWordView extends View {
 	}
 
 	/**
-	 *
-	 * 
-	 * @param points
 	 * @return
 	 */
 	private String toPointString() {

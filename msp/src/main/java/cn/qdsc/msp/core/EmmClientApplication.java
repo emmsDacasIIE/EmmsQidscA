@@ -16,6 +16,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,8 +26,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.dacas.emmclient.msgpush.MsgListener;
+import cn.dacas.emmclient.msgpush.PushMsgReceiver;
+import cn.dacas.pushmessagesdk.PushMsgManager;
 import cn.qdsc.msp.core.mdm.MDMService;
 import cn.qdsc.msp.db.DatabaseEngine;
+import cn.qdsc.msp.manager.UrlManager;
 import cn.qdsc.msp.model.ActivateDevice;
 import cn.qdsc.msp.model.CheckAccount;
 import cn.qdsc.msp.model.UserModel;
@@ -58,13 +65,15 @@ public class EmmClientApplication extends Application {
 	public static UserModel mUserModel = null;
 	public static boolean isFloating=false;
 
+	public static String imei;
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		mContext=EmmClientApplication.this;
 		PrefUtils.Init(EmmClientApplication.this);
 		String json="{\"vpnGatewayAddress\": \"192.168.0.100:443\"}";
-
+		imei = PhoneInfoExtractor.getIMEI(this);
 		PrefUtils.putVpnSettings(EmmClientApplication.this,json);
 		mActivateDevice = ActivateDevice
 				.getActivateDeviceInstance(EmmClientApplication.this);
@@ -90,6 +99,22 @@ public class EmmClientApplication extends Application {
 		String logOUt = SdcardManager.getSdcardPath();
 		QDLog.i(TAG, "onCreate========logOUt===========" + logOUt);
 		QDLog.i(TAG,"onCreate===================");
+
+
+		/*PushMsgManager pushMsgManager = new PushMsgManager(this, UrlManager.getMsgPushUrl());
+		try {
+			//1. 注册APP，如果发现已经有reg_id则直接请求要关注的主题
+			pushMsgManager.registerPush(
+					UrlManager.getRegMsgPushUrl(),// Web adder
+					"046e2930-7cc2-4398-9b1c-65852317de29",// client_id
+					"6668b6a3-8486-4165-a418-374194ad47d3");// client_secret
+			//pushMsgManager.addFullTopicToLists("AD",PushMsgManager.CommCodeType.NET_GetAliase);
+			//pushMsgManager.addFullTopicToLists("AD",PushMsgManager.CommCodeType.NET_GetTopics);
+			//pushMsgManager.addFullTopicToLists("AD",PushMsgManager.CommCodeType.NET_GetAccounts);
+		}catch (Exception e)
+		{
+			e.printStackTrace();
+		}*/
 	}
 
 	private void initIpSettings(Context context) {

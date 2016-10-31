@@ -13,8 +13,13 @@
         <item>待安装</item>
         <item>已安装</item>
         <item>待更新</item>
-    </string-array> 
-    
+    </string-array>
 
-    
+    <string-array name="app_delete_menu">
+        <item>删除已下载APK</item>
+        <item>删除已安装APK</item>
+    </string-array>
+
+
+
 </resources>

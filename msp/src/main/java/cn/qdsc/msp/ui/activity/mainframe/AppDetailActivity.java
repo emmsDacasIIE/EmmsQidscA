@@ -48,6 +48,7 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
     String appStatusStr;
     String appName;
     String appFileName;
+    String downloadUrl;
 
     private TextView mAppNameTextView;
     private TextView mAppTypeTextView;
@@ -229,9 +230,9 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
                     }
                     if (appStatusStr.equals("下载")||appStatusStr.equals("升级")) {
                         try {
-                            String url = AddressManager.getAddrFile(1) + "/" + URLEncoder.encode(appFileName, "UTF-8");
-                            showNoticeDialog(appName,appFileName, url);
-                        } catch (UnsupportedEncodingException e) {
+                            //String url = AddressManager.getAddrFile(1) + "/" + URLEncoder.encode(appFileName, "UTF-8");
+                            showNoticeDialog(appName,appFileName, downloadUrl);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -265,6 +266,7 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
     private void setMsgData() {
         Bundle bundle = this.getIntent().getExtras();
         appName = bundle.getString(GlobalConsts.App_Name);
+        downloadUrl = bundle.getString(GlobalConsts.App_Download_Url);
         String appTypeStr = bundle.getString(GlobalConsts.App_Type);
         String appSizeStr = bundle.getString(GlobalConsts.App_Size);
 

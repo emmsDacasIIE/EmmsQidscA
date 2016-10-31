@@ -561,9 +561,11 @@ public class QdSecureContainer implements IVpnDelegate {
     //0:不存在；1：下载完成；2：下载未完成
     public int getFileState(String fileName) {
         File file=new File(dirPath + fileName);
-        if (file.exists()) return 1;
+        if (file.exists())
+            return 1;
         File tempFile=new File(dirTempPath+fileName);
-        if (tempFile.exists()) return 2;
+        if (tempFile.exists())
+            return 2;
         return 0;
     }
 

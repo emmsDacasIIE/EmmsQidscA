@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.dacas.pushmessagesdk.PushMsgManager;
 import cn.qdsc.msp.R;
 import cn.qdsc.msp.event.MessageEvent;
 import cn.qdsc.msp.ui.activity.base.BaseSlidingFragmentActivity;
@@ -91,6 +92,7 @@ public class MdmMsgListActivity extends BaseSlidingFragmentActivity {
 //        mButtonLayout.setVisibility(View.VISIBLE);
 
         registerBoradcastReceiver();
+        PushMsgManager.cancelNotification(this);
         EventBus.getDefault().register(this);
 
 
@@ -235,7 +237,7 @@ public class MdmMsgListActivity extends BaseSlidingFragmentActivity {
 
     }
 
-    ////关于事件的
+    ////关于事件的， 貌似没有用呀？
     public void onEventMainThread(MessageEvent event)
     {
         switch (event.type)

@@ -37,6 +37,9 @@ public class MamAppInfoModel implements Comparable {
 
     public String type; //APK;WEB
 
+    @SerializedName("url")
+    public String url;
+
     public transient int  appType;   //企业应用、个人应用
 
     public transient int progress;
@@ -93,6 +96,7 @@ public class MamAppInfoModel implements Comparable {
                 ", iconUrl='" + iconUrl + '\'' +
                 ", appType=" + appType +
                 ", id='" + id + '\'' +
+                ", url='" + url + '\'' +
                 '}';
     }
 

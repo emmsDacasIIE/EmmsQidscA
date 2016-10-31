@@ -3,6 +3,7 @@ package cn.qdsc.msp.webservice.download;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,18 +13,27 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import cn.qdsc.msp.core.EmmClientApplication;
 import cn.qdsc.msp.manager.AddressManager;
+import cn.qdsc.msp.manager.UrlManager;
+import cn.qdsc.msp.security.ssl.IgnoreCertTrustManager;
 import cn.qdsc.msp.util.PrefUtils;
+import cn.qdsc.msp.webservice.qdvolley.UpdateTokenRequest;
 import cn.qdsc.mspsdk.QdSecureContainer;
 
 /**
  * Created by lizhongyi on 2015/12/12.
+ * Updated by Sun RX on 2016/10/28
+ * 1. upd : get download_url from app/doc model getting from Server,
+ *    rather than fixed Url of Resource Server
+ * 2. upd : change download_url from http to https;
  */
 public class DownloadFileThread extends Thread {
     public static final String TAG = "DownloadFileThread";
 
-//    private DownLoadFileFromUrl mDownLoadFileFromUrl;
+    //private DownLoadFileFromUrl mDownLoadFileFromUrl;
     private static final int CacheSize = 1024*10;
     private Context mContext;
 
@@ -59,18 +69,25 @@ public class DownloadFileThread extends Thread {
         try {
             String finalUrl = "";
             String name=info.fileName;
+            HttpURLConnection conn;
             if (info.type == MyDownloadListener.Download_Type.Type_App) {
-                finalUrl = AddressManager.getAddrFile(1)+"/"+ AddressManager.parseAddress(name);
+                //finalUrl = AddressManager.getAddrFile(1)+"/"+ AddressManager.parseAddress(name);
+                finalUrl = info.url;
+                conn = (HttpURLConnection) new URL(finalUrl).openConnection();
             } else if (info.type == MyDownloadListener.Download_Type.Type_Doc) {
-                finalUrl = AddressManager.getAddrFile(2)+"/"+ AddressManager.parseAddress(name);
-            }
-            String tempfullpath= QdSecureContainer.getInstance(EmmClientApplication.getContext()).getDirTempPath()+name;
-            File file = new File(tempfullpath);
+                //finalUrl = AddressManager.getAddrFile(2)+"/"+ AddressManager.parseAddress(name);
+                finalUrl = info.url+"?uuid="+EmmClientApplication.imei;
+                IgnoreCertTrustManager.allowAllSSL();
+                conn= (HttpsURLConnection)new URL(UrlManager.urWithToken(finalUrl, UpdateTokenRequest.TokenType.USER)).openConnection();
+            } else
+            return;
+
+            String tempFullPath= QdSecureContainer.getInstance(EmmClientApplication.getContext()).getDirTempPath()+name;
+            File file = new File(tempFullPath);
             if (file.exists()) file.delete();
             FileOutputStream fos = new FileOutputStream(file);
             long range=0;
 //            long range=file.length();
-
 //            SSLContext sc = SSLContext.getInstance("TLS");
 //            sc.init(null, new TrustManager[]{new MyX509TrustManager()}, new SecureRandom());
 //            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
@@ -78,12 +95,17 @@ public class DownloadFileThread extends Thread {
 //            HttpsURLConnection conn = (HttpsURLConnection) new URL(mDownLoadFileFromUrl.url).openConnection();
             
 //            String finalUrl=mDownLoadFileFromUrl.url+ URLEncoder.encode(mDownLoadFileFromUrl.fileName, "UTF-8");
-            HttpURLConnection conn=(HttpURLConnection)new URL(finalUrl).openConnection();
+
+            //IgnoreCertTrustManager.allowAllSSL();
+            //HttpsURLConnection conn= (HttpsURLConnection)new URL(UrlManager.urWithToken(finalUrl, UpdateTokenRequest.TokenType.USER)).openConnection();
+            conn.setRequestMethod("GET");
+            //conn.setDoOutput(false);
             conn.setRequestProperty("Content-Type", "application/octet-stream");
             conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Range", String.valueOf(range));
+            //conn.setRequestProperty("Range", String.valueOf(range));
             conn.connect();
             // 获取文件大小
+            Log.e(TAG, "Status: "+conn.getResponseCode());
             int length = conn.getContentLength();
 
 //            if (length>0) {

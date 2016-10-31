@@ -166,7 +166,7 @@
             android:background="@color/item_line_color" />
 
         <!-- 1.4 float button  layout -->
-        <LinearLayout
+        <!--LinearLayout
             android:id="@+id/ll_float"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -204,15 +204,15 @@
                 android:layout_gravity="center_vertical"
                 android:paddingRight="20dp"
                 android:src="@mipmap/msp_right_arrow_gray" />
-        </LinearLayout>
+        </LinearLayout-->
 
-        <TextView
+        <!--TextView
             android:layout_width="fill_parent"
             android:layout_height="0.5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="20dp"
-            android:background="@color/item_line_color" />
+            android:background="@color/item_line_color" /-->
 
         <!-- 1.4 float button  layout -->
         <LinearLayout

@@ -28,7 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     static Handler showHandler = new Handler(){
         public void handleMessage(Message msg){
-            textView.setText(textView.getText()+"//n"+msg.obj.toString());
+            textView.setText(textView.getText()+"/\n"+msg.obj.toString());
         }
     };
 
@@ -51,10 +51,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         PushMsgManager.refleshMsgNotification(this,getIntent());
 
         pushMsgManager = new PushMsgManager(this,serverUri);
+        pushMsgManager.setExtTopics(true);
         try {
             //1. 注册APP，如果发现已经有reg_id则直接请求要关注的主题
             pushMsgManager.registerPush(
-                    "http://192.168.151.137:8000/client/devices",// Web adder
+                    "http://192.168.151.175:8000/client/devices",// Web adder
                     "046e2930-7cc2-4398-9b1c-65852317de29",// client_id
                     "6668b6a3-8486-4165-a418-374194ad47d3");// client_secret
         }catch (Exception e)

@@ -12,7 +12,6 @@ import java.util.Date;
 /**
  * LOG的类, 可以控制代码的是否打印
  * @author lenovo
- *
  */
 public class QDLog {
 	private static boolean isOpenLog = true;

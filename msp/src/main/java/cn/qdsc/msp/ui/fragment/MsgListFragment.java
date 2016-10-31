@@ -124,10 +124,10 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 		mMcmController = new McmController(mContext,this);
 
 		registerMReceiver();
-//		getMsgListFromServer();
+		getMsgListFromServer();
 
 
-//		registerBoradcastReceiver();
+//		registerBroadcastReceiver();
 //		EventBus.getDefault().register(this.getActivity());
 	}
 
@@ -306,7 +306,7 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 
 
 //	//注册广播
-//	public void registerBoradcastReceiver() {
+//	public void registerBroadcastReceiver() {
 //		IntentFilter myIntentFilter = new IntentFilter();
 //		myIntentFilter.addAction(REFRESH_MAIN_ACTIVITY);
 //		myIntentFilter.addAction(GlobalConsts.NEW_MESSAGE);

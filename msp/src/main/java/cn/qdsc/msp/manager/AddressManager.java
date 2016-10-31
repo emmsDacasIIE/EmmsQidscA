@@ -12,6 +12,7 @@ public class AddressManager {
 
 	// 消息推送服务器地址
 	private static String ADDR_MSG;
+	private static String ADDR_RG_MSG;
 
 	// webservice服务器地址
 	private static String ADDR_WEBSERVICE ;
@@ -51,6 +52,10 @@ public class AddressManager {
 		PrefUtils.setAddrForward(addrForward);
 	}
 
+	public static String getAddrRgMsg() {
+		return ADDR_RG_MSG;
+	}
+
 	public static String getAddrMsg() {
 		return ADDR_MSG;
 	}
@@ -62,6 +67,9 @@ public class AddressManager {
 
 	public static String getAddrWebservice() {
 		return ADDR_WEBSERVICE;
+	}
+	public static String getAddrCommandServer(){
+		return  getAddrWebservice();
 	}
 
 	public static void setAddrWebservice(String addrWebservice) {
@@ -88,10 +96,11 @@ public class AddressManager {
 
 	public static void initIpSettings() {
 		ADDR_BDMAP="159.226.94.159:3000";//
-		ADDR_FORWARD=PrefUtils.getAddrForward();
-		ADDR_MSG=PrefUtils.getAddrMsg();
-		ADDR_WEBSERVICE=PrefUtils.getAddrWebservice();
-		ADDR_UPDATE=PrefUtils.getAddrUpdate();
+		ADDR_RG_MSG = "192.168.151.137:8000";
+		ADDR_FORWARD = PrefUtils.getAddrForward();
+		ADDR_MSG = PrefUtils.getAddrMsg();
+		ADDR_WEBSERVICE = PrefUtils.getAddrWebservice();
+		ADDR_UPDATE = PrefUtils.getAddrUpdate();
 	}
 
 	public static String encodeUrl(String appUrl) {
