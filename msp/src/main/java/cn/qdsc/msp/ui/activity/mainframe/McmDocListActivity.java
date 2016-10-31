@@ -837,8 +837,7 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
         docsListView.setMenuCreator(creator);
 
         // step 2. listener item click event
-        docsListView
-                .setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+        docsListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(int position,
                                                    SwipeMenu menu, int index) {
@@ -898,8 +897,7 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
         });
 
         // test item long click
-        docsListView
-                .setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        docsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
                     @Override
                     public boolean onItemLongClick(AdapterView<?> parent,
