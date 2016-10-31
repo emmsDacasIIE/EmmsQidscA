@@ -30,8 +30,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -279,7 +277,6 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 refreshHandler.sendMessage(Message.obtain());
             }
         });
@@ -296,7 +293,6 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 refreshHandler.sendMessage(Message.obtain());
             }
         });

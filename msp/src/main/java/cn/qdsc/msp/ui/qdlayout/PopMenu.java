@@ -74,7 +74,7 @@ public class PopMenu implements OnItemClickListener {
 
 	private int measureContentHeigh(ListAdapter listAdapter) {
 		ViewGroup mMeasureParent = null;
-		int sumHeight = 0;
+		int sumHeight = 50;
 		View itemView = null;
 		int itemType = 0;
 
@@ -129,10 +129,6 @@ public class PopMenu implements OnItemClickListener {
 				measureContentHeigh(adapter));//LayoutParams.WRAP_CONTENT
 		// 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景（很神奇的）
 		popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-		//popupWindow.getContentView().measure(0,0);
-		//popHeight = popupWindow.getContentView().getMeasuredWidth();
-		//popupWindow.setHeight(popHeight);
 	}
 
 	public PopMenu(Context mContext,ArrayList<String> list) {

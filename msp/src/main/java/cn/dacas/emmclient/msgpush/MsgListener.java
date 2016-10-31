@@ -211,10 +211,10 @@ public class MsgListener {
         }
     }
 
-    public void dealMessage(JSONObject jsonObject) throws JSONException {
-        CommandModel commandModel = new CommandModel(jsonObject);
-
+    public void dealMessage(CommandModel commandModel) throws JSONException {
         int reqCode =  commandModel.getCmdCode();
+        JSONObject jsonObject = new JSONObject();
+
         int ret;
 
         switch (reqCode) {
@@ -235,7 +235,7 @@ public class MsgListener {
                 notifyDataChange(BroadCastDef.OP_LOG);
                 break;
             case MDMService.CommdCode.OP_LOCK_KEY:
-                String passwdLock = jsonObject.getString("passwd");
+                String passwdLock = commandModel.getCommandMap().get("passcode");
                 ret = DeviceAdminWorker.getDeviceAdminWorker(ctxt).resetPasswd(passwdLock);
                 DeviceAdminWorker.getDeviceAdminWorker(ctxt).lockNow();
                 EmmClientApplication.mDatabaseEngine.setLockScreenCode(ret, MDMService.CommdCode.OP_LOCK_KEY);
@@ -243,7 +243,6 @@ public class MsgListener {
                 break;
             case MDMService.CommdCode.OP_LOCK:
                 DeviceAdminWorker.getDeviceAdminWorker(ctxt).lockNow();
-                sendStatusToServer("Acknowledged",commandModel.getCommandUUID());
                 break;
             case MDMService.CommdCode.OP_FACTORY:
                 if (hdler != null) {
@@ -289,7 +288,6 @@ public class MsgListener {
                     hdler.sendMessage(handlerMsg);
                 }
                 EmmClientApplication.mDatabaseEngine.refreshDevice(MDMService.CommdCode.OP_REFRESH);
-//                    notifyDataChange(BroadCastDef.OP_LOG);
                 break;
             case MDMService.CommdCode.OP_POLICY1:
             case MDMService.CommdCode.OP_POLICY2:
@@ -327,6 +325,7 @@ public class MsgListener {
             default:
                 break;
         }
+        sendStatusToServer("Acknowledged",commandModel.getCommandUUID());
 
     }
 
@@ -377,6 +376,8 @@ public class MsgListener {
         params.putLong("lastOnlineTime", System.currentTimeMillis());
         EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_OnlineState, params));
     }
+
+
 
 
     //send handler msg
@@ -430,11 +431,15 @@ public class MsgListener {
         //2. sent the status "idle" to Server to get cmd (cmdUUID == "");
         if(cmdUUID.equals("")) {
             rspListener = new Response.Listener<JSONObject>() {
+                CommandModel commandModel;
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        dealMessage(response);
-                    } catch (JSONException e) {
+                        commandModel = new CommandModel(response);
+                        dealMessage(commandModel);
+                    } catch (Exception e) {
+                        if(commandModel!=null)
+                            sendStatusToServer("Error",commandModel.getCommandUUID());
                         e.printStackTrace();
                     }
                 }

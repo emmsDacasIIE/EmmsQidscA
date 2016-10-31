@@ -14,7 +14,13 @@ import cn.qdsc.msp.core.mdm.MDMService;
  */
 public class CommandModel {
     interface RequestTypeString{
-        String DeviceLock = "DeviceLock";
+        String DeviceLock = "DeviceLock";//	锁定设备
+        String  UPDATE_PASSCODE_AND_DEVICE_LOCK="UpdatePasscodeAndDeviceLock";
+
+        String  DEVICE_INFORMATION="DeviceInformation";	// 获取设备信息
+        String  ERASE_DEVICE="EraseDevice";	//	抹掉设备
+        String  ERASE_ENTERPRISE_DATA="EraseEnterpriseData";	//	擦除企业数据，删除EMM客户端的文档、消息
+        String  ERASE_ALL_DATA="EraseAllData";	//	擦除全部数据，删除EMM客户端的文档、消息，删除EMM管理的APP
     }
 
     private String commandUUID;
@@ -68,6 +74,25 @@ public class CommandModel {
             case RequestTypeString.DeviceLock: {
                 cmdCode = MDMService.CommdCode.OP_LOCK;
                 break;
+            }
+            case RequestTypeString.UPDATE_PASSCODE_AND_DEVICE_LOCK:{
+                cmdCode = MDMService.CommdCode.OP_LOCK_KEY;
+                break;
+            }
+            case RequestTypeString.DEVICE_INFORMATION:{
+                cmdCode = MDMService.CommdCode.OP_REFRESH;
+                break;
+            }
+            case RequestTypeString.ERASE_ALL_DATA:{
+                cmdCode = MDMService.CommdCode.OP_FACTORY;
+                break;
+            }
+            case RequestTypeString.ERASE_DEVICE:{
+                cmdCode = MDMService.CommdCode.DELETE_DEVICE;
+                break;
+            }
+            case RequestTypeString.ERASE_ENTERPRISE_DATA:{
+                cmdCode =MDMService.CommdCode.OP_ERASE_CORP;
             }
         }
     }
