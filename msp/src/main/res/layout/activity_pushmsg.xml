@@ -24,7 +24,7 @@
 
         >
 
-    <cn.qdsc.msp.ui.qdlayout.RefreshableView
+    <cn.dacas.emmclient.ui.qdlayout.RefreshableView
         android:id="@+id/refreshable_view"
         android:layout_below="@+id/textview_line"
         android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             android:id="@+id/pushmsgListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </cn.qdsc.msp.ui.qdlayout.RefreshableView>
+    </cn.dacas.emmclient.ui.qdlayout.RefreshableView>
 
     </LinearLayout>
 

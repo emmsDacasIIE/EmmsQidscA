@@ -12,14 +12,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <cn.qdsc.msp.ui.qdlayout.SearchView
+        <cn.dacas.emmclient.ui.qdlayout.SearchView
             android:id="@+id/main_search_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"
 
             >
-        </cn.qdsc.msp.ui.qdlayout.SearchView>
+        </cn.dacas.emmclient.ui.qdlayout.SearchView>
 
     </LinearLayout>
 

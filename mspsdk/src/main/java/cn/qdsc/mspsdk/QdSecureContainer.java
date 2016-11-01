@@ -554,6 +554,28 @@ public class QdSecureContainer implements IVpnDelegate {
          throw  new FileNotFoundException();
     }
 
+    private void deleteAllFilesInPath(String path){
+        File root = new File(path);
+        File files[] = root.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) { // 判断是否为文件夹
+                    continue;
+                } else {
+                    try {
+                        delete(f.getName());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    public void deletAllFiles(){
+        deleteAllFilesInPath(dirPath);
+    }
+
     public String getDirTempPath() {
         return dirTempPath;
     }

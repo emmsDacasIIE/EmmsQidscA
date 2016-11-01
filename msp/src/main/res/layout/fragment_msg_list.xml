@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/my_information_background"
 
-    tools:context="cn.qdsc.msp.ui.fragment.DocListFragment_bak2" >
+    tools:context=".ui.fragment.DocListFragment_bak2" >
 
     <LinearLayout
         android:id="@+id/search_layout"
@@ -21,13 +21,13 @@
             android:layout_width="0px"
             android:layout_height="0px"/>
 
-        <cn.qdsc.msp.ui.qdlayout.SearchView
+        <cn.dacas.emmclient.ui.qdlayout.SearchView
             android:id="@+id/main_search_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             >
-        </cn.qdsc.msp.ui.qdlayout.SearchView>
+        </cn.dacas.emmclient.ui.qdlayout.SearchView>
 
     </LinearLayout>
 
@@ -50,7 +50,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
 
-    <cn.qdsc.msp.ui.qdlayout.RefreshableView
+    <cn.dacas.emmclient.ui.qdlayout.RefreshableView
         android:id="@+id/refreshable_view"
         android:layout_below="@id/textview_line"
         android:layout_width="match_parent"
@@ -65,7 +65,7 @@
             android:layout_height="match_parent" />
 
 
-    </cn.qdsc.msp.ui.qdlayout.RefreshableView>
+    </cn.dacas.emmclient.ui.qdlayout.RefreshableView>
 
     <include android:id="@+id/button_layout"
         layout="@layout/layout_bottom_button"

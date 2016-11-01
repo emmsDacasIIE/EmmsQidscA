@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_information_background"
-    tools:context="cn.qdsc.msp.ui.fragment.AppListFragment" >
+    tools:context=".ui.fragment.AppListFragment" >
 
     <!-- 下面这个LinearLayout是为了去edit焦点-->
     <LinearLayout
@@ -14,7 +14,7 @@
         android:layout_width="0px"
         android:layout_height="0px"/>
 
-    <cn.qdsc.msp.ui.contacts.ClearEditText
+    <cn.dacas.emmclient.ui.contacts.ClearEditText
         android:id="@+id/filter_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             android:text="data"
             />
 
-        <cn.qdsc.msp.ui.contacts.SideBar
+        <cn.dacas.emmclient.ui.contacts.SideBar
             android:id="@+id/sidrbar"
             android:layout_width="30.0dip"
             android:layout_height="fill_parent"

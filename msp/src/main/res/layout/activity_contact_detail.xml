@@ -35,7 +35,7 @@
             android:orientation="horizontal"
             android:id="@+id/myphoto_sublayout">
 
-            <cn.qdsc.msp.ui.qdlayout.RoundImageView
+            <cn.dacas.emmclient.ui.qdlayout.RoundImageView
                 android:id="@+id/imageview_myphoto"
                 android:layout_width="60dp"
                 android:layout_height="60dp"

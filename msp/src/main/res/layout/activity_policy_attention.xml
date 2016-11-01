@@ -5,7 +5,7 @@
     android:background="@color/my_information_background"
     tools:context="cn.dacas.emmclient.PolicyAttentionActivity$PlaceholderFragment" >
 
-    <cn.qdsc.msp.ui.qdlayout.RefreshableView
+    <cn.dacas.emmclient.ui.qdlayout.RefreshableView
         android:id="@+id/refreshable_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
@@ -14,6 +14,6 @@
             android:id="@+id/policyListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </cn.qdsc.msp.ui.qdlayout.RefreshableView>
+    </cn.dacas.emmclient.ui.qdlayout.RefreshableView>
 
 </RelativeLayout>

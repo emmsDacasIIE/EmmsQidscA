@@ -13,7 +13,6 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,21 +22,20 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.qdsc.msp.controller.McmController;
-import cn.qdsc.msp.core.EmmClientApplication;
-import cn.qdsc.msp.core.mdm.DeviceAdminWorker;
-import cn.qdsc.msp.core.mdm.MDMService;
-import cn.qdsc.msp.core.mdm.PolicyManager;
-import cn.qdsc.msp.event.MessageEvent;
-import cn.qdsc.msp.manager.AddressManager;
-import cn.qdsc.msp.manager.UrlManager;
-import cn.qdsc.msp.model.CommandModel;
-import cn.qdsc.msp.util.BroadCastDef;
-import cn.qdsc.msp.util.GlobalConsts;
-import cn.qdsc.msp.util.PrefUtils;
-import cn.qdsc.msp.util.QDLog;
-import cn.qdsc.msp.webservice.qdvolley.MyJsonObjectRequest;
-import cn.qdsc.msp.webservice.qdvolley.UpdateTokenRequest;
+import cn.dacas.emmclient.controller.McmController;
+import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.core.mdm.DeviceAdminWorker;
+import cn.dacas.emmclient.core.mdm.MDMService;
+import cn.dacas.emmclient.core.mdm.PolicyManager;
+import cn.dacas.emmclient.event.MessageEvent;
+import cn.dacas.emmclient.manager.UrlManager;
+import cn.dacas.emmclient.model.CommandModel;
+import cn.dacas.emmclient.util.BroadCastDef;
+import cn.dacas.emmclient.util.GlobalConsts;
+import cn.dacas.emmclient.util.PrefUtils;
+import cn.dacas.emmclient.util.QDLog;
+import cn.dacas.emmclient.webservice.qdvolley.MyJsonObjectRequest;
+import cn.dacas.emmclient.webservice.qdvolley.UpdateTokenRequest;
 import de.greenrobot.event.EventBus;
 
 /** Worker to deal with Messages.
@@ -92,6 +90,7 @@ public class MsgListener {
         }
     }
 
+    @Deprecated
     public void dealMessage(String message) throws JSONException {
         JSONTokener jsonParser = new JSONTokener(message);
         JSONObject jsonObject = (JSONObject) jsonParser.nextValue();
@@ -203,7 +202,7 @@ public class MsgListener {
             case  MDMService.CommdCode.OP_CHANGE_DEVICE_TYPE:
                 if (hdler != null) {
                     Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 =  MDMService.CommdCode.DEVICE_TYPE;
+                    handlerMsg.arg1 =  MDMService.CommdCode.DEVICE_INFO_CHANGE;
                     hdler.sendMessage(handlerMsg);
                 }
             default:
@@ -214,6 +213,7 @@ public class MsgListener {
     public void dealMessage(CommandModel commandModel) throws JSONException {
         int reqCode =  commandModel.getCmdCode();
         JSONObject jsonObject = new JSONObject();
+        boolean nowSendStatus = true;
 
         int ret;
 
@@ -246,11 +246,13 @@ public class MsgListener {
                 break;
             case MDMService.CommdCode.OP_FACTORY:
                 if (hdler != null) {
-                    String option = jsonObject.getString("option");
-
+                    String option = commandModel.getCommandMap().get("option");
                     Message handlerMsg = Message.obtain();
                     handlerMsg.arg1 = MDMService.CommdCode.FACTORY;
-                    handlerMsg.arg2 = option.equals("enforce") ? MDMService.CommdCode.ENFORCE : MDMService.CommdCode.WARN;
+                    if(option == null)
+                        handlerMsg.arg2 = MDMService.CommdCode.WARN;
+                    else
+                        handlerMsg.arg2 = option.equals("enforce") ? MDMService.CommdCode.ENFORCE : MDMService.CommdCode.WARN;
                     hdler.sendMessage(handlerMsg);
                     EmmClientApplication.mDatabaseEngine.reFactory(MDMService.CommdCode.OP_FACTORY);
 
@@ -259,11 +261,14 @@ public class MsgListener {
                 break;
             case MDMService.CommdCode.OP_ERASE_CORP:
                 if (hdler != null) {
-                    String option = jsonObject.getString("option");
+                    String option = commandModel.getCommandMap().get("option");
 
                     Message handlerMsg = Message.obtain();
                     handlerMsg.arg1 = MDMService.CommdCode.ERASE_CORP;
-                    handlerMsg.arg2 = option.equals("enforce") ? MDMService.CommdCode.ENFORCE : MDMService.CommdCode.WARN;
+                    if(option == null)
+                        handlerMsg.arg2 = MDMService.CommdCode.WARN;
+                    else
+                        handlerMsg.arg2 = option.equals("enforce") ? MDMService.CommdCode.ENFORCE : MDMService.CommdCode.WARN;
                     hdler.sendMessage(handlerMsg);
                     EmmClientApplication.mDatabaseEngine.eraseCorp(MDMService.CommdCode.OP_ERASE_CORP);
                 }
@@ -271,20 +276,25 @@ public class MsgListener {
                 break;
             case MDMService.CommdCode.OP_ERASE_ALL:
                 if (hdler != null) {
-                    String option = jsonObject.getString("option");
+                    String option = commandModel.getCommandMap().get("option");
 
                     Message handlerMsg = Message.obtain();
                     handlerMsg.arg1 = MDMService.CommdCode.ERASE_ALL;
-                    handlerMsg.arg2 = option.equals("enforce") ? MDMService.CommdCode.ENFORCE : MDMService.CommdCode.WARN;
+                    if(option == null)
+                        handlerMsg.arg2 = MDMService.CommdCode.WARN;
+                    else
+                        handlerMsg.arg2 = option.equals("enforce") ? MDMService.CommdCode.ENFORCE : MDMService.CommdCode.WARN;
                     hdler.sendMessage(handlerMsg);
                     EmmClientApplication.mDatabaseEngine.eraseDeviceAllData(MDMService.CommdCode.OP_ERASE_ALL);
                 }
 //                    notifyDataChange(BroadCastDef.OP_LOG);
                 break;
             case MDMService.CommdCode.OP_REFRESH:
+                nowSendStatus = false;
                 if (hdler != null) {
                     Message handlerMsg = Message.obtain();
                     handlerMsg.arg1 = MDMService.CommdCode.REFRESH_ALL;
+                    handlerMsg.obj = commandModel.getCommandUUID();
                     hdler.sendMessage(handlerMsg);
                 }
                 EmmClientApplication.mDatabaseEngine.refreshDevice(MDMService.CommdCode.OP_REFRESH);
@@ -319,13 +329,14 @@ public class MsgListener {
             case MDMService.CommdCode.OP_CHANGE_DEVICE_TYPE:
                 if (hdler != null) {
                     Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 = MDMService.CommdCode.DEVICE_TYPE;
+                    handlerMsg.arg1 = MDMService.CommdCode.DEVICE_INFO_CHANGE;
                     hdler.sendMessage(handlerMsg);
                 }
             default:
                 break;
         }
-        sendStatusToServer("Acknowledged",commandModel.getCommandUUID());
+        if(nowSendStatus)
+            sendStatusToServer("Acknowledged",commandModel.getCommandUUID(),null);
 
     }
 
@@ -408,7 +419,6 @@ public class MsgListener {
     }
     public void sendHandlerCommend(int actionType){
         if (this.getHandler() != null) {
-            // 来自服务器的消息格式错误
             Message message = Message.obtain();
             message.arg1 = actionType;
             this.getHandler().sendMessage(message);
@@ -424,7 +434,7 @@ public class MsgListener {
      * if status = Idle, it means the Device is ready to execute new CMD;
      * if status = NotNow
      */
-    public void sendStatusToServer(final String status, final String cmdUUID) {
+    public void sendStatusToServer(final String status, final String cmdUUID, final Map<String,JSONObject> params) {
         Response.Listener<JSONObject> rspListener = null;
         Response.ErrorListener errorListener = null;
         //1. sent the result of cmd (cmdUUID != ""), and then not deal with any response;
@@ -439,7 +449,7 @@ public class MsgListener {
                         dealMessage(commandModel);
                     } catch (Exception e) {
                         if(commandModel!=null)
-                            sendStatusToServer("Error",commandModel.getCommandUUID());
+                            sendStatusToServer("Error",commandModel.getCommandUUID(),null);
                         e.printStackTrace();
                     }
                 }
@@ -465,6 +475,11 @@ public class MsgListener {
                 try {
                     jsonObject.put("status",status);
                     jsonObject.put("command_uuid",cmdUUID);
+                    if(params!=null && params.size()>0){
+                        for (String key:params.keySet()) {
+                            jsonObject.put(key,params.get(key));
+                        }
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
