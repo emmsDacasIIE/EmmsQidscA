@@ -26,7 +26,7 @@ public class PushMsgReceiver extends BaseMessageReceiver{
     @Override
     protected void onError(Context context, String msg) {
         Toast.makeText(context,msg,Toast.LENGTH_LONG).show();
-        msgListener.sendHandlerCommend(MDMService.CommdCode.ERROR_MSG_SERVER);
+        msgListener.sendHandlerCommend(MDMService.CmdCode.ERROR_MSG_SERVER);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PushMsgReceiver extends BaseMessageReceiver{
                     String cmd = contJsn.getString("message");
                     switch (cmd){
                         case "DeviceUpdated":
-                            msgListener.sendHandlerCommend(MDMService.CommdCode.DEVICE_INFO_CHANGE);
+                            msgListener.sendHandlerCommend(MDMService.CmdCode.DEVICE_INFO_CHANGE);
                             break;
                         default:
                             break;
@@ -51,7 +51,7 @@ public class PushMsgReceiver extends BaseMessageReceiver{
                     msgListener.sendStatusToServer(msgListener.getExeCmdStatus(), "", null);
                 }
             } catch (Exception e) {
-                msgListener.sendHandlerCommend(MDMService.CommdCode.ERROR_FORMAT);
+                msgListener.sendHandlerCommend(MDMService.CmdCode.ERROR_FORMAT);
                 e.printStackTrace();
             }
         }

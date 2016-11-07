@@ -165,7 +165,7 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
     }
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Image_Text_Image;
     }
 

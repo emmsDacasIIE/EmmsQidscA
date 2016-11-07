@@ -18,7 +18,7 @@ public class PrivacyStatementActivity extends BaseSlidingFragmentActivity {
 	private CheckBox mCheckBox;
 
 	@Override
-	protected HearderView_Style setHeaderViewSyle() {
+	protected HearderView_Style setHeaderViewStyle() {
 		return HearderView_Style.Null_Text_Null;
 	}
 

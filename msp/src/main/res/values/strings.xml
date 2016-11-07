@@ -215,7 +215,7 @@
 
 
     <!-- 我的.关于 -->
-    <string name="my_system_info">系统信息</string>
+    <string name="my_system_info">关于本机</string>
     <string name="my_check_update_version">检测更新</string>
     <string name="my_feedback">我要反馈</string>
     <string name="software_version">版本号</string>

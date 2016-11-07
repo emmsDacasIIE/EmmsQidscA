@@ -10,6 +10,7 @@ import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.model.DeviceModel;
 import cn.dacas.emmclient.model.TokenModel;
 import cn.dacas.emmclient.util.PrefUtils;
+import cn.dacas.emmclient.webservice.qdvolley.DeviceforbiddenError;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -30,7 +31,7 @@ public class QdBusiness {
                     public void onResponse(DeviceModel response) {
                         if (!response.isStatus()) {
                              if  (errorListener!=null )
-                                errorListener.onErrorResponse(new AuthFailureError());
+                                errorListener.onErrorResponse(new DeviceforbiddenError());
                             return;
                         }
                         EmmClientApplication.mActivateDevice.setDeviceBinder(response.getOwner_account());

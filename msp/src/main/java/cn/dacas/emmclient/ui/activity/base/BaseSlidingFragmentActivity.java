@@ -80,7 +80,7 @@ public abstract class BaseSlidingFragmentActivity extends SlidingFragmentActivit
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
-		mHearderView_Style = setHeaderViewSyle();
+		mHearderView_Style = setHeaderViewStyle();
 		if (mHearderView_Style == HearderView_Style.Image_Text_Image_Image) {
 			setContentView(R.layout.activity_base_home);
 		}else {
@@ -707,7 +707,7 @@ public abstract class BaseSlidingFragmentActivity extends SlidingFragmentActivit
 
 	}
 
-	abstract protected HearderView_Style setHeaderViewSyle();
+	abstract protected HearderView_Style setHeaderViewStyle();
 
 	//////////////////bottom控件事件的处理////////////
 

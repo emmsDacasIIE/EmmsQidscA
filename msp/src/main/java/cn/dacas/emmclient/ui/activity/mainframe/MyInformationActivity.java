@@ -67,7 +67,7 @@ public class MyInformationActivity extends BaseSlidingFragmentActivity {
     private String headPicPath;
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Image_Text_Text;
     }
 

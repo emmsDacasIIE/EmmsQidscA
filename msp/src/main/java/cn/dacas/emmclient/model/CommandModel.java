@@ -19,6 +19,9 @@ public class CommandModel {
         String  ERASE_DEVICE="EraseDevice";	//	抹掉设备，恢复出厂设置
         String  ERASE_ENTERPRISE_DATA="EraseEnterpriseData";	//	擦除企业数据，删除EMM客户端的文档、消息
         String  ERASE_ALL_DATA="EraseAllData";	//	擦除全部数据，删除EMM客户端的文档、消息，删除EMM管理的APP
+
+        String INSTALL_PROFILE = "InstallProfile";
+        String REMOVE_PROFILE = "RemoveProfile";
     }
 
     private String commandUUID;
@@ -79,27 +82,36 @@ public class CommandModel {
     private void parseRequestTypeToCmdCode(String requestType){
         switch (requestType) {
             case RequestTypeString.DeviceLock: {
-                cmdCode = MDMService.CommdCode.OP_LOCK;
+                cmdCode = MDMService.CmdCode.OP_LOCK;
                 break;
             }
             case RequestTypeString.UPDATE_PASSCODE_AND_DEVICE_LOCK:{
-                cmdCode = MDMService.CommdCode.OP_LOCK_KEY;
+                cmdCode = MDMService.CmdCode.OP_LOCK_KEY;
                 break;
             }
             case RequestTypeString.DEVICE_INFORMATION:{
-                cmdCode = MDMService.CommdCode.OP_REFRESH;
+                cmdCode = MDMService.CmdCode.OP_REFRESH;
                 break;
             }
             case RequestTypeString.ERASE_ALL_DATA:{
-                cmdCode = MDMService.CommdCode.OP_ERASE_ALL;
+                cmdCode = MDMService.CmdCode.OP_ERASE_ALL;
                 break;
             }
             case RequestTypeString.ERASE_DEVICE:{
-                cmdCode = MDMService.CommdCode.OP_FACTORY;
+                cmdCode = MDMService.CmdCode.OP_FACTORY;
                 break;
             }
             case RequestTypeString.ERASE_ENTERPRISE_DATA:{
-                cmdCode =MDMService.CommdCode.OP_ERASE_CORP;
+                cmdCode = MDMService.CmdCode.OP_ERASE_CORP;
+                break;
+            }
+            case RequestTypeString.INSTALL_PROFILE:{
+                cmdCode = MDMService.CmdCode.OP_INSTALL_POLICY2;
+                break;
+            }
+            case RequestTypeString.REMOVE_PROFILE:{
+                cmdCode = MDMService.CmdCode.OP_REMOVE_PROFILE;
+                break;
             }
         }
     }

@@ -369,6 +369,17 @@ public class DatabaseEngine {
                         Long.toString(System.currentTimeMillis())});
     }
 
+    public void removePolicy(int opId) {
+        mEmmClientDb.updateOrInsertItemByInfo(
+                EmmClientDb.ACTIONLOG_DATABASE_TABLE,
+                null,
+                null,
+                new String[]{"code", "content", "state", "time"},
+                new String[]{Integer.toString(opId), "企业策略移除",
+                        "s",
+                        Long.toString(System.currentTimeMillis())});
+    }
+
     /**
      * 重新上传设备信息--改变设备状态
      */

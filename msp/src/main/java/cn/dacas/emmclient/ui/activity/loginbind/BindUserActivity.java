@@ -55,7 +55,7 @@ public class BindUserActivity extends BaseSlidingFragmentActivity {
 //    private LoadingDialog mLoadingDialog;
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Null_Text_Null;
     }
 

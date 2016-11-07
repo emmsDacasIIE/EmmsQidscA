@@ -15,6 +15,7 @@ public  class PolicyContent implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
+    private long policyId;
     private String name;
     private String version;
     public String type;
@@ -333,5 +334,60 @@ public  class PolicyContent implements Serializable {
     public void addWifi(String ssid,String password,String encryptionType) {
         MdmWifiModel wifi=new MdmWifiModel(ssid,password,encryptionType);
         wifis.add(wifi);
+    }
+
+    public void setPolicyId(long id){
+        policyId = id;
+    }
+
+    public long getPolicyId(){
+        return this.policyId;
+    }
+
+    static public PolicyContent getDefaultPolicyContent(){
+        PolicyContent policyContent = new PolicyContent();
+
+        policyContent.setPolicyId(0);
+        policyContent.setName("默认");
+        policyContent.setType("Organization");
+        policyContent.setEffectTimeStart("00:00");
+        policyContent.setEffectTimeEnd("23:59");
+
+        policyContent.setAlertLevel("警告");
+        policyContent.setDisableCamera(false);
+        policyContent.setConfigPasswdPolicy(true);
+        policyContent.setMaximumFailedPasswordsForWipe(0);
+        policyContent.setMaximumTimeToLock(0);
+        policyContent.setPasswdQuality("");
+        policyContent.setPasswordExpirationTimeout(0);
+        policyContent.setPasswordHistoryLength(0);
+        policyContent.setPasswordMinimumLength(0);
+        policyContent.setPasswordMinimumSymbols(0);
+
+        policyContent.setDisableWifi(false);
+        policyContent.setDisableDataNetwork(false);
+        policyContent.setDisableBluetooth(false);
+
+        policyContent.setDisableBrowser(false);
+        policyContent.setDisableEmail(false);
+        policyContent.setDisableGallery(false);
+        policyContent.setDisableGmail(false);
+        policyContent.setDisableGoogleMap(false);
+        policyContent.setDisableGooglePlay(false);
+        policyContent.setDisableSettings(false);
+        policyContent.setDisableYouTubey(false);
+        policyContent.setBlackApps(null);
+        policyContent.setWhiteApps(null);
+        policyContent.setMustApps(null);
+
+        return policyContent;
+    }
+
+    public String getPolicyFileName(){
+        String name = "policy";
+        if(policyId==0)
+            return name+".last";
+        else
+            return name+"_"+getPolicyId()+".last";
     }
 }

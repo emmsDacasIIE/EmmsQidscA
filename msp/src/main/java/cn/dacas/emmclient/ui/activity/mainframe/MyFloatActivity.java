@@ -28,7 +28,7 @@ public class MyFloatActivity extends BaseListActivity {
     private int ArrowID = R.mipmap.msp_right_arrow_gray;
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Image_Text_Null;
     }
 

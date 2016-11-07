@@ -38,6 +38,7 @@ import cn.dacas.emmclient.util.PrefUtils;
 import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.webservice.QdBusiness;
 import cn.dacas.emmclient.webservice.QdWebService;
+import cn.dacas.emmclient.webservice.qdvolley.DeviceforbiddenError;
 
 /**
  * @author Wang
@@ -94,7 +95,7 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
 
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Text_Text_Null;
     }
 
@@ -357,7 +358,10 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                 }
                 else if (error instanceof NoConnectionError || error instanceof NetworkError || error instanceof TimeoutError) {
                     Toast.makeText(mContext,"网络连接错误",Toast.LENGTH_SHORT).show();
-                } else {
+                } else if( error instanceof DeviceforbiddenError){
+                    Toast.makeText(mContext,"该设备被禁用",Toast.LENGTH_SHORT).show();
+                }
+                else {
                     Toast.makeText(mContext,"登录错误",Toast.LENGTH_SHORT).show();
                 }
             }

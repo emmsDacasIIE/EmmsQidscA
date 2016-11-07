@@ -75,8 +75,6 @@ public class EmmClientDb {
 			+ "filetag text not null, isnative text not null, url text, path text, time text not null, sender text not null,fav integer not null default 0,len integer not null default 0);";
 	private static final String CONTACT_DATABASE_CREATE = "create table contacttable (_id integer primary key ,"
 			+ "name text not null, telephone text, cellphone_1 text, cellphone_2 text, email_1 text, email_2 text, company text, address text);";
-//	private static final String CONTACT_DATABASE_CREATE = "create table contacttable ("
-//			+ "name text not null, tel text primary key not null, email text, company text, address text);";
 
 	//在安全工作区显示的app
 	//time:安装或者更新的时间
@@ -95,7 +93,7 @@ public class EmmClientDb {
 	public static final String PASSWORD_DATABASE_TABLE = "passwordtable";
 	public static final String APPLIST_DATABASE_TABLE = "applisttable";
 
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 4;
 
 	private final Context mCtx;
 
@@ -118,20 +116,23 @@ public class EmmClientDb {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//			db.execSQL("DROP TABLE IF EXISTS " + ACTIONLOG_DATABASE_TABLE);
-//			db.execSQL("DROP TABLE IF EXISTS " + APPBLACK_DATABASE_TABLE);
-//			db.execSQL("DROP TABLE IF EXISTS " + DEVICEMSG_DATABASE_TABLE);
-//			db.execSQL("DROP TABLE IF EXISTS " + CORPFILE_DATABASE_TABLE);
-//			db.execSQL("DROP TABLE IF EXISTS " + CONTACT_DATABASE_TABLE);
-//			db.execSQL("DROP TABLE IF EXISTS " + PASSWORD_DATABASE_CREATE);
-			
-			db.execSQL("DELETE FROM "+ACTIONLOG_DATABASE_TABLE);
-			db.execSQL("DELETE FROM "+DEVICEMSG_DATABASE_TABLE);
-			db.execSQL("DELETE FROM "+CORPFILE_DATABASE_TABLE);
-			db.execSQL("DELETE FROM "+CONTACT_DATABASE_TABLE);
-			db.execSQL("DELETE FROM "+APPLIST_DATABASE_TABLE);
-			
-//			onCreate(db);
+			//删除低版本的数据库
+			db.execSQL("DROP TABLE IF EXISTS actionlogtable");
+			db.execSQL("DROP TABLE IF EXISTS appblacktable" );
+			db.execSQL("DROP TABLE IF EXISTS devicemsgtable");
+			db.execSQL("DROP TABLE IF EXISTS corpfiletable");
+			db.execSQL("DROP TABLE IF EXISTS contacttable");
+			db.execSQL("DROP TABLE IF EXISTS passwordtable");
+
+			//清空本版本数据
+			//db.execSQL("DELETE FROM "+ACTIONLOG_DATABASE_TABLE);
+			//db.execSQL("DELETE FROM "+DEVICEMSG_DATABASE_TABLE);
+			//db.execSQL("DELETE FROM "+CORPFILE_DATABASE_TABLE);
+			//db.execSQL("DELETE FROM "+CONTACT_DATABASE_TABLE);
+			//db.execSQL("DELETE FROM "+APPLIST_DATABASE_TABLE);
+			//db.execSQL("DELETE FROM "+APPBLACK_DATABASE_TABLE);
+
+			onCreate(db);
 		}
 	}
 

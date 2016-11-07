@@ -56,7 +56,7 @@ public class MamAppListActivity extends BaseSlidingFragmentActivity {
 //    int currenttab=-1;
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Image_Text_Image;
     }
 

@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.Policy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class PolicyManager {
 
 
     static {
+        DEFAULT_POLICY.setPolicyId(0);
         DEFAULT_POLICY.setName("默认");
         DEFAULT_POLICY.setType("Organization");
         DEFAULT_POLICY.setEffectTimeStart("00:00");
@@ -68,7 +70,6 @@ public class PolicyManager {
         DEFAULT_POLICY.setBlackApps(null);
         DEFAULT_POLICY.setWhiteApps(null);
         DEFAULT_POLICY.setMustApps(null);
-
     }
 
     public static final String PASSWD_POLICY = "锁屏密码";
@@ -93,11 +94,15 @@ public class PolicyManager {
         return curPolicy;
     }
 
+    public void setPolicy(PolicyContent policyContent){
+        this.curPolicy = policyContent;
+    }
+
     private PolicyManager(Context context) {
         this.mContext = context;
         policyFilePath = context.getApplicationContext().getFilesDir()
                 .getAbsolutePath()
-                + "/policy.last";
+                +"/policy.last";
         importPolicy();
     }
 
@@ -148,7 +153,6 @@ public class PolicyManager {
                 oos = new ObjectOutputStream(fos);
                 oos.writeObject(curPolicy);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } finally {
                 if (oos != null) {
@@ -274,6 +278,18 @@ public class PolicyManager {
         EmmClientApplication.mVolleyQueue.add(request);
     }
 
+    public void updatePolicy(JSONObject jsonObject){
+        setPolicy(convertPolicy(jsonObject));
+        enforcePolicy();
+        exportPolicy();
+    }
+
+    public void resetPolicy(){
+        setPolicy(PolicyContent.getDefaultPolicyContent());
+        enforcePolicy();
+        exportPolicy();
+    }
+
     // [{"id":10,"name":"New","content":"{\"passcode\":{\"passwordType\":\"图案\",\"allowSimple\":true,\"forcePIN\":true,\"minLength\":16,\"minComplexChars\":1,\"maxPINAgeInDays\":2,\"maxInactivity\":3,\"pinHistory\":4,\"maxGracePeriod\":\"5分钟\",\"maxFailedAttempts\":6}}","type":null,"effectTimeStart":null,"effectTimeEnd":null,"creator":null,"description":null,"priority":null,"created_at":"2014-11-26 06:17:49","updated_at":"2014-11-26 06:17:49"}]
     private PolicyContent convertPolicy(JSONObject jPolicy) {
         PolicyContent policy = new PolicyContent();
@@ -282,6 +298,7 @@ public class PolicyManager {
         }
 
         try {
+            policy.setPolicyId(jPolicy.getLong("id"));
             policy.setName(jPolicy.getString("name"));
             policy.setVersion(jPolicy.getString("version"));
         } catch (JSONException e) {

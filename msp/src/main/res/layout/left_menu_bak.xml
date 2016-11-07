@@ -23,7 +23,7 @@
             android:orientation="horizontal" >
 
             <cn.dacas.emmclient.ui.qdlayout.RoundImageView
-                android:id="@+id/imageview_myphoto"
+                android:id="@+id/imageview_myphoto1"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:gravity="center"

@@ -40,7 +40,7 @@ public class MyHeadTakePic extends BaseSlidingFragmentActivity {
     int i = 0;
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Image_Text_Image;
     }
 

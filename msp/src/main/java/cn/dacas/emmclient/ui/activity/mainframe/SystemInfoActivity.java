@@ -19,7 +19,7 @@ public class SystemInfoActivity extends BaseSlidingFragmentActivity {
     }
 
     @Override
-    protected HearderView_Style setHeaderViewSyle() {
+    protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Image_Text_Null;
     }
 
@@ -35,6 +35,7 @@ public class SystemInfoActivity extends BaseSlidingFragmentActivity {
         text_info_mac.setText(mac);
         text_device_name.setText(EmmClientApplication.mDeviceModel.getName());
         text_device_type.setText(EmmClientApplication.mDeviceModel.getType());
+
     }
 
 }

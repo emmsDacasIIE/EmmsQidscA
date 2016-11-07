@@ -1,6 +1,5 @@
 package cn.dacas.emmclient.core.mdm;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -15,10 +14,10 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -85,7 +84,7 @@ public class MDMService extends Service implements ControllerListener {
 
     private MsgListener mMsgListener;
 
-    public interface CommdCode{
+    public interface CmdCode {
         int ENFORCE = 1;
         // 提示用户选项
         int WARN = 2;
@@ -112,11 +111,12 @@ public class MDMService extends Service implements ControllerListener {
         int OP_ERASE_ALL = 1060;
         int OP_FACTORY = 1065;
         int OP_POLICY1 = 1070;
-        int OP_POLICY2 = 1075;
+        int OP_INSTALL_POLICY2 = 1075;
+        int OP_REMOVE_PROFILE = 1076;
         int OP_PUSH_FILE = 1080; // fileUrlList以,分割
         int OP_CHANGE_DEVICE_TYPE = 1015; // 设备类型改变
         int DELETE_DEVICE = 1090; // 服务器端删除设备
-        int STOP_DEVICE = 1091;
+        int FORBIDDEN_DEVICE = 1091;
         int NEW_COMMANDS = 1111;// 新指令
 
         int ALERT_DIALOG = 1200;//提示
@@ -129,10 +129,6 @@ public class MDMService extends Service implements ControllerListener {
 
     PushMsgManager pushMsgManager;
 
-
-    public MsgListener getmMsgListener() {
-        return mMsgListener;
-    }
     //接收EventBus发生的消息
     public void onEventBackgroundThread(MessageEvent event) {
         switch (event.type) {
@@ -177,7 +173,9 @@ public class MDMService extends Service implements ControllerListener {
         updateDeviceInfo();
         //uploadLocation();
         MDMService.this.owner = owner;
+        Looper.prepare();
         startMsgPush();
+        Looper.loop();
         // 1）每次注册成功，都向服务器询问当前策略
         // 2）在运行期间的策略更新依赖于“消息通知”
         PolicyManager.getMPolicyManager(mContext).updatePolicy();
@@ -191,12 +189,10 @@ public class MDMService extends Service implements ControllerListener {
         if(ActivateDevice.online || mMsgListener.isWorking())
             return;
         String ip = AddressManager.getAddrMsg();
-        //RegMsgPush sub = new RegMsgPush();
         Log.d("MDMService", "MsgPush reg to " + ip);
         QDLog.writeMsgPushLog("try to connect to" + ip);
         String imei = PhoneInfoExtractor.getIMEI(mContext);
         Log.d(TAG, "IMEI: "+imei);
-        //sub.init(PhoneInfoExtractor.getIMEI(mContext), mMsgListener, new String[]{ip});
 
         //Init PushMsgManager
         pushMsgManager = new PushMsgManager(getApplicationContext(), UrlManager.getMsgPushUrl());
@@ -265,22 +261,7 @@ public class MDMService extends Service implements ControllerListener {
         mMyLocationListener = new MyLocationListener();
         mLocationClient = new LocationService(getApplication(),mMyLocationListener).getLocationClient();
 
-        /**
-         * mLocationClient = new LocationClient(MDMService.this.getApplicationContext());
-         * mMyLocationListener = new MyLocationListener();
-         * mLocationClient.registerLocationListener(mMyLocationListener);
-         * 配置定位SDK模式
-         * LocationClientOption option = new LocationClientOption();
-         * option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
-         * option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-         * option.setScanSpan(60 * 1000);// 设置发起定位请求的间隔时间为1分钟
-         * option.setOpenGps(true);//设置开启GPS
-         * option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
-         * option.setNeedDeviceDirect(true);// 返回的定位结果包含手机机头的方向
-         * mLocationClient.setLocOption(option);
-         */
-
-        forward = new IForward();
+        //forward = new IForward();
         EventBus.getDefault().register(this);
 
         mMonitor=new DeviceAdminMonitor(mContext);
@@ -315,7 +296,7 @@ public class MDMService extends Service implements ControllerListener {
             AlertDialog alertDialog;
 
             switch (code) {
-                case CommdCode.PUSH_MSG:
+                case CmdCode.PUSH_MSG:
                     String content = null;
                     if (bd != null) {
                         content = (String) bd.getCharSequence("msg");
@@ -352,124 +333,93 @@ public class MDMService extends Service implements ControllerListener {
                                 .setContentIntent(contentItent);
 
                         Notification notification = notificationBuilder.build();
-                        notification.flags |= Notification.FLAG_ONGOING_EVENT; // 将此通知放到通知栏的"Ongoing"即"正在运行"组中
+                        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+                        // 将此通知放到通知栏的"Ongoing"即"正在运行"组中
                         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
                         notification.flags |= Notification.FLAG_AUTO_CANCEL;
                         notificationManager.notify(0, notification);
                     }
                     break;
-                case CommdCode.FACTORY:
-                    if (msg.arg2 == CommdCode.ENFORCE) {
+                case CmdCode.FACTORY:
+                    if (msg.arg2 == CmdCode.ENFORCE) {
                         DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(false);
                     } else {
+                        new Thread(new Runnable() {
+                            public void run() {
+                                DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(false);
+                            }
+                        }).start();
                         builder = new AlertDialog.Builder(mContext);
                         builder.setTitle("恢复出厂设置");
-                        builder.setMessage("是否确定执行？");
-
-                        builder.setPositiveButton("确定", new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(false);
-                                    }
-                                }).start();
-                                dialog.cancel();
-                            }
-                        });
-
-                        builder.setNegativeButton("取消", new OnClickListener() {
-
+                        builder.setMessage("该设备已经被恢复出厂设置");
+                        builder.setPositiveButton("OK", new OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         });
-
                         alertDialog = builder.create();
                         alertDialog.getWindow().setType(
                                 (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                         alertDialog.show();
                     }
                     break;
-                case CommdCode.ERASE_ALL:
-                    if (msg.arg2 == CommdCode.ENFORCE) {
+                case CmdCode.ERASE_ALL:
+                    if (msg.arg2 == CmdCode.ENFORCE) {
                         DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(true);
                     } else {
+                        new Thread(new Runnable() {
+                            public void run() {
+                                DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(true);
+                            }
+                        }).start();
                         builder = new AlertDialog.Builder(mContext);
                         builder.setTitle("擦除设备所有数据");
-                        builder.setMessage("包括恢复出厂和sd卡擦除，是否确定执行？");
+                        builder.setMessage("该设备已被擦除所有数据，包括恢复出厂和sd卡擦除");
 
-                        builder.setPositiveButton("确定", new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(true);
-                                    }
-                                }).start();
-                                dialog.cancel();
-                            }
-                        });
-
-                        builder.setNegativeButton("取消", new OnClickListener() {
+                        builder.setPositiveButton("OK", new OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         });
-
                         alertDialog = builder.create();
                         alertDialog.getWindow().setType(
                                 (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                         alertDialog.show();
                     }
-
                     break;
-                case CommdCode.ERASE_CORP:
-                    if (msg.arg2 == CommdCode.ENFORCE) {
+                case CmdCode.ERASE_CORP:
+                    if (msg.arg2 == CmdCode.ENFORCE) {
                         new Thread(new Runnable() {
                             public void run() {
                                EmmClientApplication.mDatabaseEngine.clearCorpData();
                             }
                         }).start();
                     } else {
+                        new Thread(new Runnable() {
+                            public void run() {
+                                EmmClientApplication.mSecureContainer.deletAllFiles();
+                                EmmClientApplication.mDatabaseEngine.clearCorpData();
+                            }
+                        }).start();
                         builder = new AlertDialog.Builder(mContext);
                         builder.setTitle("擦除企业数据");
-                        builder.setMessage("是否确定执行？");
-
-                        builder.setPositiveButton("确定", new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        EmmClientApplication.mSecureContainer.deletAllFiles();
-                                        EmmClientApplication.mDatabaseEngine.clearCorpData();
-                                    }
-                                }).start();
-                                dialog.cancel();
-                            }
-                        });
-
-                        builder.setNegativeButton("取消", new OnClickListener() {
-
+                        builder.setMessage("该设备已被擦除企业数据");
+                        builder.setPositiveButton("OK", new OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         });
-
                         alertDialog = builder.create();
                         alertDialog.getWindow().setType(
                                 (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                         alertDialog.show();
                     }
                     break;
-                case CommdCode.ERROR_FORMAT:
+                case CmdCode.ERROR_FORMAT:
                     builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("格式错误");
                     builder.setMessage("来自消息推送服务器的消息格式不合法！");
@@ -487,7 +437,7 @@ public class MDMService extends Service implements ControllerListener {
                             (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                     alertDialog.show();
                     break;
-                case CommdCode.ERROR_MSG_SERVER:
+                case CmdCode.ERROR_MSG_SERVER:
                     builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("服务器错误");
                     builder.setMessage("无法连接消息推送服务器!");
@@ -505,25 +455,24 @@ public class MDMService extends Service implements ControllerListener {
                             (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                     alertDialog.show();
                     break;
-                case CommdCode.REFRESH_ALL:
+                case CmdCode.REFRESH_ALL:
                     String uuid = (String) msg.obj;
                     HashMap<String,JSONObject> map = new HashMap<>();
                     map.put("query_responses",getDeviceInfoDetail());
                     mMsgListener.sendStatusToServer("Acknowledged",uuid,map);
-                    //updateDeviceInfo();
                     break;
-                case CommdCode.AUTH_STATE_CHANGE:
+                case CmdCode.AUTH_STATE_CHANGE:
 //                    DisableTask dt1 = new DisableTask(MDMService.this);
 //                    dt1.execute(DisableTask.AUTH_STATE_CHANGE);
                     break;
-                case CommdCode.DELETE_DEVICE:
+                case CmdCode.DELETE_DEVICE:
 //                    DisableTask dt2 = new DisableTask(MDMService.this);
 //                    dt2.execute(DisableTask.DELETE_DEVICE);
                     break;
-                case CommdCode.DEVICE_INFO_CHANGE:
+                case CmdCode.DEVICE_INFO_CHANGE:
                     downloadDeviceInfo();
                     break;
-                case CommdCode.ALERT_DIALOG:
+                case CmdCode.ALERT_DIALOG:
                     builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("消息提醒");
                     String s = (String) msg.obj;
@@ -542,24 +491,22 @@ public class MDMService extends Service implements ControllerListener {
                             (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                     alertDialog.show();
                     break;
-                case CommdCode.STOP_DEVICE:
-                    builder = new AlertDialog.Builder(mContext);
+                case CmdCode.FORBIDDEN_DEVICE:
+                    exitApplication();
+                    /*builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("消息提醒");
                     builder.setMessage("该设备已被禁用");
 
                     builder.setPositiveButton("确定", new OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(getApplicationContext(),UserLoginActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                            exitApplication();
                         }
                     });
-
                     alertDialog = builder.create();
                     alertDialog.getWindow().setType(
                             (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
-                    alertDialog.show();
+                    alertDialog.show();*/
 
                 default:
                     break;
@@ -739,13 +686,13 @@ public class MDMService extends Service implements ControllerListener {
                     EmmClientApplication.mDeviceModel = deviceModel;
                     if(!deviceModel.isStatus()) {
                         Message message = Message.obtain();
-                        message.arg1 = CommdCode.STOP_DEVICE;
+                        message.arg1 = CmdCode.FORBIDDEN_DEVICE;
                         uiHandler.sendMessage(message);
                     }
                     if(!deviceModel.getType().equals(EmmClientApplication.mActivateDevice.getDeviceType())) {
                         EmmClientApplication.mActivateDevice.setDeviceType(deviceInfo.getString("type"));
                         Message message = Message.obtain();
-                        message.arg1 = CommdCode.ALERT_DIALOG;
+                        message.arg1 = CmdCode.ALERT_DIALOG;
                         message.obj = "设备类型改变为："+deviceModel.getType();
                         uiHandler.sendMessage(message);
                     }
@@ -875,17 +822,14 @@ public class MDMService extends Service implements ControllerListener {
 
     //from MDMService
     private void UpdateCommandList(List<String> modelList) {
-
-        if (modelList != null && modelList.size() <= 0) {
+        if (modelList == null || modelList.size() <= 0) {
             return;
         }
-
-        for (int i = 0; i < modelList.size();i++) {
-
+        for (int i = 0; i < modelList.size(); i++) {
             QDLog.i(TAG, "UpdateCommandList=============" + modelList.get(i));
             String m = modelList.get(i);
             try {
-                mMsgListener.dealMessage(m);
+                //mMsgListener.dealMessage(m);
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -899,6 +843,14 @@ public class MDMService extends Service implements ControllerListener {
         int unreadCount = PrefUtils.getMsgUnReadCount();
         PrefUtils.putMsgMaxId(mId);
         PrefUtils.putMsgUnReadCount(unreadCount+1);
+    }
+
+    public void exitApplication(){
+        EmmClientApplication.mCheckAccount.clearCurrentAccount();
+        Intent intent = new Intent(mContext, UserLoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 }
