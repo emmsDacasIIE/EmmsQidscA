@@ -250,8 +250,8 @@ public class DatabaseEngine {
     /////////////5.message
 
     public Cursor getAllMessageData() {
-        return mEmmClientDb.getAllItemsOfTable(
-                EmmClientDb.DEVICEMSG_DATABASE_TABLE, null);
+        return mEmmClientDb.getAllItemsOfTableInOrder(
+                EmmClientDb.DEVICEMSG_DATABASE_TABLE, null,"time");
     }
 
     public void deleteDbItemByColumns(String msg,String time) {
@@ -409,7 +409,7 @@ public class DatabaseEngine {
     }
 
     public void clearCorpData() {
-        mEmmClientDb.upgrade();
+        mEmmClientDb.clearData();
     }
 
     ///////applist//////////////

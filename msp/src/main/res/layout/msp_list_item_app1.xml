@@ -139,10 +139,10 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:textColor="@color/white"
-        android:textSize="22sp"
+        android:textColor="@color/orange"
+        android:textSize="18sp"
         android:duplicateParentState="true"
-        android:background="@drawable/button_positive"
+        android:background="@drawable/button_style"
         android:text="下载"
         android:visibility="visible"
         />

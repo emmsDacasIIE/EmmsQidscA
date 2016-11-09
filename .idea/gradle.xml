@@ -19,19 +19,7 @@
             <option value="$PROJECT_DIR$/qdpulltorefreshswipmenulistview" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/dynamicgrid" />
-            <option value="$PROJECT_DIR$/listviewlibrary" />
-            <option value="$PROJECT_DIR$/mqttmsgtest" />
-            <option value="$PROJECT_DIR$/msp" />
-            <option value="$PROJECT_DIR$/mspsdk" />
-            <option value="$PROJECT_DIR$/pushmessagesdk" />
-            <option value="$PROJECT_DIR$/qdSlidemenuLib" />
-            <option value="$PROJECT_DIR$/qdpulltorefreshswipmenulistview" />
-          </set>
-        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

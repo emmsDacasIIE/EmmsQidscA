@@ -199,7 +199,7 @@ public class MDMService extends Service implements ControllerListener {
         PushMsgReceiver.setMsgListener(mMsgListener);
         try {
             pushMsgManager.registerPush(
-                    UrlManager.getRegMsgPushUrl(),// Web adder
+                    UrlManager.getRegMsgPushUrl(),// Web address
                     "046e2930-7cc2-4398-9b1c-65852317de29",// client_id
                     "6668b6a3-8486-4165-a418-374194ad47d3");// client_secret
             pushMsgManager.addFullTopicToLists(imei,PushMsgManager.CommCodeType.NET_GetAliase);

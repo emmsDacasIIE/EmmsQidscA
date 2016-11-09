@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cn.dacas.emmclient.R;
@@ -162,7 +163,6 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				QDLog.i(TAG, "noTextView.setOnClickListener===========");
 
 				refreshableView.setVisibility(View.GONE);
@@ -270,57 +270,6 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 		}
 	};
 
-//	//广播接收者
-//	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-//		@Override
-//		public void onReceive(Context context, Intent intent) {
-//			String action = intent.getAction();
-//			if (action.equals(REFRESH_MAIN_ACTIVITY)) {
-////                appListSharedPreferences = app.getSharedPreferences(app
-////                                .getCheckAccount().getCurrentAccount() + "appList",
-////                        0);
-////                String pageNo = "";
-////                pageNo += String.valueOf(vpMain.getCurrentItem() + 1);
-////                pageNo += "/";
-////                pageNo += String.valueOf(views.size());
-////                tvPage.setText(pageNo);
-////                if (getActivity() instanceof NewMainActivity) {
-////                    ((NewMainActivity) getActivity()).checkPolicy();
-////                }
-//			}
-//			else if(action.equals(GlobalConsts.NEW_MESSAGE)){
-//				refreshHandler.sendMessage(Message.obtain());
-//
-////				refreshFragment();
-////                adapter.notifyDataSetChanged();
-////                String pageNo = "";
-////                pageNo += String.valueOf(vpMain.getCurrentItem() + 1);
-////                pageNo += "/";
-////                pageNo += String.valueOf(views.size());
-////                tvPage.setText(pageNo);
-//			}
-//		}
-//
-//	};
-
-
-
-//	//注册广播
-//	public void registerBroadcastReceiver() {
-//		IntentFilter myIntentFilter = new IntentFilter();
-//		myIntentFilter.addAction(REFRESH_MAIN_ACTIVITY);
-//		myIntentFilter.addAction(GlobalConsts.NEW_MESSAGE);
-//		// 注册广播
-//		getActivity().getApplicationContext().registerReceiver(
-//				mBroadcastReceiver, myIntentFilter);
-//	}
-//
-//	public void unregisterBoradcastReceiver() {
-//		// 反注册广播
-//		getActivity().getApplicationContext().unregisterReceiver(
-//				mBroadcastReceiver);
-//	}
-
 	/**
 	 * 接收OP_MSG消息（来自mdmserver）
 	 */
@@ -345,7 +294,6 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 	//////需要接口调用的函数////
 
 	private void loadAdapterData() {
-		// TODO 从数据库初始化数据
 		mResultArrayList.clear();
 		allList.clear();
 
@@ -369,6 +317,7 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 								false
 						));
 			} while (mCursor.moveToNext());
+			Collections.reverse(mResultArrayList);
 			allList.addAll(mResultArrayList);
 			mCursor.close();
 		}

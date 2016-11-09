@@ -124,15 +124,18 @@ public class EmmClientDb {
 			db.execSQL("DROP TABLE IF EXISTS contacttable");
 			db.execSQL("DROP TABLE IF EXISTS passwordtable");
 
-			//清空本版本数据
-			//db.execSQL("DELETE FROM "+ACTIONLOG_DATABASE_TABLE);
-			//db.execSQL("DELETE FROM "+DEVICEMSG_DATABASE_TABLE);
-			//db.execSQL("DELETE FROM "+CORPFILE_DATABASE_TABLE);
-			//db.execSQL("DELETE FROM "+CONTACT_DATABASE_TABLE);
-			//db.execSQL("DELETE FROM "+APPLIST_DATABASE_TABLE);
-			//db.execSQL("DELETE FROM "+APPBLACK_DATABASE_TABLE);
-
 			onCreate(db);
+		}
+
+		public void onClearData(SQLiteDatabase db) {
+			//清空本版本数据
+			db.execSQL("DELETE FROM "+ACTIONLOG_DATABASE_TABLE);
+			db.execSQL("DELETE FROM "+DEVICEMSG_DATABASE_TABLE);
+			db.execSQL("DELETE FROM "+CORPFILE_DATABASE_TABLE);
+			db.execSQL("DELETE FROM "+CONTACT_DATABASE_TABLE);
+			db.execSQL("DELETE FROM "+APPLIST_DATABASE_TABLE);
+			db.execSQL("DELETE FROM "+APPBLACK_DATABASE_TABLE);
+			//onCreate(db);
 		}
 	}
 
@@ -152,6 +155,10 @@ public class EmmClientDb {
 
 	public void upgrade() {
 		mDbHelper.onUpgrade(mDb, currentVersion, ++currentVersion);
+	}
+
+	public void clearData(){
+		mDbHelper.onClearData(mDb);
 	}
 
 	
@@ -199,6 +206,17 @@ public class EmmClientDb {
 	public Cursor getAllItemsOfTable(String tablename, String[] requestColumns) {
 		Cursor mCursor = mDb.query(tablename, requestColumns, null, null, null,
 				null, null);
+		if ((mCursor == null) || (mCursor.getCount() <= 0)) {
+			return null;
+		} else {
+			mCursor.moveToFirst();
+			return mCursor;
+		}
+	}
+
+	public Cursor getAllItemsOfTableInOrder(String tablename, String[] requestColumns,String orderBy) {
+		Cursor mCursor = mDb.query(tablename, requestColumns, null, null, null,
+				null, orderBy);
 		if ((mCursor == null) || (mCursor.getCount() <= 0)) {
 			return null;
 		} else {
