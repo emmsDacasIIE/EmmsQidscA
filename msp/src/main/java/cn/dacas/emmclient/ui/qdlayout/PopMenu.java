@@ -36,7 +36,6 @@ public class PopMenu implements OnItemClickListener {
 
 	String[] from={"text"};
 	int[] to={R.id.text_main_record};
-	int popHeight;
 
 	private int measureContentWidth(ListAdapter listAdapter) {
 		ViewGroup mMeasureParent = null;
@@ -71,15 +70,15 @@ public class PopMenu implements OnItemClickListener {
 		return maxWidth;
 	}
 
-	private int measureContentHeigh(ListAdapter listAdapter) {
+	private int measureContentHeight(ListAdapter listAdapter) {
 		ViewGroup mMeasureParent = null;
 		int sumHeight = 50;
 		View itemView = null;
 		int itemType = 0;
 
 		final ListAdapter adapter = listAdapter;
-		final int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-		final int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		//final int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		final int measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 		final int count = adapter.getCount();
 		for (int i = 0; i < count; i++) {
 			final int positionType = adapter.getItemViewType(i);
@@ -93,7 +92,7 @@ public class PopMenu implements OnItemClickListener {
 			}
 
 			itemView = adapter.getView(i, itemView, mMeasureParent);
-			itemView.measure(widthMeasureSpec, heightMeasureSpec);
+			itemView.measure(measureSpec, measureSpec);
 
 			int itemHeight = itemView.getMeasuredHeight();
 
@@ -125,7 +124,7 @@ public class PopMenu implements OnItemClickListener {
 
 		popupWindow = new PopupWindow(view,
 				measureContentWidth(adapter),
-				measureContentHeigh(adapter));//LayoutParams.WRAP_CONTENT
+				measureContentHeight(adapter));//LayoutParams.WRAP_CONTENT
 		// 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景（很神奇的）
 		popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 	}
@@ -153,6 +152,7 @@ public class PopMenu implements OnItemClickListener {
 	public void showAsDropDown(View parent) {
 		//保证尺寸是根据屏幕像素密度来的
 		popupWindow.showAsDropDown(parent);
+
 		//popupWindow.showAsDropDown(parent, 0, -popHeight);
 		//使其聚集
 		popupWindow.setFocusable(true);

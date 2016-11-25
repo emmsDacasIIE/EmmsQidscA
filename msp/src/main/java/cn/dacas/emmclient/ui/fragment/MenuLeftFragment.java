@@ -18,6 +18,7 @@ import java.io.File;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.core.mdm.MDMService;
 import cn.dacas.emmclient.ui.activity.loginbind.UserLoginActivity;
 import cn.dacas.emmclient.ui.activity.mainframe.MyAboutActivity;
 import cn.dacas.emmclient.ui.activity.mainframe.MySettingsActivity;
@@ -93,7 +94,6 @@ public class MenuLeftFragment extends BaseFragment
 		mPhoneTextView = (TextView)mView.findViewById(R.id.textview_phone_number);
 
 		setClickEvent();
-
 	}
 
 	private void setClickEvent() {
@@ -177,13 +177,14 @@ public class MenuLeftFragment extends BaseFragment
 		String headphotoName = QdCamera.GetHeadFullPathName(mContext);
 		if (!TextUtils.isEmpty(headphotoName)) {
 			File f = new File(headphotoName);
-			if (f != null && f.exists())
+			if (f.exists())
 				setImageView(headphotoName);
 		}
-
+		mUserNameTextView.setText(EmmClientApplication.mCheckAccount.getCurrentName());
 		if (EmmClientApplication.mUserModel!= null) {
-			mUserNameTextView.setText(EmmClientApplication.mUserModel.getName());
 			mPhoneTextView.setText(EmmClientApplication.mUserModel.getTelephone_number());
+		} else {
+			mPhoneTextView.setText("");
 		}
 	}
 
@@ -242,12 +243,7 @@ public class MenuLeftFragment extends BaseFragment
 			public void onClick(View v) {
 
 				QDLog.i(TAG, "onNotify =======mExitLoginButton========");
-				EmmClientApplication.mCheckAccount.clearCurrentAccount();
-				Intent intent = new Intent(mContext, UserLoginActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-				startActivity(intent);
-
+				startActivity(EmmClientApplication.getExitApplicationIntent());
 
 				if (mPopupMenuDialog != null && mPopupMenuDialog.isShowing()) {
 					mPopupMenuDialog.dismiss();

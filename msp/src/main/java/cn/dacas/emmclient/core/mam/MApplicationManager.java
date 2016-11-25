@@ -94,7 +94,6 @@ public class MApplicationManager {
 					try {
 						queryPacakgeSize(app);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 						noSuchMethod = true; //No such a method is called getPackageSizeInfo in Class PackageManager
 					}
@@ -267,11 +266,10 @@ public class MApplicationManager {
 
 		public void onGetStatsCompleted(PackageStats pStats, boolean succeeded)
 				throws RemoteException {
-			// TODO Auto-generated method stub
 			if (appInfo != null) {
-				appInfo.setCachesize(pStats.cacheSize / 1024); // KB
-				appInfo.setCodesize(pStats.codeSize / 1024); // KB
-				appInfo.setDatasize(pStats.dataSize / 1024); // KB
+				appInfo.setCachesize(pStats.cacheSize); //B
+				appInfo.setCodesize(pStats.codeSize);   //B
+				appInfo.setDatasize(pStats.dataSize);   //B
 			}
 		}
 	}

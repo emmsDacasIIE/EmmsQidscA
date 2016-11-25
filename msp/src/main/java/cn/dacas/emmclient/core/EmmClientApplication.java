@@ -31,6 +31,7 @@ import cn.dacas.emmclient.model.DeviceModel;
 import cn.dacas.emmclient.model.UserModel;
 import cn.dacas.emmclient.security.ssl.SslHttpStack;
 import cn.dacas.emmclient.manager.AddressManager;
+import cn.dacas.emmclient.ui.activity.loginbind.UserLoginActivity;
 import cn.dacas.emmclient.util.PhoneInfoExtractor;
 import cn.dacas.emmclient.util.PrefUtils;
 import cn.dacas.emmclient.util.QDLog;
@@ -213,6 +214,19 @@ public class EmmClientApplication extends Application {
 	private boolean detectApk(String packageName) {
 		return packagNameList.contains(packageName.toLowerCase());
 
+	}
+
+	/**
+	 * clear mCheckAccount and mUserModel
+	 * @return Intent to UserLoginActivity
+     */
+	public static Intent getExitApplicationIntent(){
+		mCheckAccount.clearCurrentAccount();
+		mUserModel = null;
+		Intent intent = new Intent(mContext, UserLoginActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		return intent;
 	}
 
 	private class MyReceiver extends BroadcastReceiver {

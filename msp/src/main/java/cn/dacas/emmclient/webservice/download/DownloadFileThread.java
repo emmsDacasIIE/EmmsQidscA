@@ -83,7 +83,8 @@ public class DownloadFileThread extends Thread {
 
             String tempFullPath= QdSecureContainer.getInstance(EmmClientApplication.getContext()).getDirTempPath()+name;
             File file = new File(tempFullPath);
-            if (file.exists()) file.delete();
+            if (file.exists())
+                file.delete();
             FileOutputStream fos = new FileOutputStream(file);
             long range=0;
 //            long range=file.length();

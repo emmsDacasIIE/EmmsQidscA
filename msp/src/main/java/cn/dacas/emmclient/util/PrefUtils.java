@@ -51,7 +51,7 @@ public class PrefUtils {
 	private static final String ADDR_UPDATE="UPDATEADDRESS";
 
 	static String[] addressList = {
-			"192.168.151.137:8443", //ADDR_WEBSERVICE
+			"192.168.151.175:8443", //ADDR_WEBSERVICE
 			"192.168.151.175:1883",//ADDR_MSG 192.168.151.175:3544
 			"192.168.0.23:43546",//ADDR_FORWARD
 			"192.168.151.137:8080" //ADDR_UPDATE

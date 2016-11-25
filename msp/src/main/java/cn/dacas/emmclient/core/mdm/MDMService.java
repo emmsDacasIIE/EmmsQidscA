@@ -173,9 +173,9 @@ public class MDMService extends Service implements ControllerListener {
         updateDeviceInfo();
         //uploadLocation();
         MDMService.this.owner = owner;
-        Looper.prepare();
+        //Looper.prepare();
         startMsgPush();
-        Looper.loop();
+        //Looper.loop();
         // 1）每次注册成功，都向服务器询问当前策略
         // 2）在运行期间的策略更新依赖于“消息通知”
         PolicyManager.getMPolicyManager(mContext).updatePolicy();
@@ -186,27 +186,43 @@ public class MDMService extends Service implements ControllerListener {
      * init RegMsgPush, -> init PushMsgManager
      */
     private void startMsgPush() {
-        if(ActivateDevice.online || mMsgListener.isWorking())
-            return;
-        String ip = AddressManager.getAddrMsg();
-        Log.d("MDMService", "MsgPush reg to " + ip);
-        QDLog.writeMsgPushLog("try to connect to" + ip);
-        String imei = PhoneInfoExtractor.getIMEI(mContext);
-        Log.d(TAG, "IMEI: "+imei);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                if(ActivateDevice.online || mMsgListener.isWorking())
+                    return;
+                String ip = AddressManager.getAddrMsg();
+                Log.d("MDMService", "MsgPush reg to " + ip);
+                QDLog.writeMsgPushLog("try to connect to" + ip);
+                String imei = PhoneInfoExtractor.getIMEI(mContext);
+                Log.d(TAG, "IMEI: "+imei);
 
-        //Init PushMsgManager
-        pushMsgManager = new PushMsgManager(getApplicationContext(), UrlManager.getMsgPushUrl());
-        PushMsgReceiver.setMsgListener(mMsgListener);
-        try {
-            pushMsgManager.registerPush(
-                    UrlManager.getRegMsgPushUrl(),// Web address
-                    "046e2930-7cc2-4398-9b1c-65852317de29",// client_id
-                    "6668b6a3-8486-4165-a418-374194ad47d3");// client_secret
-            pushMsgManager.addFullTopicToLists(imei,PushMsgManager.CommCodeType.NET_GetAliase);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
+                //Init PushMsgManager
+                PushMsgReceiver.setMsgListener(mMsgListener);
+                try {
+                    pushMsgManager = new PushMsgManager.Builder(getApplicationContext(), UrlManager.getMsgPushUrl())
+                            .setRegServerUrl(UrlManager.getRegMsgPushUrl())
+                            .setClientIdAndKey("046e2930-7cc2-4398-9b1c-65852317de29",
+                                    "6668b6a3-8486-4165-a418-374194ad47d3")
+                            .buildAndRun();
+                    pushMsgManager.addFullTopicToLists(imei,PushMsgManager.CommCodeType.NET_GetAliase);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                /*pushMsgManager = new PushMsgManager(getApplicationContext(), UrlManager.getMsgPushUrl());
+                try {
+                    pushMsgManager.registerPush(
+                            UrlManager.getRegMsgPushUrl(),// Web address
+                            "046e2930-7cc2-4398-9b1c-65852317de29",// client_id
+                            "6668b6a3-8486-4165-a418-374194ad47d3");// client_secret
+                    pushMsgManager.addFullTopicToLists(imei,PushMsgManager.CommCodeType.NET_GetAliase);
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+                Looper.loop();
+            }
+        }).start();
     }
 
 
@@ -492,22 +508,7 @@ public class MDMService extends Service implements ControllerListener {
                     alertDialog.show();
                     break;
                 case CmdCode.FORBIDDEN_DEVICE:
-                    exitApplication();
-                    /*builder = new AlertDialog.Builder(mContext);
-                    builder.setTitle("消息提醒");
-                    builder.setMessage("该设备已被禁用");
-
-                    builder.setPositiveButton("确定", new OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            exitApplication();
-                        }
-                    });
-                    alertDialog = builder.create();
-                    alertDialog.getWindow().setType(
-                            (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
-                    alertDialog.show();*/
-
+                    startActivity(EmmClientApplication.getExitApplicationIntent());
                 default:
                     break;
             }
@@ -771,7 +772,7 @@ public class MDMService extends Service implements ControllerListener {
                     case BusinessType_startForwarding:
                         if (data1 != null) {
                             HashMap<Integer, String> map = (HashMap<Integer, String>) data1;
-                            forward.addMapping(map);
+                            //forward.addMapping(map);
                             return;
                         }
                         break;
@@ -843,14 +844,6 @@ public class MDMService extends Service implements ControllerListener {
         int unreadCount = PrefUtils.getMsgUnReadCount();
         PrefUtils.putMsgMaxId(mId);
         PrefUtils.putMsgUnReadCount(unreadCount+1);
-    }
-
-    public void exitApplication(){
-        EmmClientApplication.mCheckAccount.clearCurrentAccount();
-        Intent intent = new Intent(mContext, UserLoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 
 }
