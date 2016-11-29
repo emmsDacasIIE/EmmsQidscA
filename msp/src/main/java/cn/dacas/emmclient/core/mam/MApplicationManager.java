@@ -290,8 +290,8 @@ public class MApplicationManager {
 				AppInfo appInfo = allPackages.get(idx);
 				JSONObject app = new JSONObject();
 				try {
-					app.put("N", appInfo.getAppLabel()); // String
-					app.put("I", appInfo.getAppUid()); // int
+					app.put("N", appInfo.getAppLabel()); // String name
+					app.put("I", appInfo.getPackageName()); // String
 					app.put("V", appInfo.getVersion()); // String
 					app.put("AS", appInfo.getCodesize()); // long
 					app.put("DS", appInfo.getDatasize()); // long

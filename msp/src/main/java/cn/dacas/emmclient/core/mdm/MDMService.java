@@ -169,7 +169,7 @@ public class MDMService extends Service implements ControllerListener {
 
     private void startTransaction(final String owner) {
         //if (MDMService.this.owner!=null) return;
-        Log.d("MDMService", "start transaction");
+        QDLog.d("MDMService", "start transaction");
         updateDeviceInfo();
         //uploadLocation();
         MDMService.this.owner = owner;
@@ -193,10 +193,10 @@ public class MDMService extends Service implements ControllerListener {
                 if(ActivateDevice.online || mMsgListener.isWorking())
                     return;
                 String ip = AddressManager.getAddrMsg();
-                Log.d("MDMService", "MsgPush reg to " + ip);
+                QDLog.d("MDMService", "MsgPush reg to " + ip);
                 QDLog.writeMsgPushLog("try to connect to" + ip);
                 String imei = PhoneInfoExtractor.getIMEI(mContext);
-                Log.d(TAG, "IMEI: "+imei);
+                QDLog.d(TAG, "IMEI: "+imei);
 
                 //Init PushMsgManager
                 PushMsgReceiver.setMsgListener(mMsgListener);

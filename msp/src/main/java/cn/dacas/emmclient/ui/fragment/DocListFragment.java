@@ -1040,9 +1040,9 @@ public class DocListFragment extends BaseFragment implements ControllerListener,
                         refreshableView.onRefreshComplete();
 //                        morePrg.setVisibility(View.GONE);
 //                        // GetMyFish();
-                        Log.i(TAG, "URL+刷新==================");
-                        Log.i(TAG, "URL+刷新==================");
-                        Log.i(TAG, "URL+刷新==================");
+                        QDLog.i(TAG, "URL+刷新==================");
+                        QDLog.i(TAG, "URL+刷新==================");
+                        QDLog.i(TAG, "URL+刷新==================");
                         // adapter = new NewsAdapter(MyFishListFA.this,
                         // list);
                         // newsListView.setAdapter(adapter);
@@ -1072,7 +1072,7 @@ public class DocListFragment extends BaseFragment implements ControllerListener,
                 .setOnLastItemVisibleListener(new PullToRefreshBase.OnLastItemVisibleListener() {
                     @Override
                     public void onLastItemVisible() {
-                        Log.i(TAG, "setOnLastItemVisibleListener==xxxxx======");
+                        QDLog.i(TAG, "setOnLastItemVisibleListener==xxxxx======");
                         Toast.makeText(mContext, "下拉刷新！", Toast.LENGTH_SHORT).show();
 //                        if (pageIndex <= modelTotalPage) {
 //                            morePrg.setVisibility(View.VISIBLE);

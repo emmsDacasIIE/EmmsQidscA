@@ -70,7 +70,6 @@ public class GestureLockActivity  extends Activity implements LocusPassWordView.
 
 	@Override
 	public void onComplete(String mPassword) {
-		// TODO Auto-generated method stub
 		setPwdCount++;
 		if (setPwdCount == 1) {
 			leftButton.setVisibility(View.VISIBLE);

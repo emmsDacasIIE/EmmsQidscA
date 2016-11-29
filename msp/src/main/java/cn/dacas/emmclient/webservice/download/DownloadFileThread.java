@@ -19,6 +19,7 @@ import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.manager.UrlManager;
 import cn.dacas.emmclient.security.ssl.IgnoreCertTrustManager;
 import cn.dacas.emmclient.util.PrefUtils;
+import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.webservice.qdvolley.UpdateTokenRequest;
 import cn.qdsc.mspsdk.QdSecureContainer;
 
@@ -105,7 +106,7 @@ public class DownloadFileThread extends Thread {
             //conn.setRequestProperty("Range", String.valueOf(range));
             conn.connect();
             // 获取文件大小
-            Log.e(TAG, "Status: "+conn.getResponseCode());
+            QDLog.e(TAG, "Status: "+conn.getResponseCode());
             int length = conn.getContentLength();
 
 //            if (length>0) {

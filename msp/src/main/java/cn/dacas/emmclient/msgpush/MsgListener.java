@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -70,129 +69,8 @@ public class MsgListener {
         this.ctxt = context;
     }
 
-    /* @Deprecated
-    public void dealMessage(String message) throws JSONException {
-        JSONTokener jsonParser = new JSONTokener(message);
-        JSONObject jsonObject = (JSONObject) jsonParser.nextValue();
-        String code = jsonObject.getString("command");
-
-        int reqCode = Integer.parseInt(code);
-        int ret;
-
-        switch (reqCode) {
-            case MDMService.CmdCode.NEW_COMMANDS:
-                getCommands();
-                break;
-            case MDMService.CmdCode.OP_PUSH_MSG:
-                getMessages();
-                break;
-            case MDMService.CmdCode.OP_SET_MUTE:
-                String stateMute = jsonObject.getString("state");
-                if (stateMute.equals("true")) {
-                    DeviceAdminWorker.getDeviceAdminWorker(ctxt).setMute(true);
-                } else {
-                    DeviceAdminWorker.getDeviceAdminWorker(ctxt).setMute(false);
-                }
-                EmmClientApplication.mDatabaseEngine.setMute(MDMService.CmdCode.OP_SET_MUTE);
-                notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case MDMService.CmdCode.OP_LOCK_KEY:
-                String passwdLock = jsonObject.getString("passwd");
-                ret = DeviceAdminWorker.getDeviceAdminWorker(ctxt).resetPasswd(passwdLock);
-                DeviceAdminWorker.getDeviceAdminWorker(ctxt).lockNow();
-                EmmClientApplication.mDatabaseEngine.setLockScreenCode(ret, MDMService.CmdCode.OP_LOCK_KEY);
-                notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case MDMService.CmdCode.OP_LOCK:
-                DeviceAdminWorker.getDeviceAdminWorker(ctxt).lockNow();
-                break;
-            case MDMService.CmdCode.OP_FACTORY:
-                if (hdler != null) {
-                    String option = jsonObject.getString("option");
-
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 = MDMService.CmdCode.FACTORY;
-                    handlerMsg.arg2 = option.equals("enforce") ?  MDMService.CmdCode.ENFORCE :  MDMService.CmdCode.WARN;
-                    hdler.sendMessage(handlerMsg);
-                    EmmClientApplication.mDatabaseEngine.reFactory(MDMService.CmdCode.OP_FACTORY);
-
-                }
-//                    notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case MDMService.CmdCode.OP_ERASE_CORP:
-                if (hdler != null) {
-                    String option = jsonObject.getString("option");
-
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 = MDMService.CmdCode.ERASE_CORP;
-                    handlerMsg.arg2 = option.equals("enforce") ?  MDMService.CmdCode.ENFORCE :  MDMService.CmdCode.WARN;
-                    hdler.sendMessage(handlerMsg);
-                    EmmClientApplication.mDatabaseEngine.eraseCorp(MDMService.CmdCode.OP_ERASE_CORP);
-                }
-                notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case  MDMService.CmdCode.OP_ERASE_ALL:
-                if (hdler != null) {
-                    String option = jsonObject.getString("option");
-
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 =  MDMService.CmdCode.ERASE_ALL;
-                    handlerMsg.arg2 = option.equals("enforce") ?  MDMService.CmdCode.ENFORCE : MDMService.CmdCode. WARN;
-                    hdler.sendMessage(handlerMsg);
-                    EmmClientApplication.mDatabaseEngine.eraseDeviceAllData( MDMService.CmdCode.OP_ERASE_ALL);
-                }
-//                    notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case  MDMService.CmdCode.OP_REFRESH:
-                if (hdler != null) {
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 =  MDMService.CmdCode.REFRESH_ALL;
-                    hdler.sendMessage(handlerMsg);
-                }
-                EmmClientApplication.mDatabaseEngine.refreshDevice( MDMService.CmdCode.OP_REFRESH);
-//                    notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case  MDMService.CmdCode.OP_POLICY1:
-            case  MDMService.CmdCode.OP_INSTALL_POLICY2:
-                Log.d("POLICY", "Receive new policy notification");
-                EmmClientApplication.mDatabaseEngine.pushPolicy( MDMService.CmdCode.OP_POLICY1);
-
-                PolicyManager.getMPolicyManager(ctxt).updatePolicy();
-                notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-
-            case  MDMService.CmdCode.AUTH_STATE_CHANGE:
-                if (hdler != null) {
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 =  MDMService.CmdCode.AUTH_STATE_CHANGE;
-                    hdler.sendMessage(handlerMsg);
-                }
-                EmmClientApplication.mDatabaseEngine.changeDeviceState( MDMService.CmdCode.AUTH_STATE_CHANGE);
-                notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case  MDMService.CmdCode.DELETE_DEVICE:
-                if (hdler != null) {
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 =  MDMService.CmdCode.DELETE_DEVICE;
-                    hdler.sendMessage(handlerMsg);
-                }
-                EmmClientApplication.mDatabaseEngine.deleteDeviceFromService( MDMService.CmdCode.DELETE_DEVICE);
-                notifyDataChange(BroadCastDef.OP_LOG);
-                break;
-            case  MDMService.CmdCode.OP_CHANGE_DEVICE_TYPE:
-                if (hdler != null) {
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 =  MDMService.CmdCode.DEVICE_INFO_CHANGE;
-                    hdler.sendMessage(handlerMsg);
-                }
-            default:
-                break;
-        }
-    }*/
-
     public void dealMessage(CommandModel commandModel) throws JSONException {
         int reqCode =  commandModel.getCmdCode();
-        JSONObject jsonObject = new JSONObject();
         boolean nowSendStatus = true;
 
         int ret;
@@ -205,7 +83,7 @@ public class MsgListener {
                 getMessages();
                 break;
             case MDMService.CmdCode.OP_SET_MUTE:
-                String stateMute = jsonObject.getString("state");
+                String stateMute = commandModel.getCommandMap().get("state");
                 if (stateMute.equals("true")) {
                     DeviceAdminWorker.getDeviceAdminWorker(ctxt).setMute(true);
                 } else {
@@ -284,7 +162,7 @@ public class MsgListener {
                 break;
             case MDMService.CmdCode.OP_POLICY1:
             case MDMService.CmdCode.OP_INSTALL_POLICY2:
-                Log.d("POLICY", "Receive new policy notification");
+                QDLog.d("POLICY", "Receive new policy notification");
                 EmmClientApplication.mDatabaseEngine.pushPolicy(MDMService.CmdCode.OP_POLICY1);
                 String payload = commandModel.getCommandMap().get("payload");
                 JSONObject policyJson = new JSONObject(payload);
@@ -294,7 +172,7 @@ public class MsgListener {
             case MDMService.CmdCode.OP_REMOVE_PROFILE:
                 EmmClientApplication.mDatabaseEngine.removePolicy(MDMService.CmdCode.OP_REMOVE_PROFILE);
                 String id = commandModel.getCommandMap().get("identifier");
-                Log.d("POLICY", "Remove policy: "+ id +", and reset to be the Default one.");
+                QDLog.d("POLICY", "Remove policy: "+ id +", and reset to be the Default one.");
                 PolicyManager.getMPolicyManager(ctxt).resetPolicy();
                 notifyDataChange(BroadCastDef.OP_LOG);
                 break;
@@ -353,7 +231,6 @@ public class MsgListener {
         final int maxId= PrefUtils.getMsgMaxId();
         mcmController.FetchMessageList(maxId);
         PrefUtils.addSecurityRecord("加密一条消息");
-
     }
 
     private void getCommands() {

@@ -461,7 +461,7 @@ public class MyInformationActivity extends BaseSlidingFragmentActivity {
 
         if (requestCode == QdCamera.Take_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == ((Activity) mContext).RESULT_OK) {
-                Log.e(TAG, "获取图片成功，path=" + mQdCamera.oldPicFileFullName);
+                QDLog.e(TAG, "获取图片成功，path=" + mQdCamera.oldPicFileFullName);
                 //保存
                 //File file1 = new File(QdCamera.oldPicFileFullName);
                 //File file2 = new File("new_" + QdCamera.oldPicFileFullName );
@@ -472,7 +472,7 @@ public class MyInformationActivity extends BaseSlidingFragmentActivity {
 //                finish();
             } else {
                 // 图像捕获失败，提示用户
-                Log.i(TAG, "拍照失败， take fail");
+                QDLog.i(TAG, "拍照失败， take fail");
                 Toast.makeText(mContext, "拍照失败!", Toast.LENGTH_SHORT).show();
 //                finish();
             }
@@ -535,11 +535,11 @@ public class MyInformationActivity extends BaseSlidingFragmentActivity {
                 }
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                Log.e(TAG, "放弃拍照！");
+                QDLog.e(TAG, "放弃拍照！");
                 Toast.makeText(mContext, "放弃拍照！", Toast.LENGTH_SHORT).show();
 //                finish();
             } else {
-                Log.e(TAG, "拍照失败， cut fail");
+                QDLog.e(TAG, "拍照失败， cut fail");
                 Toast.makeText(mContext, "拍照失败!", Toast.LENGTH_SHORT).show();
 //                finish();
             }

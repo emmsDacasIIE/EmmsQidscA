@@ -2,13 +2,14 @@ package cn.dacas.emmclient.core.mcm;
 
 import android.os.Environment;
 import android.os.FileObserver;
-import android.util.Log;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import cn.dacas.emmclient.util.QDLog;
 
 public class SDCardFileObserver extends FileObserver {
 	private Timer mTimer;
@@ -32,10 +33,10 @@ public class SDCardFileObserver extends FileObserver {
         final int action = event & FileObserver.ALL_EVENTS;  
         switch (action) {  
         case FileObserver.OPEN:
-        	Log.d("FileObserver","file open; path="+path); 
+        	QDLog.d("FileObserver","file open; path="+path);
         	break;
         case FileObserver.CLOSE_NOWRITE:
-        	Log.d("FileObserver","file close; path: " + path); 
+        	QDLog.d("FileObserver","file close; path: " + path);
         	if (tasks.containsKey(path)) {
         		DeleteFileTimerTask task=tasks.get(path);
         		if (task.cancel()) {
@@ -70,7 +71,7 @@ public class SDCardFileObserver extends FileObserver {
 			String tpath = sdpath + "tmp/" + path;
 			File f = new File(tpath);
 			if (f.exists() && f.isFile()) {
-				Log.d("FileObserver", "delete tmp file " + path);
+				QDLog.d("FileObserver", "delete tmp file " + path);
 				f.delete();
 			}
 			tasks.remove(path);

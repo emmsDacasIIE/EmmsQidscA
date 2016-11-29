@@ -233,7 +233,7 @@ public class EmmClientApplication extends Application {
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)) {
 				String packName = intent.getDataString().substring(8);
-				Log.e(intent.getDataString() + "====", packName);
+				QDLog.e(intent.getDataString() + "====", packName);
 				// packName为所安装的程序的包名
 				packagNameList.add(packName.toLowerCase());
 

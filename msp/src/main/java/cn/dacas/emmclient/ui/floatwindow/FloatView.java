@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.ui.activity.mainframe.NewMainActivity;
+import cn.dacas.emmclient.util.QDLog;
 
 /**
  * Created by lenovo on 2015-12-28.
@@ -69,7 +70,7 @@ public class FloatView extends RelativeLayout {
                 // 获取相对屏幕的坐标，即以屏幕左上角为原点
                 x = event.getRawX();
                 y = event.getRawY() - statusBarHeight; // statusBarHeight是系统状态栏的高度
-                Log.i("tag", "currX" + x + "====currY" + y);
+                QDLog.i("tag", "currX" + x + "====currY" + y);
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: // 捕获手指触摸按下动作
                         // 获取相对View的坐标，即以此View左上角为原点
@@ -77,7 +78,7 @@ public class FloatView extends RelativeLayout {
                         mTouchY = event.getY();
                         mStartX = x;
                         mStartY = y;
-                        Log.i("tag", "startX" + mTouchX + "====startY"
+                        QDLog.i("tag", "startX" + mTouchX + "====startY"
                                 + mTouchY);
                         break;
 

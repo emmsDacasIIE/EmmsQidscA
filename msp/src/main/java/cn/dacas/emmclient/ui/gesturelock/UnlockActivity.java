@@ -11,6 +11,7 @@ import com.umeng.analytics.MobclickAgent;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.manager.ActivityManager;
 
 public class UnlockActivity extends Activity implements LocusPassWordView.OnCompleteListener {
 	private String userAccount;
@@ -37,7 +38,8 @@ public class UnlockActivity extends Activity implements LocusPassWordView.OnComp
 		mPwdView.setOnCompleteListener(this);
 
 		userAccount = EmmClientApplication.mCheckAccount.getCurrentAccount();
-        type=getIntent().getIntExtra("type",0);
+		//0：解锁 1：设置
+		type=getIntent().getIntExtra("type",0);
 		if (type==0) {
 			unlockTitle.setText("请解锁");
 		}
@@ -73,13 +75,14 @@ public class UnlockActivity extends Activity implements LocusPassWordView.OnComp
 	 */
 	@Override
 	public void onComplete(String password) {
-		// TODO Auto-generated method stub
 
 		if (password.equals(EmmClientApplication.mDatabaseEngine.getPatternPassword(userAccount))) {
             if (type==1) {
                 Intent intent = new Intent(UnlockActivity.this, GestureLockActivity.class);
                 startActivity(intent);
             }
+			if(ActivityManager.isLocking)
+				ActivityManager.isLocking = false;
 			finish();
 		} else {
 			mPwdView.error();

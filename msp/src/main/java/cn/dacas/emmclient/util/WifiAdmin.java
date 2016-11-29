@@ -24,7 +24,7 @@ public class WifiAdmin {
 
 	public boolean openWifi() {//打开wifi
 		if (!mWifiManager.isWifiEnabled()) {
-			Log.i(TAG, "setWifiEnabled.....");
+			QDLog.i(TAG, "setWifiEnabled.....");
 			mWifiManager.setWifiEnabled(true);
 			try {
 				Thread.sleep(1000);
@@ -32,7 +32,7 @@ public class WifiAdmin {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Log.i(TAG, "setWifiEnabled.....end");
+			QDLog.i(TAG, "setWifiEnabled.....end");
 		}
 		return mWifiManager.isWifiEnabled();
 	}
@@ -74,19 +74,19 @@ public class WifiAdmin {
 
 	public void startScan() {//wifi扫描
 		boolean scan = mWifiManager.startScan();
-		Log.i(TAG, "startScan result:" + scan);
+		QDLog.i(TAG, "startScan result:" + scan);
 		mWifiList = mWifiManager.getScanResults();
 		mWifiConfiguration = mWifiManager.getConfiguredNetworks();
 
 		if (mWifiList != null) {
-			Log.i(TAG, "startScan result:" + mWifiList.size());
+			QDLog.i(TAG, "startScan result:" + mWifiList.size());
 			for (int i = 0; i < mWifiList.size(); i++) {
 				ScanResult result = mWifiList.get(i);
-				Log.i(TAG, "startScan result[" + i + "]" + result.SSID + "," + result.BSSID);
+				QDLog.i(TAG, "startScan result[" + i + "]" + result.SSID + "," + result.BSSID);
 			}
-			Log.i(TAG, "startScan result end.");
+			QDLog.i(TAG, "startScan result end.");
 		} else {
-			Log.i(TAG, "startScan result is null.");
+			QDLog.i(TAG, "startScan result is null.");
 		}
 
 	}
@@ -145,7 +145,7 @@ public class WifiAdmin {
 	}
 
 	public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type) {
-		Log.i(TAG, "SSID:" + SSID + ",password:" + Password);
+		QDLog.i(TAG, "SSID:" + SSID + ",password:" + Password);
 		WifiConfiguration config = new WifiConfiguration();
 		config.allowedAuthAlgorithms.clear();
 		config.allowedGroupCiphers.clear();
@@ -159,19 +159,19 @@ public class WifiAdmin {
 		if (tempConfig != null) {
 			mWifiManager.removeNetwork(tempConfig.networkId);
 		} else {
-			Log.i(TAG, "IsExsits is null.");
+			QDLog.i(TAG, "IsExsits is null.");
 		}
 
 		if (Type == 1) // WIFICIPHER_NOPASS
 		{
-			Log.i(TAG, "Type =1.");
+			QDLog.i(TAG, "Type =1.");
 			config.wepKeys[0] = "";
 			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 			config.wepTxKeyIndex = 0;
 		}
 		if (Type == 2) // WIFICIPHER_WEP
 		{
-			Log.i(TAG, "Type =2.");
+			QDLog.i(TAG, "Type =2.");
 			config.hiddenSSID = true;
 			config.wepKeys[0] = "\"" + Password + "\"";
 			config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
@@ -185,7 +185,7 @@ public class WifiAdmin {
 		if (Type == 3) // WIFICIPHER_WPA
 		{
 
-			Log.i(TAG, "Type =3.");
+			QDLog.i(TAG, "Type =3.");
 			config.preSharedKey = "\"" + Password + "\"";
 
 			config.hiddenSSID = true;

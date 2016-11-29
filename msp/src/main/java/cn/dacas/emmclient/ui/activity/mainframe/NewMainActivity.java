@@ -1,5 +1,6 @@
 package cn.dacas.emmclient.ui.activity.mainframe;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -609,4 +610,11 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         }
     }
 
+    static public Intent getMainActivityIntent(Context context){
+        Intent intent = new Intent(context, NewMainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return intent;
+    }
 }

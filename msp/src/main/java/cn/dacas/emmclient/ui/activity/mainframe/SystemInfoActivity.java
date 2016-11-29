@@ -33,8 +33,10 @@ public class SystemInfoActivity extends BaseSlidingFragmentActivity {
         String mac= PhoneInfoExtractor.getPhoneInfoExtractor(mContext).getMacAddress();
 
         text_info_mac.setText(mac);
-        text_device_name.setText(EmmClientApplication.mDeviceModel.getName());
-        text_device_type.setText(EmmClientApplication.mDeviceModel.getType());
+        if(EmmClientApplication.mDeviceModel!=null) {
+            text_device_name.setText(EmmClientApplication.mDeviceModel.getName());
+            text_device_type.setText(EmmClientApplication.mDeviceModel.getType());
+        }
 
     }
 

@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.manager.ActivityManager;
 import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.DeviceModel;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
@@ -332,6 +333,8 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    if(ActivityManager.isLocking)
+                        ActivityManager.isLocking = false;
                     startActivity(intent);
                     finish();
                 }

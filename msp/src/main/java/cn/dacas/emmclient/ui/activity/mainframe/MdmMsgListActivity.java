@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.dacas.emmclient.manager.ActivityManager;
 import cn.dacas.pushmessagesdk.PushMsgManager;
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.event.MessageEvent;
@@ -106,13 +107,15 @@ public class MdmMsgListActivity extends BaseSlidingFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        if(ActivityManager.isLocking)
+            ActivityManager.gotoUnlockActivity();
     }
 
     @Override
     public void onBackPressed() {
-        if(getIntent().getBooleanExtra("FromMsg",false))
-            startActivity(new Intent(this,NewMainActivity.class));
+        if(getIntent().getBooleanExtra("FromMsg",false)) {
+            startActivity(NewMainActivity.getMainActivityIntent(this));
+        }
         else
             super.onBackPressed();
     }
