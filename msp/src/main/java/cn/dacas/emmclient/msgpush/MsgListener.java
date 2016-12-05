@@ -302,6 +302,7 @@ public class MsgListener {
      * if status = NotNow
      */
     public void sendStatusToServer(final String status, final String cmdUUID, final Map<String,JSONObject> params) {
+        QDLog.d(CommandModel.TAG,status+":"+cmdUUID);
         Response.Listener<JSONObject> rspListener = null;
         Response.ErrorListener errorListener = null;
         //1. sent the result of cmd (cmdUUID != ""), and then not deal with any response;
@@ -312,6 +313,7 @@ public class MsgListener {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
+                        QDLog.d(CommandModel.TAG,response.toString());
                         commandModel = new CommandModel(response);
                         dealMessage(commandModel);
                     } catch (Exception e) {

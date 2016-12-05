@@ -307,9 +307,12 @@ public class PolicyManager {
             return curPolicy;
         }
         try {
-            policy.setType("Organization");
-            policy.setEffectTimeStart(jPolicy.getString("effectTimeStart"));
-            policy.setEffectTimeEnd(jPolicy.getString("effectTimeEnd"));
+            if(jPolicy.has("Organization"))
+                policy.setType("Organization");
+            if(jPolicy.has("effectTimeStart"))
+                policy.setEffectTimeStart(jPolicy.getString("effectTimeStart"));
+            if(jPolicy.has("effectTimeEnd"))
+                policy.setEffectTimeEnd(jPolicy.getString("effectTimeEnd"));
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

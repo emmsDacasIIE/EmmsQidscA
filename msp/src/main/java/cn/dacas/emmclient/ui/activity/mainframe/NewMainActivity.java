@@ -159,8 +159,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
     @Override
     public void onStop() {
-        super.onStop();
         saveAppList();
+        super.onStop();
     }
 
     private void showApppList() {

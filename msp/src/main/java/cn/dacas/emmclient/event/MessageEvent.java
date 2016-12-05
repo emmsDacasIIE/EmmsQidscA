@@ -14,6 +14,8 @@ public class MessageEvent {
 	public static final int Event_Bluetooth_State_Changed=0x0401;
 	public static final int Event_Network_State_Changed=0x0402;
 
+	public static final int Event_FILEOPEN_FAILED=0x0501;
+
 	// 0x0101-0x01FF for MDMService
 	public int type;
 	public Bundle params;

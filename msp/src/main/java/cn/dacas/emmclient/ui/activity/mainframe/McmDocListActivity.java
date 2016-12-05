@@ -39,6 +39,7 @@ import cn.dacas.emmclient.controller.ControllerListener;
 import cn.dacas.emmclient.controller.McmController;
 import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.core.mcm.FileOpener;
+import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.McmDocInfoModel;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
@@ -57,6 +58,10 @@ import cn.dacas.emmclient.webservice.download.DownLoadFileFromUrl;
 import cn.dacas.emmclient.webservice.download.DownloadDataInfo;
 import cn.dacas.emmclient.webservice.download.DownloadFileThread;
 import cn.dacas.emmclient.webservice.download.MyDownloadListener;
+import de.greenrobot.event.EventBus;
+
+import static com.baidu.location.h.i.T;
+import static com.baidu.location.h.i.V;
 
 //import android.widget.RelativeLayout;
 
@@ -188,7 +193,15 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
 
         refreshHandler.sendMessage(Message.obtain());
+        EventBus.getDefault().register(this);
+    }
 
+    public void onEventMainThread(MessageEvent event) {
+        if (event.type == MessageEvent.Event_FILEOPEN_FAILED){
+            Toast.makeText(this,
+                    "无法打开该文件，文件损坏或是文件类型不支持",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -200,6 +213,12 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
         QDLog.i(TAG, "onPause===============================1112======");
 
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     private Handler refreshHandler = new Handler() {
@@ -1158,7 +1177,7 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
                 try {
                     EmmClientApplication.mSecureContainer.delete(docsArrayList.get(pos).fileName);
-                    docsArrayList.remove(pos);
+                    //docsArrayList.remove(pos);
                     mSearchAdapter.notifyDataSetChanged();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();

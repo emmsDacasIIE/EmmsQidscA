@@ -21,6 +21,7 @@ import android.view.WindowManager;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -62,6 +63,8 @@ import cn.dacas.emmclient.webservice.qdvolley.MyJsonObjectRequest;
 import cn.dacas.emmclient.webservice.qdvolley.UpdateTokenRequest;
 
 import de.greenrobot.event.EventBus;
+
+import static com.baidu.location.h.i.M;
 
 /**
  * 设备管理服务
@@ -170,12 +173,12 @@ public class MDMService extends Service implements ControllerListener {
     private void startTransaction(final String owner) {
         //if (MDMService.this.owner!=null) return;
         QDLog.d("MDMService", "start transaction");
-        updateDeviceInfo();
+        //updateDeviceInfo();
         //uploadLocation();
         MDMService.this.owner = owner;
         //Looper.prepare();
         startMsgPush();
-        //Looper.loop();
+
         // 1）每次注册成功，都向服务器询问当前策略
         // 2）在运行期间的策略更新依赖于“消息通知”
         PolicyManager.getMPolicyManager(mContext).updatePolicy();
@@ -210,16 +213,6 @@ public class MDMService extends Service implements ControllerListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                /*pushMsgManager = new PushMsgManager(getApplicationContext(), UrlManager.getMsgPushUrl());
-                try {
-                    pushMsgManager.registerPush(
-                            UrlManager.getRegMsgPushUrl(),// Web address
-                            "046e2930-7cc2-4398-9b1c-65852317de29",// client_id
-                            "6668b6a3-8486-4165-a418-374194ad47d3");// client_secret
-                    pushMsgManager.addFullTopicToLists(imei,PushMsgManager.CommCodeType.NET_GetAliase);
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }*/
                 Looper.loop();
             }
         }).start();
@@ -473,9 +466,9 @@ public class MDMService extends Service implements ControllerListener {
                     break;
                 case CmdCode.REFRESH_ALL:
                     String uuid = (String) msg.obj;
-                    HashMap<String,JSONObject> map = new HashMap<>();
-                    map.put("query_responses",getDeviceInfoDetail());
-                    mMsgListener.sendStatusToServer("Acknowledged",uuid,map);
+                    HashMap<String, JSONObject> map = new HashMap<>();
+                    map.put("query_responses", getDeviceInfoDetail());
+                    mMsgListener.sendStatusToServer("Acknowledged", uuid, map);
                     break;
                 case CmdCode.AUTH_STATE_CHANGE:
 //                    DisableTask dt1 = new DisableTask(MDMService.this);
@@ -606,16 +599,41 @@ public class MDMService extends Service implements ControllerListener {
             jsonObject.put("policyCompletionStatus", "完成");
             jsonObject.put("strategyReleasedVersion", "1.0");
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+    static public void updatePrivacySetting(final Boolean isChecked) {
+        MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT,
+                "/client/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "/privacy",
+                UpdateTokenRequest.TokenType.DEVICE, null, null) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=UTF-8");
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("network_show",isChecked);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return jsonObject.toString().getBytes();
+            }
+        };
+        EmmClientApplication.mVolleyQueue.add(request);
     }
 
     /**
      * 上传设备基本信息
      */
     private void updateDeviceInfo() {
+        updatePrivacySetting(PrefUtils.getNetPrivacy());
         MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT, "/client/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "/infos",
                 UpdateTokenRequest.TokenType.DEVICE, null, null) {
             @Override
@@ -723,7 +741,6 @@ public class MDMService extends Service implements ControllerListener {
 
     @Override
     public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
         return myBinder;
     }
 

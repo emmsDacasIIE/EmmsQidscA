@@ -245,6 +245,7 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
+                        //TODO How it works!
                         JSONObject message_broker = response.getJSONObject("message_broker");
                         JSONObject secure_access = response.getJSONObject("secure_access");
                         JSONObject android_app = response.getJSONObject("android_app");
@@ -328,15 +329,18 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                     startActivity(intent);
                     finish();
                 } else {
-                    //goto NewMainActivity
-                    Intent intent = new Intent(mContext, NewMainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    if(ActivityManager.isLocking)
+                    if(ActivityManager.isLocking) {
                         ActivityManager.isLocking = false;
-                    startActivity(intent);
-                    finish();
+                        finish();
+                    }else {
+                        //goto NewMainActivity
+                        Intent intent = new Intent(mContext, NewMainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
             }
         }, new Response.ErrorListener() {

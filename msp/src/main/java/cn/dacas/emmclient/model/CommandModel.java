@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import cn.dacas.emmclient.core.mdm.MDMService;
+import cn.dacas.emmclient.util.QDLog;
 
 /**Command Model
  * Created by Sun Rx on 2016-10-25.
@@ -41,6 +42,7 @@ public class CommandModel {
     private String commandUUIDTag = "command_uuid";
     private String commandTag = "command";
     private String requestTypeTag = "request_type";
+    final static public String TAG="MDMCOMMD";
 
     public CommandModel(String cmdString) throws JSONException {
         JSONObject jsonObject = new JSONObject(cmdString);
@@ -57,6 +59,7 @@ public class CommandModel {
     }
 
     public CommandModel(JSONObject jsonObject) throws JSONException {
+        QDLog.d(TAG,jsonObject.toString());
         commandUUID = jsonObject.getString(commandUUIDTag);
         String cmdMapString = jsonObject.getString(commandTag);
         if(!cmdMapString.equals("")) {

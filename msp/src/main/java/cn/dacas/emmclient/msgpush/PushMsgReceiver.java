@@ -5,11 +5,15 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.core.mam.MApplicationManager;
 import cn.dacas.pushmessagesdk.BaseMessageReceiver;
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.mdm.MDMService;
 import cn.dacas.emmclient.ui.activity.mainframe.MdmMsgListActivity;
 import cn.dacas.emmclient.util.PhoneInfoExtractor;
+
+import static com.baidu.location.h.i.M;
 
 /**
  * Created by Sun RX on 2016-10-13.
@@ -66,6 +70,8 @@ public class PushMsgReceiver extends BaseMessageReceiver{
 
     @Override
     protected void onNotificationArrived(Context context, String msg) {
+        if(!EmmClientApplication.mDeviceModel.isStatus())
+            return;
         super.onNotificationArrived(context,msg);
         if(msgListener!=null)
             msgListener.getMessages();

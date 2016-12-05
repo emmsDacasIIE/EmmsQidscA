@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-
 import java.util.List;
 
 import cn.dacas.emmclient.R;
@@ -13,6 +12,8 @@ import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.ui.activity.base.BaseListActivity;
 import cn.dacas.emmclient.ui.qdlayout.ListItemData;
 import cn.dacas.emmclient.util.PrefUtils;
+
+import static cn.dacas.emmclient.core.mdm.MDMService.updatePrivacySetting;
 
 /**
  * 隐私设置
@@ -68,7 +69,6 @@ public class MyPrivacySettingsActivity extends BaseListActivity {
 
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
     }
 
@@ -145,6 +145,7 @@ public class MyPrivacySettingsActivity extends BaseListActivity {
                     break;
                 case 3:
                     PrefUtils.putNetPrivacy(isChecked);
+                    updatePrivacySetting(isChecked);
                     break;
                 case 4:
                     PrefUtils.putAppPrivacy(isChecked);
@@ -200,7 +201,6 @@ public class MyPrivacySettingsActivity extends BaseListActivity {
             return view;
         }
     }
-
 
 
 }
