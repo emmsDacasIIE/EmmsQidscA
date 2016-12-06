@@ -116,6 +116,10 @@ public class DeviceAdminWorker {
 	}
 
 
+	/**
+	 * 得到数据连接状态
+	 * @return
+     */
 	public int getDataConnection() {
 		TelephonyManager telephonyManager = (TelephonyManager) mContext
 				.getSystemService(Context.TELEPHONY_SERVICE);
@@ -129,7 +133,6 @@ public class DeviceAdminWorker {
 		Class<?> cmClass = connManager.getClass();
 		Class<?>[] argClasses = new Class[1];
 		argClasses[0] = boolean.class;
-
 		// 反射ConnectivityManager中hide的方法setMobileDataEnabled，可以开启和关闭GPRS网络
 		Method method;
 		try {

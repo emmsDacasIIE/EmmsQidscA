@@ -163,17 +163,9 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
 
     ////////////////自定义函数////////////
     private void initMyView() {
-
-//        mLeftHeaderView.setTextVisibile(false);
-//        mLeftHeaderView.setImageVisibile(true);
-        mLeftHeaderView.setImageView(R.mipmap.msp_titlebar_leftarrow_icon);
-
+        mLeftHeaderView.setImageView(R.mipmap.back_advanced);
         mMiddleHeaderView.setText(mContext.getString(R.string.app_detail_title));
-//        mMiddleHeaderView.setTextVisibile(true);
         mMiddleHeaderView.setImageVisibile(false);
-
-//        mRightHeaderView.setTextVisibile(false);
-//        mRightHeaderView.setImageVisibile(false);
 
         mImageView = (ImageView)findViewById(R.id.imageview_left);
 

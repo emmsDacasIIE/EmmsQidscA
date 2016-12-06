@@ -282,5 +282,11 @@
     </LinearLayout>
 
     <!-- BOTTOM -->
-
+    <LinearLayout
+        android:id="@+id/llyt_dots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_above="@id/bottomLayout"/>
 </RelativeLayout>

@@ -142,42 +142,36 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
 //		System.out.println("OneFragment  onPause");
-        // TODO Auto-generated method stub
         super.onPause();
     }
 
     @Override
     public void onResume() {
 //		System.out.println("OneFragment  onResume");
-        // TODO Auto-generated method stub
         super.onResume();
     }
 
     @Override
     public void onDestroy() {
 //		System.out.println("OneFragment  onDestroy");
-        // TODO Auto-generated method stub
         super.onDestroy();
     }
 
     @Override
     public void onDestroyView() {
 //		System.out.println("OneFragment  onDestroyView");
-        // TODO Auto-generated method stub
         super.onDestroyView();
     }
 
     @Override
     public void onStop() {
 //		System.out.println("OneFragment  onStop");
-        // TODO Auto-generated method stub
         super.onStop();
     }
 
     @Override
     public void onStart() {
 //		System.out.println("OneFragment  onStart");
-        // TODO Auto-generated method stub
         super.onStart();
     }
 }

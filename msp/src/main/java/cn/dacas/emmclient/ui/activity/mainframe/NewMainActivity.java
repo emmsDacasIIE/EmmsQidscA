@@ -8,10 +8,12 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -55,7 +57,7 @@ import de.greenrobot.event.EventBus;
 public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMainPageChangedListener {
 
     private static final String TAG = "NewMainActivity";
-
+    private static int position = 0;
     private static boolean isFirstCreated = true;
     private static final int Handler_Flag_StartActivity = 1;
     private static final int Handler_Flag_Timer = 2;
@@ -63,6 +65,9 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     private static int UpdateLockTwice = 0;
 
     LinearLayout layout_info_network;
+
+    //LinearLayout layoutDots;
+    private ImageView[] mImageViews;
     /**
      * 作为页面容器的ViewPager
      */
@@ -89,7 +94,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newmain, "");
+        setContentView(cn.dacas.emmclient.R.layout.activity_newmain, "");
 
         //初始化header
         initHeader();
@@ -118,11 +123,12 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             isFirstCreated = false;
         }
 
-        layout_info_network=(LinearLayout)findViewById(R.id.layout_info_netwrok);
-        if (NetworkUtils.isConnected(mContext))
+        layout_info_network=(LinearLayout)findViewById(cn.dacas.emmclient.R.id.layout_info_netwrok);
+        /*if (NetworkUtils.isConnected(mContext))
             layout_info_network.setVisibility(View.GONE);
         else
             layout_info_network.setVisibility(View.VISIBLE);
+         */
         EventBus.getDefault().register(this);
         //获取用户信息
         QdWebService.getUserInformation(new Response.Listener<UserModel>() {
@@ -157,6 +163,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         showApppList();
     }
 
+
+
     @Override
     public void onStop() {
         saveAppList();
@@ -178,6 +186,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
                 PrefUtils.putAppList(newList);
                 refreshMainPage(newList);
                 mViewPager.setAdapter(new MyFrageStatePagerAdapter(getSupportFragmentManager()));
+                mViewPager.setCurrentItem(position);
             }
         }, null);
     }
@@ -225,6 +234,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         if (fragment!=null) {
             fragment.setContent(idx, pageList, NewMainActivity.this);
         }
+
+        GuideDotsSelected(0);
     }
 
     private ArrayList<MamAppInfoModel> reorderAppList(ArrayList<MamAppInfoModel> sourceList,ArrayList<MamAppInfoModel> orderList) {
@@ -244,8 +255,17 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     @Override
     public void onResume() {
         super.onResume();
+        if (NetworkUtils.isConnected(mContext))
+            layout_info_network.setVisibility(View.GONE);
+        else
+            layout_info_network.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onPause(){
+        position = mViewPager.getCurrentItem();
+        super.onPause();
+    }
     protected void onDestroy ( ) {
 
         if (timer != null) {
@@ -347,6 +367,29 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         });
     }
 
+    private void GuideDotsSelected(int index){
+        if(index<0 || index >fragmentList.size()-1)
+            return;
+        if(layoutDots==null)
+            return;
+        layoutDots.removeAllViews();
+        mImageViews = new ImageView[fragmentList.size()];
+        for (int i = 0; i < fragmentList.size(); i++) {
+            mImageViews[i] = new ImageView(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20,20);
+            // 设置边界
+            params.setMargins(7, 10, 7, 10);
+            mImageViews[i].setLayoutParams(params);
+            if (index == i) {
+                mImageViews[i].setBackgroundResource(cn.dacas.emmclient.R.mipmap.dot_red_light);
+            } else {
+                mImageViews[i].setBackgroundResource(cn.dacas.emmclient.R.mipmap.dot_grey);
+            }
+            layoutDots.addView(mImageViews[i]);
+        }
+    }
+
+
     private void initRightMenu()
     {
         Fragment leftMenuFragment = new MenuLeftFragment();
@@ -387,6 +430,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     private void initViewPager() {
         mViewPager=(ViewPager) findViewById(R.id.viewPager);
         fragmentList=new ArrayList<HomeFragment>();
+        mViewPager.addOnPageChangeListener(new onPageChangeListener());
     }
 
     /**
@@ -438,6 +482,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             fragmentList.get(idx-1).getAdapter().remove(modelToExchange);
             fragmentList.get(idx-1).getAdapter().add(model);
             mViewPager.setCurrentItem(idx-1,true);
+            //GuideDotsSelected(idx-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -453,6 +498,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             fragmentList.get(idx+1).getAdapter().remove(modelToExchange);
             fragmentList.get(idx+1).getAdapter().add(model);
             mViewPager.setCurrentItem(idx+1,true);
+            //GuideDotsSelected(idx+1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -464,10 +510,20 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
      */
     class MyFrageStatePagerAdapter extends FragmentStatePagerAdapter
     {
-
+        PagerTabStrip pagerTabStrip;
         public MyFrageStatePagerAdapter(FragmentManager fm)
         {
             super(fm);
+            //pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
+            //pagerTabStrip.setTabIndicatorColorResource(R.color.gold);
+            //pagerTabStrip.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            //return position+"/"+getCount();
+            return super.getPageTitle(position);
+            //return "Title:" + String.valueOf(position);
         }
 
         @Override
@@ -616,5 +672,21 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return intent;
+    }
+
+
+    private class onPageChangeListener implements ViewPager.OnPageChangeListener {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            GuideDotsSelected(position);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
     }
 }

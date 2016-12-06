@@ -224,8 +224,6 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
     private Handler refreshHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
-
             switch (msg.what) {
                 case DownLoadFileFromUrl.DOWNLOADING:
                     if (progressDialog!=null) {
@@ -254,7 +252,7 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
 //        mLeftHeaderView.setTextVisibile(false);
 //        mLeftHeaderView.setImageVisibile(true);
-        mLeftHeaderView.setImageView(R.mipmap.msp_titlebar_leftarrow_icon);
+        mLeftHeaderView.setImageView(R.mipmap.back_advanced);
 
         mMiddleHeaderView.setText(mContext.getString(R.string.title_security_doc));
 //        mMiddleHeaderView.setTextVisibile(true);

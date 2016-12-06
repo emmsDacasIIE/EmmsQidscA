@@ -45,17 +45,19 @@ public class PrefUtils {
 
 
 	//------------------服务器地址-----------------------//
-	private static final String ADDR_WEBSERVICE="WEBSERVICEADDRESS";
-	private static final String ADDR_MSG="MSGADDRESS";
-	private static final String ADDR_FORWARD="FORWARDADDRESS";
-	private static final String ADDR_UPDATE="UPDATEADDRESS";
+	private static final String ADDR_WEBSERVICE = "WEBSERVICEADDRESS";
+	private static final String ADDR_MSG        = "MSGADDRESS";
+	private static final String ADDR_FORWARD    = "FORWARDADDRESS";
+	private static final String ADDR_UPDATE		= "UPDATEADDRESS";
 
 	static String[] addressList = {
 			"192.168.151.175:8443", //ADDR_WEBSERVICE
-			"192.168.151.175:1883",//ADDR_MSG 192.168.151.175:3544
-			"192.168.0.23:43546",//ADDR_FORWARD
-			"192.168.151.137:8080" //ADDR_UPDATE
+			"192.168.151.175:1883", //ADDR_MSG 192.168.151.175:3544
+			"192.168.0.23:43546",   //ADDR_FORWARD
+			"192.168.151.137:8080"  //ADDR_UPDATE
 	};
+
+	//public static void
 
     public static void setAddrWebservice(String addr) {
         spHelper.putString(ADDR_WEBSERVICE,addr);

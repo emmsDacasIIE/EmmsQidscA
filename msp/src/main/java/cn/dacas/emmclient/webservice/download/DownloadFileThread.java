@@ -71,11 +71,9 @@ public class DownloadFileThread extends Thread {
             String name=info.fileName;
             HttpURLConnection conn;
             if (info.type == MyDownloadListener.Download_Type.Type_App) {
-                //finalUrl = AddressManager.getAddrFile(1)+"/"+ AddressManager.parseAddress(name);
                 finalUrl = info.url;
                 conn = (HttpURLConnection) new URL(finalUrl).openConnection();
             } else if (info.type == MyDownloadListener.Download_Type.Type_Doc) {
-                //finalUrl = AddressManager.getAddrFile(2)+"/"+ AddressManager.parseAddress(name);
                 finalUrl = info.url+"?uuid="+EmmClientApplication.imei;
                 IgnoreCertTrustManager.allowAllSSL();
                 conn= (HttpsURLConnection)new URL(UrlManager.urWithToken(finalUrl, UpdateTokenRequest.TokenType.USER)).openConnection();
@@ -132,6 +130,12 @@ public class DownloadFileThread extends Thread {
                 // 计算进度条位置
                 if (fileTotalSize > 0) {
                     progress = (int)((count * 1.0 / fileTotalSize) * 100);
+                }
+                //todo Due to the lack of Content Length in Http Response
+                else if(length == -1){ //没有读取到文件大小
+                    progress ++;
+                    if(progress > 100)
+                        progress = 99;
                 } else {
                     progress = 0;
                 }

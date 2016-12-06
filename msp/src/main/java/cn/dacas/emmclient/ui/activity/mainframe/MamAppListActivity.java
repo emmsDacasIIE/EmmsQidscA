@@ -86,28 +86,13 @@ public class MamAppListActivity extends BaseSlidingFragmentActivity {
     }
 
     private void initHeader() {
-
-//        mLeftHeaderView.setTextVisibile(false);
-//        mLeftHeaderView.setImageVisibile(true);
-        mLeftHeaderView.setImageView(R.mipmap.msp_titlebar_leftarrow_icon);
+        mLeftHeaderView.setImageView(R.mipmap.back_advanced);
+        //mLeftHeaderView.setText("◀◀");
+        //mLeftHeaderView.setTextVisibile(true);
+        //mLeftHeaderView.setImageVisibile(false);
 
         mMiddleHeaderView.setText(mContext.getString(R.string.title_applist));
-//        mMiddleHeaderView.setTextVisibile(true);
-//        mMiddleHeaderView.setImageVisibile(false);
-
-//        mRightHeaderView.setTextVisibile(false);
-//        mRightHeaderView.setImageVisibile(true);
         mRightHeaderView.setImageView(R.mipmap.msp_titlebar_doc_icon);
-
-
-
-
-//        setOnClickLeft("", true, new OnLeftListener() {
-//            @Override
-//            public void onClick() {
-//                showLeftMenu();
-//            }
-//        });
     }
 
     private void initRightMenu()
@@ -186,42 +171,6 @@ public class MamAppListActivity extends BaseSlidingFragmentActivity {
     private void initPopMenu() {
         String[] arr = this.getResources().getStringArray(R.array.app_delete_menu);
         popMenu = new PopMenu(this,arr);
-
-        //pop menu event
-        /*popMenu.setOnItemClickListener(new PopMenu.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(int index) {
-
-                switch (index) {
-                    case 0:
-                        //All
-                        mAppListFragment.getResultDataByStatus(index);
-
-                        break;
-                    case 1:
-                        //
-//                        Toast.makeText(mContext,"已下载",Toast.LENGTH_SHORT).show();
-                        mAppListFragment.getResultDataByStatus(index);
-                        break;
-                    case 2:
-//                        Toast.makeText(mContext, "未下载", Toast.LENGTH_SHORT).show();
-                        mAppListFragment.getResultDataByStatus(index);
-                        break;
-                    case 3:
-//                        Toast.makeText(mContext,"已收藏",Toast.LENGTH_SHORT).show();
-                        mAppListFragment.getResultDataByStatus(index);
-                        break;
-                    case 4:
-                        break;
-                    default:
-                        break;
-                }
-
-
-            }
-
-        });*/
         popMenu.setOnItemClickListener(new PopMenu.OnItemClickListener() {
 
             @Override

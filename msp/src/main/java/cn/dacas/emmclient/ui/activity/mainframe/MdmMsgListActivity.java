@@ -161,7 +161,7 @@ public class MdmMsgListActivity extends BaseSlidingFragmentActivity {
 
 //        mLeftHeaderView.setTextVisibile(false);
 //        mLeftHeaderView.setImageVisibile(true);
-        mLeftHeaderView.setImageView(R.mipmap.msp_titlebar_leftarrow_icon);
+        mLeftHeaderView.setImageView(R.mipmap.back_advanced);
 
         mMiddleHeaderView.setText(mContext.getString(R.string.title_security_msg));
 //        mMiddleHeaderView.setTextVisibile(true);
