@@ -7,10 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.config.Configuration;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -52,6 +53,8 @@ public class EmmClientApplication extends Application {
 	private MyReceiver receiver;
 	private static Context mContext;
 	public static RequestQueue mVolleyQueue;
+	private JobManager jobManager;
+
 	public static int intervals=0;  //使用时长
 	public static int foregroundIntervals=0;  //前台无操作时长
     public static boolean runningBackground=false;
@@ -62,6 +65,17 @@ public class EmmClientApplication extends Application {
 	public static boolean isFloating=false;
 
 	public static String imei;
+
+	public static EmmClientApplication instance;
+
+	public EmmClientApplication(){
+		instance = this;
+	}
+
+	static public EmmClientApplication getInstance(){
+		return instance;
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -85,6 +99,7 @@ public class EmmClientApplication extends Application {
 		initIpSettings(mContext);
 		
 		Intent intentMDM = new Intent(mContext, MDMService.class);
+		configureJobManager();
 		this.startService(intentMDM);
 
 
@@ -95,7 +110,7 @@ public class EmmClientApplication extends Application {
 		String logOUt = SdcardManager.getSdcardPath();
 		QDLog.i(TAG, "onCreate========logOUt===========" + logOUt);
 		QDLog.i(TAG,"onCreate===================");
-
+		//getJobManager().addJobInBackground(new BasedMDMJobTask("JOB Test!"));
 
 		/*PushMsgManager pushMsgManager = new PushMsgManager(this, UrlManager.getMsgPushUrl());
 		try {
@@ -214,6 +229,22 @@ public class EmmClientApplication extends Application {
 	private boolean detectApk(String packageName) {
 		return packagNameList.contains(packageName.toLowerCase());
 
+	}
+
+	private void configureJobManager() {
+		Configuration configuration = new Configuration.Builder(this)
+				.minConsumerCount(1)//always keep at least one consumer alive
+				.maxConsumerCount(3)//up to 3 consumers at a time
+				.loadFactor(3)//3 jobs per consumer
+				.consumerKeepAlive(120)//wait 2 minute
+				.build();
+		jobManager = new JobManager(configuration);
+	}
+
+	public JobManager getJobManager(){
+		if(jobManager == null)
+			configureJobManager();
+		return jobManager;
 	}
 
 	/**

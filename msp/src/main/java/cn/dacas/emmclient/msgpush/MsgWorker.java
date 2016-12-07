@@ -12,14 +12,17 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.birbit.android.jobqueue.JobManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.dacas.emmclient.Job.BasedMDMJobTask;
+import cn.dacas.emmclient.Job.LockAndSetPwdJob;
+import cn.dacas.emmclient.Job.LockDeviceJob;
 import cn.dacas.emmclient.controller.McmController;
 import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.core.mdm.DeviceAdminWorker;
@@ -39,22 +42,24 @@ import de.greenrobot.event.EventBus;
 /** Worker to deal with Messages.
  * Created by Sun RX on 2016-10-13.
  */
-public class MsgListener {
+public class MsgWorker {
     private Handler hdler = null;
     private Context ctxt = null;
     private McmController mcmController;
+    private JobManager mJobManager;
     private boolean working = false;
 
     /**
-     * The constructor of MsgListener,
+     * The constructor of MsgWorker,
      * in which, a method "registerBroadcastReceiver" is called
      * to register a broadcastReceiver with filter "GET_MESSAGE".
      */
-    public MsgListener(Context context, Handler handler, McmController mcmController) {
+    public MsgWorker(Context context, Handler handler, McmController mcmController) {
         setContext(context);
         setHandler(handler);
         this.mcmController = mcmController;
         registerBroadcastReceiver();
+        mJobManager = EmmClientApplication.getInstance().getJobManager();
     }
 
     public void setHandler(Handler handler) {
@@ -67,6 +72,10 @@ public class MsgListener {
 
     public void setContext(Context context) {
         this.ctxt = context;
+    }
+
+    public Context getContext(){
+        return ctxt;
     }
 
     public void dealMessage(CommandModel commandModel) throws JSONException {
@@ -93,14 +102,15 @@ public class MsgListener {
                 notifyDataChange(BroadCastDef.OP_LOG);
                 break;
             case MDMService.CmdCode.OP_LOCK_KEY:
-                String passwdLock = commandModel.getCommandMap().get("passcode");
+                /*String passwdLock = commandModel.getCommandMap().get("passcode");
                 ret = DeviceAdminWorker.getDeviceAdminWorker(ctxt).resetPasswd(passwdLock);
                 DeviceAdminWorker.getDeviceAdminWorker(ctxt).lockNow();
                 EmmClientApplication.mDatabaseEngine.setLockScreenCode(ret, MDMService.CmdCode.OP_LOCK_KEY);
-                notifyDataChange(BroadCastDef.OP_LOG);
+                notifyDataChange(BroadCastDef.OP_LOG);*/
+                mJobManager.addJobInBackground(new LockAndSetPwdJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_LOCK:
-                DeviceAdminWorker.getDeviceAdminWorker(ctxt).lockNow();
+                mJobManager.addJobInBackground(new LockDeviceJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_FACTORY:
                 if (hdler != null) {
@@ -114,7 +124,6 @@ public class MsgListener {
                                 MDMService.CmdCode.ENFORCE : MDMService.CmdCode.WARN;
                     hdler.sendMessage(handlerMsg);
                     EmmClientApplication.mDatabaseEngine.reFactory(MDMService.CmdCode.OP_FACTORY);
-
                 }
 //                    notifyDataChange(BroadCastDef.OP_LOG);
                 break;
@@ -254,24 +263,6 @@ public class MsgListener {
         params.putLong("lastOnlineTime", System.currentTimeMillis());
         EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_OnlineState, params));
     }
-
-
-
-
-    //send handler msg
-    /*public void sendMsg(String msg) {
-        Handler handler = getHandler();
-        QDLog.i(MDMService.TAG,"sendMsg =========="+msg);
-        if (handler != null) {
-            QDLog.i(MDMService.TAG,"sendMsg ======111===="+msg);
-            Bundle bundle = new Bundle();
-            bundle.putCharSequence("msg", msg);
-            Message handlerMsg = Message.obtain();
-            handlerMsg.arg1 = MDMService.CmdCode.PUSH_MSG;
-            handlerMsg.setData(bundle);
-            handler.sendMessageAtFrontOfQueue(handlerMsg);
-        }
-    }*/
 
     public boolean isWorking(){
         return working;

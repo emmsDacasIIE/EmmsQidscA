@@ -11,8 +11,9 @@ import cn.dacas.emmclient.util.QDLog;
 
 /**Command Model
  * Created by Sun Rx on 2016-10-25.
+ * implements Serializable due to JobQueue's requires.
  */
-public class CommandModel {
+public class CommandModel{
     interface RequestTypeString{
         String  DeviceLock = "DeviceLock";//	锁定设备
         String  UPDATE_PASSCODE_AND_DEVICE_LOCK="UpdatePasscodeAndDeviceLock";//修改密码并锁屏
@@ -133,5 +134,9 @@ public class CommandModel {
 
     public int getCmdCode(){
         return cmdCode;
+    }
+
+    public SerializableCMD getSerializableCMD(){
+        return new SerializableCMD(this);
     }
 }

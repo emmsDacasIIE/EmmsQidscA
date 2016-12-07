@@ -1,41 +1,57 @@
-package cn.dacas.emmclient.core.mdm.task;
+package cn.dacas.emmclient.Job;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 
+import cn.dacas.emmclient.model.SerializableCMD;
+import cn.dacas.emmclient.msgpush.PushMsgReceiver;
+import cn.dacas.emmclient.util.QDLog;
+
+
 
 /**
- * Created by Administrator on 2016-12-6.
+ * Created by Sun RX on 2016-12-6.
+ * A Based JobTask Class.
  */
 
-public class LockDeviceTask extends Job {
-    public static final int PRIORITY = 1;
-    private String text;
-    public LockDeviceTask(String text) {
+public class BasedMDMJobTask extends Job {
+    protected static int PRIORITY = 1;
+    protected String text;
+    protected SerializableCMD cmd;
+    private final String TAG = "JOB";
+    public BasedMDMJobTask(int priority,
+                           String text,
+                           SerializableCMD cmd) {
         // This job requires network connectivity,
         // and should be persisted in case the application exits before job is completed.
-        super(new Params(Integer.parseInt(text)).requireNetwork().persist());
+        super(new Params(priority).requireNetwork().persist());
         this.text = text;
-        Log.i("job",text+"  goin");
+        PRIORITY = priority;
+        this.cmd = cmd;
+        QDLog.i(TAG,text+"  goin");
+    }
 
+    public BasedMDMJobTask(String text,
+                           SerializableCMD cmd) {
+        this(PRIORITY,text,cmd);
     }
     @Override
     public void onAdded() {
         // Job has been saved to disk.
         // This is a good place to dispatch a UI event to indicate the job will eventually run.
         // In this example, it would be good to update the UI with the newly posted tweet.
-        Log.i("job",text+"  Onadded");
+        QDLog.i(TAG,text+"  Onadded");
     }
     @Override
     public void onRun() throws Throwable {
         // Job logic goes here. In this example, the network call to post to Twitter is done here.
         // All work done here should be synchronous, a job is removed from the queue once
         // onRun() finishes.
-        Log.i("job",text+"  onRun");
+        QDLog.i(TAG,text+"  onRun");
     }
 
     @Override
@@ -44,13 +60,15 @@ public class LockDeviceTask extends Job {
     }
 
     @Override
-    protected RetryConstraint shouldReRunOnThrowable(Throwable throwable, int runCount,
+    protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount,
                                                      int maxRunCount) {
         // An error occurred in onRun.
         // Return value determines whether this job should retry or cancel. You can further
         // specify a backoff strategy or change the job's priority. You can also apply the
         // delay to the whole group to preserve jobs' running order.
-        return RetryConstraint.createExponentialBackoff(runCount, 1000);
+        QDLog.e(TAG,throwable.toString());
+        PushMsgReceiver.getMsgWorker().sendStatusToServer("Error",cmd.cmdUUID,null);
+        return RetryConstraint.CANCEL;
+        //return RetryConstraint.createExponentialBackoff(runCount, 1000);
     }
-
 }

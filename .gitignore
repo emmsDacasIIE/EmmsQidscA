@@ -42,3 +42,11 @@ local.properties
 
 # Log Files
 *.log
+.idea/dictionaries/
+.idea/inspectionProfiles/
+.idea/markdown-exported-files.xml
+.idea/markdown-navigator.xml
+emmsupdatesdk/libs/
+emmsupdatesdk/src/main/res/drawable/
+mspsdk/libs/armeabi-v7a/
+projectFilesBackup/

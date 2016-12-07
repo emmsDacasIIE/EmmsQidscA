@@ -16,12 +16,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -37,9 +35,8 @@ import java.util.Map;
 
 import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.DeviceModel;
+import cn.dacas.emmclient.msgpush.MsgWorker;
 import cn.dacas.emmclient.msgpush.PushMsgReceiver;
-import cn.dacas.emmclient.msgpush.MsgListener;
-import cn.dacas.emmclient.ui.activity.loginbind.UserLoginActivity;
 import cn.dacas.emmclient.webservice.QdParser;
 import cn.dacas.pushmessagesdk.PushMsgManager;
 import cn.dacas.emmclient.business.BusinessListener;
@@ -64,8 +61,6 @@ import cn.dacas.emmclient.webservice.qdvolley.UpdateTokenRequest;
 
 import de.greenrobot.event.EventBus;
 
-import static com.baidu.location.h.i.M;
-
 /**
  * 设备管理服务
  */
@@ -85,7 +80,7 @@ public class MDMService extends Service implements ControllerListener {
 
     private String owner;
 
-    private MsgListener mMsgListener;
+    private MsgWorker mMsgWorker;
 
     public interface CmdCode {
         int ENFORCE = 1;
@@ -193,7 +188,7 @@ public class MDMService extends Service implements ControllerListener {
             @Override
             public void run() {
                 Looper.prepare();
-                if(ActivateDevice.online || mMsgListener.isWorking())
+                if(ActivateDevice.online || mMsgWorker.isWorking())
                     return;
                 String ip = AddressManager.getAddrMsg();
                 QDLog.d("MDMService", "MsgPush reg to " + ip);
@@ -202,7 +197,7 @@ public class MDMService extends Service implements ControllerListener {
                 QDLog.d(TAG, "IMEI: "+imei);
 
                 //Init PushMsgManager
-                PushMsgReceiver.setMsgListener(mMsgListener);
+                PushMsgReceiver.setMsgWorker(mMsgWorker);
                 try {
                     pushMsgManager = new PushMsgManager.Builder(getApplicationContext(), UrlManager.getMsgPushUrl())
                             .setRegServerUrl(UrlManager.getRegMsgPushUrl())
@@ -264,7 +259,7 @@ public class MDMService extends Service implements ControllerListener {
         //////初始化Controller
         mMcmController = new McmController(mContext,this);
 
-        mMsgListener = new MsgListener(mContext,uiHandler,mMcmController);
+        mMsgWorker = new MsgWorker(mContext,uiHandler,mMcmController);
 
         //baidulocation init
         mMyLocationListener = new MyLocationListener();
@@ -468,7 +463,8 @@ public class MDMService extends Service implements ControllerListener {
                     String uuid = (String) msg.obj;
                     HashMap<String, JSONObject> map = new HashMap<>();
                     map.put("query_responses", getDeviceInfoDetail());
-                    mMsgListener.sendStatusToServer("Acknowledged", uuid, map);
+                    mMsgWorker.sendStatusToServer("Acknowledged", uuid, map);
+                    updatePrivacySetting(PrefUtils.getNetPrivacy());
                     break;
                 case CmdCode.AUTH_STATE_CHANGE:
 //                    DisableTask dt1 = new DisableTask(MDMService.this);
@@ -824,15 +820,15 @@ public class MDMService extends Service implements ControllerListener {
             saveUnreadCount(m.id);
 
             //send action好像并没有什么用
-            mMsgListener.notifyDataChange(GlobalConsts.NEW_MESSAGE);
+            mMsgWorker.notifyDataChange(GlobalConsts.NEW_MESSAGE);
 
             //send msg 发出消息，显示通知
-            //mMsgListener.sendMsg(m.content);
+            //mMsgWorker.sendMsg(m.content);
 
         }
         //sendBroadcast
         QDLog.i(TAG, "UpdateMessageList======OP_MSG=======" + BroadCastDef.OP_MSG);
-        mMsgListener.notifyDataChange(BroadCastDef.OP_MSG);
+        mMsgWorker.notifyDataChange(BroadCastDef.OP_MSG);
 
     }
 
@@ -847,7 +843,7 @@ public class MDMService extends Service implements ControllerListener {
             QDLog.i(TAG, "UpdateCommandList=============" + modelList.get(i));
             String m = modelList.get(i);
             try {
-                //mMsgListener.dealMessage(m);
+                //mMsgWorker.dealMessage(m);
             }catch (Exception e) {
                 e.printStackTrace();
             }
