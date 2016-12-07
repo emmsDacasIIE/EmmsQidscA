@@ -124,6 +124,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         }
 
         layout_info_network=(LinearLayout)findViewById(cn.dacas.emmclient.R.id.layout_info_netwrok);
+        layoutDots.setVisibility(View.VISIBLE);
         /*if (NetworkUtils.isConnected(mContext))
             layout_info_network.setVisibility(View.GONE);
         else
