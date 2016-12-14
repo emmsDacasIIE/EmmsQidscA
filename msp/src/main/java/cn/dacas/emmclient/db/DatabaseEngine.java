@@ -14,15 +14,13 @@ import cn.dacas.emmclient.core.mam.MApplicationManager;
  */
 public class DatabaseEngine {
 
-    Context mContext;
-    EmmClientDb mEmmClientDb = null;
+    private EmmClientDb mEmmClientDb = null;
 
     public DatabaseEngine(Context context) {
-        mContext = context;
     }
 
     public void init() {
-        mEmmClientDb=new EmmClientDb(mContext);
+        mEmmClientDb = new EmmClientDb(EmmClientApplication.getContext());
         mEmmClientDb.open();
     }
 

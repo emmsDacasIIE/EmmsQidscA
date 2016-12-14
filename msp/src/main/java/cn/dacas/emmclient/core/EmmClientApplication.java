@@ -48,10 +48,12 @@ public class EmmClientApplication extends Application {
 	public static CheckAccount mCheckAccount = null;
 	public static PhoneInfoExtractor mPhoneInfoExtractor=null;
 	public static DatabaseEngine mDatabaseEngine=null;
+	//SDK
 	public static QdSecureContainer mSecureContainer=null;
+
 	ArrayList<String> packagNameList;
 	private MyReceiver receiver;
-	private static Context mContext;
+	//private static Context mContext;
 	public static RequestQueue mVolleyQueue;
 	private JobManager jobManager;
 
@@ -79,8 +81,7 @@ public class EmmClientApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
-		mContext=EmmClientApplication.this;
+		instance = EmmClientApplication.this;
 		PrefUtils.Init(EmmClientApplication.this);
 		String json="{\"vpnGatewayAddress\": \"192.168.0.100:443\"}";
 		imei = PhoneInfoExtractor.getIMEI(this);
@@ -95,10 +96,10 @@ public class EmmClientApplication extends Application {
         mSecureContainer=QdSecureContainer.getInstance(EmmClientApplication.this);
 
 		mVolleyQueue= Volley.newRequestQueue(EmmClientApplication.getContext(),new SslHttpStack(false));
-		initImageLoader(mContext);
-		initIpSettings(mContext);
+		initImageLoader(this);
+		initIpSettings(this);
 		
-		Intent intentMDM = new Intent(mContext, MDMService.class);
+		Intent intentMDM = new Intent(this, MDMService.class);
 		configureJobManager();
 		this.startService(intentMDM);
 
@@ -135,7 +136,8 @@ public class EmmClientApplication extends Application {
 
 	public static Context getContext()
 	{
-		return mContext;
+		//return mContext;
+		return instance.getApplicationContext();
 	}
 
 	public static void initImageLoader(Context context) {
@@ -254,7 +256,7 @@ public class EmmClientApplication extends Application {
 	public static Intent getExitApplicationIntent(){
 		mCheckAccount.clearCurrentAccount();
 		mUserModel = null;
-		Intent intent = new Intent(mContext, UserLoginActivity.class);
+		Intent intent = new Intent(getContext(), UserLoginActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		return intent;

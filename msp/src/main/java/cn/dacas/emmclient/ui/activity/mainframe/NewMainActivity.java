@@ -1,6 +1,8 @@
 package cn.dacas.emmclient.ui.activity.mainframe;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import java.util.TimerTask;
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.core.mam.AppManager;
+import cn.dacas.emmclient.core.mdm.MDMService;
 import cn.dacas.emmclient.core.update.UpdateManager;
 import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.model.MamAppInfoModel;
@@ -194,8 +198,12 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
     private void saveAppList() {
         //获取重新排列的showList
+        if(fragmentList.size() == 0||fragmentList==null)
+            return;
         ArrayList<MamAppInfoModel> showList=new ArrayList<>();
         for (HomeFragment f:fragmentList) {
+            if(f == null || f.getAdapter() == null || f.getAdapter().getCount()==0)
+                continue;
             for (Object obj: f.getAdapter().getItems()) {
                 MamAppInfoModel app=(MamAppInfoModel)obj;
                 showList.add(app);
@@ -662,6 +670,29 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
                 else {
                     layout_info_network.setVisibility(View.VISIBLE);
                 }
+                break;
+            case MessageEvent.Event_Show_alertDialog:
+                String title = event.params.getString("title");
+                String message = event.params.getString("message");
+                if(title==null || message ==null)
+                    return;
+
+                AlertDialog.Builder builder;
+                AlertDialog alertDialog;
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle(title);
+                builder.setMessage(message);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog = builder.create();
+                alertDialog.getWindow().setType(
+                        (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
+                alertDialog.show();
+                break;
             default:
                 break;
         }

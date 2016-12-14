@@ -66,7 +66,7 @@ public class BasedMDMJobTask extends Job {
         // Return value determines whether this job should retry or cancel. You can further
         // specify a backoff strategy or change the job's priority. You can also apply the
         // delay to the whole group to preserve jobs' running order.
-        QDLog.e(TAG,throwable.toString());
+        QDLog.e(TAG,text+":"+throwable.toString());
         PushMsgReceiver.getMsgWorker().sendStatusToServer("Error",cmd.cmdUUID,null);
         return RetryConstraint.CANCEL;
         //return RetryConstraint.createExponentialBackoff(runCount, 1000);

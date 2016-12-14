@@ -1,9 +1,6 @@
 package cn.dacas.emmclient.core.mdm;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +14,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -37,6 +35,7 @@ import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.DeviceModel;
 import cn.dacas.emmclient.msgpush.MsgWorker;
 import cn.dacas.emmclient.msgpush.PushMsgReceiver;
+import cn.dacas.emmclient.ui.activity.mainframe.NewMainActivity;
 import cn.dacas.emmclient.webservice.QdParser;
 import cn.dacas.pushmessagesdk.PushMsgManager;
 import cn.dacas.emmclient.business.BusinessListener;
@@ -67,8 +66,8 @@ import de.greenrobot.event.EventBus;
 public class MDMService extends Service implements ControllerListener {
 
     public static final String TAG = "MDMService";
-    private static Context mContext;
     private ActivateDevice activate;
+    static private MDMService instance;
 
 
     private LocationClient mLocationClient;
@@ -81,6 +80,7 @@ public class MDMService extends Service implements ControllerListener {
     private String owner;
 
     private MsgWorker mMsgWorker;
+
 
     public interface CmdCode {
         int ENFORCE = 1;
@@ -125,9 +125,9 @@ public class MDMService extends Service implements ControllerListener {
 
     private DeviceAdminMonitor mMonitor;
 
-    PushMsgManager pushMsgManager;
+    private PushMsgManager pushMsgManager;
 
-    //接收EventBus发生的消息
+    //接收EventBus发出的消息
     public void onEventBackgroundThread(MessageEvent event) {
         switch (event.type) {
             case MessageEvent.Event_StartTransaction:
@@ -176,7 +176,7 @@ public class MDMService extends Service implements ControllerListener {
 
         // 1）每次注册成功，都向服务器询问当前策略
         // 2）在运行期间的策略更新依赖于“消息通知”
-        PolicyManager.getMPolicyManager(mContext).updatePolicy();
+        PolicyManager.getMPolicyManager(this).updatePolicy();
         mMonitor.startScanPolicy();
     }
 
@@ -193,7 +193,7 @@ public class MDMService extends Service implements ControllerListener {
                 String ip = AddressManager.getAddrMsg();
                 QDLog.d("MDMService", "MsgPush reg to " + ip);
                 QDLog.writeMsgPushLog("try to connect to" + ip);
-                String imei = PhoneInfoExtractor.getIMEI(mContext);
+                String imei = PhoneInfoExtractor.getIMEI(MDMService.this);
                 QDLog.d(TAG, "IMEI: "+imei);
 
                 //Init PushMsgManager
@@ -230,7 +230,7 @@ public class MDMService extends Service implements ControllerListener {
      * @return boolen
      */
     private boolean needLocation() {
-        String account = CheckAccount.getCheckAccountInstance(mContext)
+        String account = CheckAccount.getCheckAccountInstance(this)
                 .getCurrentAccount();
         //没有登录时，不需要定位
         if (account == null || account.equals(""))
@@ -241,7 +241,7 @@ public class MDMService extends Service implements ControllerListener {
             return false;
         //未知设备类型且设置不允许定位的，不定位
         if (device_type.equals("BYOD") || device_type.equals("UNKNOWN")) {
-            SharedPreferences settings = mContext.getSharedPreferences(
+            SharedPreferences settings = this.getSharedPreferences(
                     PREF_NAME, 0);
             if (!settings.getBoolean("allowLocationInfo", false))
                 return false;
@@ -249,17 +249,19 @@ public class MDMService extends Service implements ControllerListener {
         return true;
     }
 
+    public MDMService(){
+        instance = this;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        mContext = this;
-
         activate = EmmClientApplication.mActivateDevice;
 
         //////初始化Controller
-        mMcmController = new McmController(mContext,this);
+        mMcmController = new McmController(MDMService.this,this);
 
-        mMsgWorker = new MsgWorker(mContext,uiHandler,mMcmController);
+        mMsgWorker = new MsgWorker(uiHandler,mMcmController);
 
         //baidulocation init
         mMyLocationListener = new MyLocationListener();
@@ -268,7 +270,7 @@ public class MDMService extends Service implements ControllerListener {
         //forward = new IForward();
         EventBus.getDefault().register(this);
 
-        mMonitor=new DeviceAdminMonitor(mContext);
+        mMonitor=new DeviceAdminMonitor(this);
 
         // deal with app running while service down
         String owner = PrefUtils.getAdministrator();
@@ -281,7 +283,7 @@ public class MDMService extends Service implements ControllerListener {
     public int onStartCommand(Intent it, int flags, int startId) {
         super.onStartCommand(it, flags, startId);
         if (mMonitor==null)
-            mMonitor=new DeviceAdminMonitor(mContext);
+            mMonitor=new DeviceAdminMonitor(this);
         // deal with app running while service down
         String owner = PrefUtils.getAdministrator();
         if (owner != null) {
@@ -301,6 +303,7 @@ public class MDMService extends Service implements ControllerListener {
 
             switch (code) {
                 case CmdCode.PUSH_MSG:
+                    /*
                     String content = null;
                     if (bd != null) {
                         content = (String) bd.getCharSequence("msg");
@@ -308,10 +311,10 @@ public class MDMService extends Service implements ControllerListener {
 
                     if (content != null) {
                         // 创建一个NotificationManager的引用
-                        NotificationManager notificationManager = (NotificationManager) mContext
+                        NotificationManager notificationManager = (NotificationManager) MDMService.this
                                 .getSystemService(Context.NOTIFICATION_SERVICE);
                         Intent notificationIntent = new Intent(
-                                mContext.getApplicationContext(),
+                                EmmClientApplication.getContext(),
                                 //点击该通知后要跳转的Activity
                                 //DeviceMessageActivity.class);
                                 MsgDetailActivity.class);
@@ -322,10 +325,10 @@ public class MDMService extends Service implements ControllerListener {
                             content = "您有" + String.valueOf(unreadCount) + "条未读消息。";
 
                         PendingIntent contentItent = PendingIntent.getActivity(
-                                mContext.getApplicationContext(), 0,
+                                EmmClientApplication.getContext(), 0,
                                 notificationIntent, 0);
                         Notification.Builder notificationBuilder = new Notification.Builder(
-                                mContext);
+                                MDMService.this);
                         notificationBuilder
                                 .setSmallIcon(android.R.drawable.sym_action_chat)
                                 .setTicker("企业消息")
@@ -345,39 +348,17 @@ public class MDMService extends Service implements ControllerListener {
                     }
                     break;
                 case CmdCode.FACTORY:
-                    if (msg.arg2 == CmdCode.ENFORCE) {
-                        DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(false);
-                    } else {
-                        new Thread(new Runnable() {
-                            public void run() {
-                                DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(false);
-                            }
-                        }).start();
-                        builder = new AlertDialog.Builder(mContext);
-                        builder.setTitle("恢复出厂设置");
-                        builder.setMessage("该设备已经被恢复出厂设置");
-                        builder.setPositiveButton("OK", new OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                        alertDialog = builder.create();
-                        alertDialog.getWindow().setType(
-                                (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
-                        alertDialog.show();
-                    }
                     break;
                 case CmdCode.ERASE_ALL:
                     if (msg.arg2 == CmdCode.ENFORCE) {
-                        DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(true);
+                        DeviceAdminWorker.getDeviceAdminWorker(MDMService.this).wipeData(true);
                     } else {
                         new Thread(new Runnable() {
                             public void run() {
-                                DeviceAdminWorker.getDeviceAdminWorker(mContext).wipeData(true);
+                                DeviceAdminWorker.getDeviceAdminWorker(MDMService.this).wipeData(true);
                             }
                         }).start();
-                        builder = new AlertDialog.Builder(mContext);
+                        builder = new AlertDialog.Builder(MDMService.this);
                         builder.setTitle("擦除设备所有数据");
                         builder.setMessage("该设备已被擦除所有数据，包括恢复出厂和sd卡擦除");
 
@@ -392,39 +373,12 @@ public class MDMService extends Service implements ControllerListener {
                         alertDialog.getWindow().setType(
                                 (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                         alertDialog.show();
-                    }
+                    }*/
                     break;
                 case CmdCode.ERASE_CORP:
-                    if (msg.arg2 == CmdCode.ENFORCE) {
-                        new Thread(new Runnable() {
-                            public void run() {
-                               EmmClientApplication.mDatabaseEngine.clearCorpData();
-                            }
-                        }).start();
-                    } else {
-                        new Thread(new Runnable() {
-                            public void run() {
-                                EmmClientApplication.mSecureContainer.deletAllFiles();
-                                EmmClientApplication.mDatabaseEngine.clearCorpData();
-                            }
-                        }).start();
-                        builder = new AlertDialog.Builder(mContext);
-                        builder.setTitle("擦除企业数据");
-                        builder.setMessage("该设备已被擦除企业数据");
-                        builder.setPositiveButton("OK", new OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                        alertDialog = builder.create();
-                        alertDialog.getWindow().setType(
-                                (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
-                        alertDialog.show();
-                    }
                     break;
                 case CmdCode.ERROR_FORMAT:
-                    builder = new AlertDialog.Builder(mContext);
+                    builder = new AlertDialog.Builder(MDMService.this);
                     builder.setTitle("格式错误");
                     builder.setMessage("来自消息推送服务器的消息格式不合法！");
 
@@ -442,7 +396,7 @@ public class MDMService extends Service implements ControllerListener {
                     alertDialog.show();
                     break;
                 case CmdCode.ERROR_MSG_SERVER:
-                    builder = new AlertDialog.Builder(mContext);
+                    builder = new AlertDialog.Builder(MDMService.this);
                     builder.setTitle("服务器错误");
                     builder.setMessage("无法连接消息推送服务器!");
 
@@ -460,11 +414,6 @@ public class MDMService extends Service implements ControllerListener {
                     alertDialog.show();
                     break;
                 case CmdCode.REFRESH_ALL:
-                    String uuid = (String) msg.obj;
-                    HashMap<String, JSONObject> map = new HashMap<>();
-                    map.put("query_responses", getDeviceInfoDetail());
-                    mMsgWorker.sendStatusToServer("Acknowledged", uuid, map);
-                    updatePrivacySetting(PrefUtils.getNetPrivacy());
                     break;
                 case CmdCode.AUTH_STATE_CHANGE:
 //                    DisableTask dt1 = new DisableTask(MDMService.this);
@@ -478,7 +427,7 @@ public class MDMService extends Service implements ControllerListener {
                     downloadDeviceInfo();
                     break;
                 case CmdCode.ALERT_DIALOG:
-                    builder = new AlertDialog.Builder(mContext);
+                    builder = new AlertDialog.Builder(MDMService.this);
                     builder.setTitle("消息提醒");
                     String s = (String) msg.obj;
                     builder.setMessage(s);
@@ -516,10 +465,29 @@ public class MDMService extends Service implements ControllerListener {
         sendBroadcast(new Intent("cn.dacas.intent.action.SERVICE_RESTART"));
     }
 
-    private JSONObject getDeviceInfoDetail() {
+    static public MDMService getInstance() throws Throwable {
+        if (instance!=null)
+            return instance;
+        else
+            throw new Throwable("MDMService's instance hasn't been created!");
+    }
+
+    static public MsgWorker getMsgWorker() throws Throwable {
+        MsgWorker msgWorker = getInstance().mMsgWorker;
+        if(msgWorker != null){
+            return msgWorker;
+        } else if (getInstance().mMcmController!=null
+                &&getInstance().uiHandler!=null){
+            msgWorker = new MsgWorker(getInstance().uiHandler,getInstance().mMcmController);
+            return msgWorker;
+        } else
+            throw new Throwable("it is failed to get MsgWorker's instance!");
+    }
+
+    public JSONObject getDeviceInfoDetail() {
         JSONObject jsonObject = new JSONObject();
-        PhoneInfoExtractor mPhoneInfoExtractor=PhoneInfoExtractor.getPhoneInfoExtractor(mContext);
-        DeviceAdminWorker mDeviceAdminWorker=DeviceAdminWorker.getDeviceAdminWorker(mContext);
+        PhoneInfoExtractor mPhoneInfoExtractor=PhoneInfoExtractor.getPhoneInfoExtractor(this);
+        DeviceAdminWorker mDeviceAdminWorker=DeviceAdminWorker.getDeviceAdminWorker(this);
         try {
             jsonObject.put("manufacturers",
                     mPhoneInfoExtractor.getDeviceManufacturer());
@@ -588,10 +556,10 @@ public class MDMService extends Service implements ControllerListener {
             jsonObject.put("dataSynchronization",
                     mPhoneInfoExtractor.isDataSyncOpen());
             jsonObject.put("serviceInfo",
-                    MApplicationManager.getApplicationManager(mContext).getServicesInJson());
-            jsonObject.put("softInfo", MApplicationManager.getApplicationManager(mContext).getAppsInJson());
+                    MApplicationManager.getApplicationManager(this).getServicesInJson());
+            jsonObject.put("softInfo", MApplicationManager.getApplicationManager(this).getAppsInJson());
             jsonObject.put("belongsPolicyName",
-                    PolicyManager.getMPolicyManager(mContext).getPolicy().getName());
+                    PolicyManager.getMPolicyManager(this).getPolicy().getName());
             jsonObject.put("policyCompletionStatus", "完成");
             jsonObject.put("strategyReleasedVersion", "1.0");
         } catch (JSONException e) {
@@ -600,9 +568,9 @@ public class MDMService extends Service implements ControllerListener {
         return jsonObject;
     }
 
-    static public void updatePrivacySetting(final Boolean isChecked) {
+    static public void uploadPrivacySetting(Context context, final Boolean isChecked) {
         MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT,
-                "/client/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "/privacy",
+                "/client/devices/" + PhoneInfoExtractor.getIMEI(context) + "/privacy",
                 UpdateTokenRequest.TokenType.DEVICE, null, null) {
             @Override
             public Map<String, String> getHeaders() {
@@ -629,8 +597,8 @@ public class MDMService extends Service implements ControllerListener {
      * 上传设备基本信息
      */
     private void updateDeviceInfo() {
-        updatePrivacySetting(PrefUtils.getNetPrivacy());
-        MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT, "/client/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "/infos",
+        uploadPrivacySetting(this,PrefUtils.getNetPrivacy());
+        MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT, "/client/devices/" + PhoneInfoExtractor.getIMEI(MDMService.this) + "/infos",
                 UpdateTokenRequest.TokenType.DEVICE, null, null) {
             @Override
             public Map<String, String> getHeaders() {
@@ -653,7 +621,7 @@ public class MDMService extends Service implements ControllerListener {
     private void updateLocationInfo() {
         final PhoneInfoExtractor mPhoneInfoExtractor=EmmClientApplication.mPhoneInfoExtractor;
         //访问Web服务器，汇报地址，没有响应函数
-        MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT, "/client/devices/" + mPhoneInfoExtractor.getIMEI(mContext) + "/locations",
+        MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.PUT, "/client/devices/" + mPhoneInfoExtractor.getIMEI(MDMService.this) + "/locations",
                 UpdateTokenRequest.TokenType.DEVICE, null, null) {
             @Override
             public Map<String, String> getHeaders() {
@@ -692,7 +660,7 @@ public class MDMService extends Service implements ControllerListener {
     }
 
     public void downloadDeviceInfo() {
-        MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.GET, "/client/devices/" + PhoneInfoExtractor.getIMEI(mContext),
+        MyJsonObjectRequest request = new MyJsonObjectRequest(Request.Method.GET, "/client/devices/" + PhoneInfoExtractor.getIMEI(this),
                 UpdateTokenRequest.TokenType.DEVICE, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject deviceInfo) {

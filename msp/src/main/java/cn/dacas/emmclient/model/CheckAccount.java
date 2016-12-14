@@ -23,8 +23,6 @@ public class CheckAccount {
 	private String currentPassword=null;
 
 
-	private Context context;
-
 	public static CheckAccount getCheckAccountInstance(Context context) {
 		if (mCheckAccount == null) {
 			mCheckAccount = new CheckAccount(context);
@@ -33,7 +31,7 @@ public class CheckAccount {
 	}
 
 	private CheckAccount(Context context) {
-		this.context = context.getApplicationContext();
+		//this.context = context.getApplicationContext();
 
 		// 如果用户已经登录，启动安全接入转发
 		if (currentAccount != null) {

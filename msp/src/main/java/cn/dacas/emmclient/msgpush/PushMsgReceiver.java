@@ -23,12 +23,16 @@ public class PushMsgReceiver extends BaseMessageReceiver{
             sMsgWorker = listener;
             sMsgWorker.setWorking(true);
     }
+
+    @Deprecated
     static public MsgWorker getMsgWorker(){
         return sMsgWorker;
     }
 
     @Override
     protected void onError(Context context, String msg) {
+        if(sMsgWorker == null)
+            return;
         Toast.makeText(context,msg,Toast.LENGTH_LONG).show();
         sMsgWorker.sendHandlerCommend(MDMService.CmdCode.ERROR_MSG_SERVER);
     }
@@ -70,8 +74,10 @@ public class PushMsgReceiver extends BaseMessageReceiver{
 
     @Override
     protected void onNotificationArrived(Context context, String msg) {
-        if(!EmmClientApplication.mDeviceModel.isStatus())
+        if(EmmClientApplication.mActivateDevice == null
+                || !EmmClientApplication.mDeviceModel.isStatus())
             return;
+
         super.onNotificationArrived(context,msg);
         if(sMsgWorker !=null)
             sMsgWorker.getMessages();

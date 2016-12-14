@@ -7,7 +7,6 @@ import cn.dacas.emmclient.core.mdm.DeviceAdminWorker;
 import cn.dacas.emmclient.core.mdm.MDMService;
 import cn.dacas.emmclient.model.SerializableCMD;
 import cn.dacas.emmclient.msgpush.MsgWorker;
-import cn.dacas.emmclient.msgpush.PushMsgReceiver;
 import cn.dacas.emmclient.util.BroadCastDef;
 
 /**
@@ -32,10 +31,10 @@ public class LockAndSetPwdJob extends BasedMDMJobTask {
     @Override
     public void onRun() throws Throwable {
         super.onRun();
-        MsgWorker msgWorker= PushMsgReceiver.getMsgWorker();
+        MsgWorker msgWorker= MDMService.getMsgWorker();
         if(msgWorker==null)
             throw new Throwable("PushMsgReceiver hasn't set MsgWorker");
-        Context context = msgWorker.getContext();
+        Context context = getApplicationContext();
 
         String passwdLock = cmd.paramMap.get("passcode");
         if(passwdLock == null)

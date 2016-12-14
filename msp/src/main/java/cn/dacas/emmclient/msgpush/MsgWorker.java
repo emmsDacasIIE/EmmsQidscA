@@ -21,8 +21,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.dacas.emmclient.Job.BasedMDMJobTask;
+import cn.dacas.emmclient.Job.EraseDeviceJob;
+import cn.dacas.emmclient.Job.EraseEnterpriseData;
+import cn.dacas.emmclient.Job.InstallPolicyJob;
 import cn.dacas.emmclient.Job.LockAndSetPwdJob;
 import cn.dacas.emmclient.Job.LockDeviceJob;
+import cn.dacas.emmclient.Job.RemovePolicyJob;
+import cn.dacas.emmclient.Job.UploadDeviceInformationJob;
 import cn.dacas.emmclient.controller.McmController;
 import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.core.mdm.DeviceAdminWorker;
@@ -44,7 +49,6 @@ import de.greenrobot.event.EventBus;
  */
 public class MsgWorker {
     private Handler hdler = null;
-    private Context ctxt = null;
     private McmController mcmController;
     private JobManager mJobManager;
     private boolean working = false;
@@ -54,8 +58,7 @@ public class MsgWorker {
      * in which, a method "registerBroadcastReceiver" is called
      * to register a broadcastReceiver with filter "GET_MESSAGE".
      */
-    public MsgWorker(Context context, Handler handler, McmController mcmController) {
-        setContext(context);
+    public MsgWorker(Handler handler, McmController mcmController) {
         setHandler(handler);
         this.mcmController = mcmController;
         registerBroadcastReceiver();
@@ -70,19 +73,9 @@ public class MsgWorker {
         return this.hdler;
     }
 
-    public void setContext(Context context) {
-        this.ctxt = context;
-    }
-
-    public Context getContext(){
-        return ctxt;
-    }
-
     public void dealMessage(CommandModel commandModel) throws JSONException {
         int reqCode =  commandModel.getCmdCode();
         boolean nowSendStatus = true;
-
-        int ret;
 
         switch (reqCode) {
             case MDMService.CmdCode.NEW_COMMANDS:
@@ -94,54 +87,26 @@ public class MsgWorker {
             case MDMService.CmdCode.OP_SET_MUTE:
                 String stateMute = commandModel.getCommandMap().get("state");
                 if (stateMute.equals("true")) {
-                    DeviceAdminWorker.getDeviceAdminWorker(ctxt).setMute(true);
+                    DeviceAdminWorker
+                            .getDeviceAdminWorker(EmmClientApplication.getContext()).setMute(true);
                 } else {
-                    DeviceAdminWorker.getDeviceAdminWorker(ctxt).setMute(false);
+                    DeviceAdminWorker
+                            .getDeviceAdminWorker(EmmClientApplication.getContext()).setMute(false);
                 }
                 EmmClientApplication.mDatabaseEngine.setMute(MDMService.CmdCode.OP_SET_MUTE);
                 notifyDataChange(BroadCastDef.OP_LOG);
                 break;
             case MDMService.CmdCode.OP_LOCK_KEY:
-                /*String passwdLock = commandModel.getCommandMap().get("passcode");
-                ret = DeviceAdminWorker.getDeviceAdminWorker(ctxt).resetPasswd(passwdLock);
-                DeviceAdminWorker.getDeviceAdminWorker(ctxt).lockNow();
-                EmmClientApplication.mDatabaseEngine.setLockScreenCode(ret, MDMService.CmdCode.OP_LOCK_KEY);
-                notifyDataChange(BroadCastDef.OP_LOG);*/
                 mJobManager.addJobInBackground(new LockAndSetPwdJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_LOCK:
                 mJobManager.addJobInBackground(new LockDeviceJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_FACTORY:
-                if (hdler != null) {
-                    String option = commandModel.getCommandMap().get("option");
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 = MDMService.CmdCode.FACTORY;
-                    if(option == null)
-                        handlerMsg.arg2 = MDMService.CmdCode.WARN;
-                    else
-                        handlerMsg.arg2 = option.equals("enforce") ?
-                                MDMService.CmdCode.ENFORCE : MDMService.CmdCode.WARN;
-                    hdler.sendMessage(handlerMsg);
-                    EmmClientApplication.mDatabaseEngine.reFactory(MDMService.CmdCode.OP_FACTORY);
-                }
-//                    notifyDataChange(BroadCastDef.OP_LOG);
+                mJobManager.addJobInBackground(new EraseDeviceJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_ERASE_CORP:
-                if (hdler != null) {
-                    String option = commandModel.getCommandMap().get("option");
-
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 = MDMService.CmdCode.ERASE_CORP;
-                    if(option == null)
-                        handlerMsg.arg2 = MDMService.CmdCode.WARN;
-                    else
-                        handlerMsg.arg2 = option.equals("enforce") ?
-                                MDMService.CmdCode.ENFORCE : MDMService.CmdCode.WARN;
-                    hdler.sendMessage(handlerMsg);
-                    EmmClientApplication.mDatabaseEngine.eraseCorp(MDMService.CmdCode.OP_ERASE_CORP);
-                }
-                notifyDataChange(BroadCastDef.OP_LOG);
+                mJobManager.addJobInBackground(new EraseEnterpriseData(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_ERASE_ALL:
                 if (hdler != null) {
@@ -160,30 +125,14 @@ public class MsgWorker {
 //                    notifyDataChange(BroadCastDef.OP_LOG);
                 break;
             case MDMService.CmdCode.OP_REFRESH:
-                nowSendStatus = false;
-                if (hdler != null) {
-                    Message handlerMsg = Message.obtain();
-                    handlerMsg.arg1 = MDMService.CmdCode.REFRESH_ALL;
-                    handlerMsg.obj = commandModel.getCommandUUID();
-                    hdler.sendMessage(handlerMsg);
-                }
-                EmmClientApplication.mDatabaseEngine.refreshDevice(MDMService.CmdCode.OP_REFRESH);
+                mJobManager.addJobInBackground(new UploadDeviceInformationJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_POLICY1:
             case MDMService.CmdCode.OP_INSTALL_POLICY2:
-                QDLog.d("POLICY", "Receive new policy notification");
-                EmmClientApplication.mDatabaseEngine.pushPolicy(MDMService.CmdCode.OP_POLICY1);
-                String payload = commandModel.getCommandMap().get("payload");
-                JSONObject policyJson = new JSONObject(payload);
-                PolicyManager.getMPolicyManager(ctxt).updatePolicy(policyJson);
-                notifyDataChange(BroadCastDef.OP_LOG);
+                mJobManager.addJobInBackground(new InstallPolicyJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.OP_REMOVE_PROFILE:
-                EmmClientApplication.mDatabaseEngine.removePolicy(MDMService.CmdCode.OP_REMOVE_PROFILE);
-                String id = commandModel.getCommandMap().get("identifier");
-                QDLog.d("POLICY", "Remove policy: "+ id +", and reset to be the Default one.");
-                PolicyManager.getMPolicyManager(ctxt).resetPolicy();
-                notifyDataChange(BroadCastDef.OP_LOG);
+                mJobManager.addJobInBackground(new RemovePolicyJob(commandModel.getSerializableCMD()));
                 break;
             case MDMService.CmdCode.AUTH_STATE_CHANGE:
                 if (hdler != null) {
@@ -232,7 +181,8 @@ public class MsgWorker {
         IntentFilter myIntentFilter = new IntentFilter();
         myIntentFilter.addAction(GlobalConsts.GET_MESSAGE);
         // 注册广播
-        ctxt.registerReceiver(mBroadcastReceiver, myIntentFilter);
+        EmmClientApplication.getContext()
+                .registerReceiver(mBroadcastReceiver, myIntentFilter);
     }
 
     public void getMessages() {
@@ -252,7 +202,7 @@ public class MsgWorker {
         QDLog.i(MDMService.TAG,"========notifyDataChange action==========" + action);
         Intent intent = new Intent();
         intent.setAction(action);
-        ctxt.sendBroadcast(intent);
+        EmmClientApplication.getContext().sendBroadcast(intent);
     }
 
     public void onState(boolean state) {

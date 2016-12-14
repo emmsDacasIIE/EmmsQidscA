@@ -13,7 +13,7 @@ import cn.dacas.emmclient.ui.activity.base.BaseListActivity;
 import cn.dacas.emmclient.ui.qdlayout.ListItemData;
 import cn.dacas.emmclient.util.PrefUtils;
 
-import static cn.dacas.emmclient.core.mdm.MDMService.updatePrivacySetting;
+import static cn.dacas.emmclient.core.mdm.MDMService.uploadPrivacySetting;
 
 /**
  * 隐私设置
@@ -145,7 +145,7 @@ public class MyPrivacySettingsActivity extends BaseListActivity {
                     break;
                 case 3:
                     PrefUtils.putNetPrivacy(isChecked);
-                    updatePrivacySetting(isChecked);
+                    uploadPrivacySetting(this,isChecked);
                     break;
                 case 4:
                     PrefUtils.putAppPrivacy(isChecked);
