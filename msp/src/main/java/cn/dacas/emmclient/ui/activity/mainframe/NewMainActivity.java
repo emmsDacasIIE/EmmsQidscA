@@ -119,7 +119,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
         final UpdateManager manager = new UpdateManager(NewMainActivity.this);
         // 检查软件更新
-        manager.checkUpdate();
+        //manager.checkUpdate();
+        manager.checkClientUpdate();
 
         //初次加载展现合规页面
         if (NewMainActivity.isFirstCreated) {

@@ -19,6 +19,8 @@ import java.util.HashMap;
 import cn.dacas.emmclient.util.WifiAdmin;
 import de.greenrobot.event.EventBus;
 
+import static android.R.attr.enabled;
+
 
 public class DeviceAdminWorker {
 	private static String TAG = DeviceAdminWorker.class.getSimpleName();
@@ -128,7 +130,19 @@ public class DeviceAdminWorker {
 
 	// 打开、关闭数据连接
 	public int setDataConnection(boolean enable) {
-		ConnectivityManager connManager = (ConnectivityManager) mContext
+		//关于禁止数据网络连接，这个功能在Android 5 以上版本中，只有系统APP才能调用，也就是所设备必须root权限才可以使用，下面是具体的解释
+		// http://stackoverflow.com/questions/29340150/android-l-5-x-turn-on-off-mobile-data-programmatically
+		try {
+			TelephonyManager telephonyService = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+			Method setMobileDataEnabledMethod = telephonyService.getClass().getDeclaredMethod("setDataEnabled", boolean.class);
+			if (null != setMobileDataEnabledMethod)
+			{
+				setMobileDataEnabledMethod.invoke(telephonyService, enable);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		/*ConnectivityManager connManager = (ConnectivityManager) mContext
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		Class<?> cmClass = connManager.getClass();
 		Class<?>[] argClasses = new Class[1];
@@ -139,15 +153,9 @@ public class DeviceAdminWorker {
 			method = cmClass.getMethod("setMobileDataEnabled", argClasses);
 			method.invoke(connManager, enable);
 			return 0;
-		} catch (NoSuchMethodException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		}*/
 		return ERROR_UNSUPPORTED;
 	}
 

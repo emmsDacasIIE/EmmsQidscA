@@ -1,16 +1,21 @@
 package cn.dacas.emmclient.ui.activity.mainframe;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.update.UpdateManager;
+import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
 import cn.dacas.emmclient.util.PhoneInfoExtractor;
+import de.greenrobot.event.EventBus;
 
 /**
  * @author Wang
@@ -24,7 +29,7 @@ public class MyAboutActivity extends BaseSlidingFragmentActivity {
     private LinearLayout mFeedbackLinearLayout = null;
     private TextView mVersionTextView;
 
-
+    private UpdateManager manager;
     @Override
     protected HearderView_Style setHeaderViewStyle() {
         return HearderView_Style.Image_Text_Null;
@@ -37,6 +42,18 @@ public class MyAboutActivity extends BaseSlidingFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_about, "");
         init();
+        EventBus.getDefault().register(this);
+    }
+
+    public void onEventMainThread(MessageEvent event)
+    {
+        switch (event.type) {
+            case MessageEvent.Event_NO_UpdateApk:
+                Toast.makeText(this,"当前已经是最新版本",Toast.LENGTH_LONG).show();
+                break;
+            default:
+                break;
+        }
     }
 
     public void onResume() {
@@ -86,7 +103,7 @@ public class MyAboutActivity extends BaseSlidingFragmentActivity {
         mUpdateLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext,"已经是最新版本!",Toast.LENGTH_SHORT).show();
+                manager.checkClientUpdate();
             }
         });
 
@@ -122,9 +139,10 @@ public class MyAboutActivity extends BaseSlidingFragmentActivity {
     }
 
     private void checkSwVersion() {
-        final UpdateManager manager = new UpdateManager(this);
+        manager = new UpdateManager(this);
         // 检查软件更新
-        manager.checkUpdate();
+        //manager.checkUpdate();
+        manager.checkClientUpdate();
     }
 
 

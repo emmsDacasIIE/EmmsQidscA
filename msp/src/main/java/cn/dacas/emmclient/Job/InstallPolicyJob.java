@@ -9,6 +9,7 @@ import cn.dacas.emmclient.model.SerializableCMD;
 import cn.dacas.emmclient.msgpush.MsgWorker;
 import cn.dacas.emmclient.util.BroadCastDef;
 import cn.dacas.emmclient.util.QDLog;
+import it.sauronsoftware.base64.Base64;
 
 /**
  * Created by Sun RX on 2016-12-13.

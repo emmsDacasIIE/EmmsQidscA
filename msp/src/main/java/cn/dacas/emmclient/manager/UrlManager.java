@@ -22,7 +22,8 @@ public class UrlManager {
     static String WebServicePath ="/api/v1";
     static String tokenPath = "/api/v1/oauth/token";
     static String regMsgPushPath = "/client/devices";
-    public static String cmdServerPath = "/command/server";
+    public static final String cmdServerPath = "/command/server";
+    public static final String clientUpdatePath = "/api/v1/client";
     static String[] protocols = {"https://","http://","tcp://"};
 
     interface protocolType{
@@ -115,5 +116,11 @@ public class UrlManager {
 
     public static String getCmdServerUrl(){
         return protocols[protocolType.HTTPS]+AddressManager.getAddrCommandServer()+cmdServerPath;
+    }
+
+    public static String getUpdateUrl(){
+        return protocols[protocolType.HTTPS]
+                +AddressManager.getAddrUpdate()
+                +clientUpdatePath;
     }
 }
