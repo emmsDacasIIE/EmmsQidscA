@@ -122,7 +122,7 @@ public class GestureLockActivity  extends Activity implements LocusPassWordView.
 				Toast.makeText(mContext, mContext.getString(R.string.pwd_setted), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, NewMainActivity.class);
                 startActivity(intent);
-                finish();;
+                finish();
 			}
 		}
 

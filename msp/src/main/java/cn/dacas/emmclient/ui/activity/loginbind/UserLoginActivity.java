@@ -41,6 +41,8 @@ import cn.dacas.emmclient.webservice.QdBusiness;
 import cn.dacas.emmclient.webservice.QdWebService;
 import cn.dacas.emmclient.webservice.qdvolley.DeviceforbiddenError;
 
+import static cn.dacas.emmclient.core.EmmClientApplication.mDatabaseEngine;
+
 /**
  * @author Wang
  */
@@ -318,13 +320,14 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                 if (mLoadingDialog!=null) {
                     mLoadingDialog.dismiss();
                 }
+                String password = EmmClientApplication.mDatabaseEngine.getPatternPassword(mEmail);
                 if (!EmmClientApplication.mActivateDevice.isDeviceReported() && response.getOwner_account().equals(mEmail)) {
                     // go to BinderHitActivity
                     Intent intent = new Intent(mContext, BinderSelectorActivity.class);
                     intent.putExtra("default_bind_flag", true);
                     startActivity(intent);
                     finish();
-                } else if (EmmClientApplication.mDatabaseEngine.getPatternPassword(mEmail) == null) {
+                } else if (password == null || password.equals("")) {
                     Intent intent = new Intent(mContext, GestureLockActivity.class);
                     startActivity(intent);
                     finish();

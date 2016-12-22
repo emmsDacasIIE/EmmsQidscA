@@ -190,6 +190,7 @@ public class UpdateManager
 					@Override
 					public void onErrorResponse(VolleyError error) {
 						QDLog.e("update",error.toString());
+						EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_Error_UpdateApk));
 					}
 				}
 		);

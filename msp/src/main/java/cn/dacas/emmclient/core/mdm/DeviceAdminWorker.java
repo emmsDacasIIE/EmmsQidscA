@@ -114,7 +114,10 @@ public class DeviceAdminWorker {
 	public void disconnectWifi() {
 		android.net.wifi.WifiManager wifiManager = (android.net.wifi.WifiManager) mContext
 				.getSystemService(Context.WIFI_SERVICE);
-		wifiManager.disconnect();
+		wifiManager.getConnectionInfo().getNetworkId();
+		WifiAdmin wifiAdmin = new WifiAdmin(mContext);
+		wifiAdmin.disconnectWifi(wifiManager.getConnectionInfo().getNetworkId());
+		//wifiManager.disconnect();
 	}
 
 

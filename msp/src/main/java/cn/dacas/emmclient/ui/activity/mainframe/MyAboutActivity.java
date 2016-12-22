@@ -1,11 +1,8 @@
 package cn.dacas.emmclient.ui.activity.mainframe;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +46,9 @@ public class MyAboutActivity extends BaseSlidingFragmentActivity {
     {
         switch (event.type) {
             case MessageEvent.Event_NO_UpdateApk:
+                Toast.makeText(this,"当前已经是最新版本",Toast.LENGTH_LONG).show();
+                break;
+            case MessageEvent.Event_Error_UpdateApk:
                 Toast.makeText(this,"当前已经是最新版本",Toast.LENGTH_LONG).show();
                 break;
             default:
