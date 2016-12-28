@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 
@@ -16,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.util.WifiAdmin;
 import de.greenrobot.event.EventBus;
 
@@ -175,9 +177,15 @@ public class DeviceAdminWorker {
 		else{
 			typeInt = 1;
 		}
+		WifiManager wifiManager =(android.net.wifi.WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+		QDLog.d("[WifiAdmin]",wifiManager.getConnectionInfo().getSSID()+"<>"+"\"" + ssid + "\"");
+		if(wifiManager.getConnectionInfo().getSSID().equals("\"" + ssid + "\"")) {
+			QDLog.d("[WifiAdmin]","Has been connecting Wifi:"+ssid);
+			return 0;
+		}
 		WifiAdmin wifiAdmin = new WifiAdmin(mContext);
-		return wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, typeInt)) == -1 ? ERROR_UNSUPPORTED
-				: 0;
+		return (wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, typeInt)) == -1)
+				? ERROR_UNSUPPORTED : 0;
 	}
 
 	// 设置静音

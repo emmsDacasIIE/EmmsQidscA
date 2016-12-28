@@ -81,7 +81,8 @@ public class AppManager {
      * 安装成功与否check,也可以用于判断app是否存在
      */
     public static boolean checkInstallResult(Context mContext, String pkgName) {
-       return PhoneInfoExtractor.getPackageVersionCode(mContext, pkgName)>=0;
+        int code = PhoneInfoExtractor.getPackageVersionCode(mContext, pkgName);
+        return code >= 0;
 
     }
 

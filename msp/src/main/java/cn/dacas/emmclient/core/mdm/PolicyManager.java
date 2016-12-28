@@ -590,7 +590,7 @@ public class PolicyManager {
         mustItem.score=20;
         StringBuilder mustSb = new StringBuilder("");
         for (String pkgName:curPolicy.getMustApps()) {
-            if (AppManager.checkInstallResult(mContext,pkgName)) {
+            if (!AppManager.checkInstallResult(mContext,pkgName)) {
                 mustSb.append("  " + pkgName + "\n");
                 if (mustItem.score>=10) mustItem.score=mustItem.score-10;
             }

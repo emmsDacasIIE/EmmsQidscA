@@ -49,6 +49,10 @@ public class PushMsgReceiver extends BaseMessageReceiver{
                         case "DeviceUpdated":
                             sMsgWorker.sendHandlerCommend(MDMService.CmdCode.DEVICE_INFO_CHANGE);
                             break;
+                        case "DeviceDeleted":
+                            Toast.makeText(EmmClientApplication.getContext(),"设备已经被删除",Toast.LENGTH_LONG).show();
+                            EmmClientApplication.getContext().startActivity(EmmClientApplication.getExitApplicationIntent());
+                            break;
                         default:
                             break;
                     }

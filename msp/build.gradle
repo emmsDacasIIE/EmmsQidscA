@@ -1,29 +1,38 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        EMMSignConfig {
+            keyAlias 'DCS'
+            keyPassword '123456'
+            storeFile file('C:/Users/Administrator/Desktop/EmmsQidscA/emms_keystore')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "23.0.3"
-
     defaultConfig {
         applicationId "cn.dacas.emmclient"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 42
-        versionName "4.0.20"
+        versionCode 43
+        versionName "4.0.30"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.EMMSignConfig
+        }
+        debug {
+            signingConfig signingConfigs.EMMSignConfig
         }
     }
-
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
         }
     }
-
     testOptions {
         unitTests.returnDefaultValues = true
     }
