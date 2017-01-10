@@ -72,8 +72,9 @@ public class PushMsgReceiver extends BaseMessageReceiver{
 
     @Override
     protected void onConnectionError(Context context, String msg) {
-        if(sMsgWorker !=null)
+        if(sMsgWorker !=null) {
             sMsgWorker.onState(false);
+        }
     }
 
     @Override

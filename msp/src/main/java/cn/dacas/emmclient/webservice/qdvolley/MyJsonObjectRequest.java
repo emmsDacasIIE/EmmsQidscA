@@ -45,9 +45,13 @@ public class MyJsonObjectRequest extends  MyAsynRequest<JSONObject> {
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {
             String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            QDLog.i(TAG, "Response========" + jsonString);
-            QDLog.println(TAG, jsonString);
-            return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+            if(!jsonString.equals("")) {
+                QDLog.i(TAG, "Response========" + jsonString);
+                QDLog.println(TAG, jsonString);
+                return Response.success(new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
+            } else{
+                return Response.success(new JSONObject(),HttpHeaderParser.parseCacheHeaders(response));
+            }
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         } catch (JSONException je) {

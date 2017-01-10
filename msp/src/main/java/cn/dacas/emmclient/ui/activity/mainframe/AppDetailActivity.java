@@ -187,6 +187,7 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
                         PackageManager pm = mContext.getPackageManager();
                         Intent intent = new Intent();
                         try {
+                            // TODO: 2017-1-9
                             intent = pm
                                     .getLaunchIntentForPackage(pkgNameStr);
                             mContext.startActivity(intent);

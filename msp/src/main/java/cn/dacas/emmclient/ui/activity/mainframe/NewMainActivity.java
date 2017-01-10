@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Response;
+import com.jauker.widget.BadgeView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import java.io.File;
@@ -89,6 +90,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
     private ArrayList<MamAppInfoModel> buildInApps;
 
+    private BadgeView badge;
+
 
     @Override
     protected HearderView_Style setHeaderViewStyle() {
@@ -155,6 +158,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             }
         }
 
+        badge = new BadgeView(this);
 //        WindowManager windowManager = getWindowManager();
 //        Display display = windowManager.getDefaultDisplay();
 //        int screenWidth = display.getWidth();
@@ -269,6 +273,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             layout_info_network.setVisibility(View.GONE);
         else
             layout_info_network.setVisibility(View.VISIBLE);
+        setLoaclMsgCount2Image();
     }
 
     @Override
@@ -284,8 +289,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
             timer = null;
         }
+        EventBus.getDefault().unregister(this);
         super.onDestroy( );
-
     }
 
     private void gotoComplianceActivity() {
@@ -326,7 +331,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     };
 
     private void updateRightImage() {
-        if (UpdateLockTwice <=10000000)  {
+        if (UpdateLockTwice <= 10000000)  {
             if (UpdateLockTwice %2 == 0) {
                 mRightHeaderView.setImageView(R.mipmap.msp_lock_icon);
             }else {
@@ -658,7 +663,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     }
 
 
-    ////网络状态
+    ////网络状态以及消息提醒
     public void onEventMainThread(MessageEvent event)
     {
         switch (event.type)
@@ -694,9 +699,23 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
                         (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
                 alertDialog.show();
                 break;
+            case MessageEvent.Event_MsgCount_Change:
+                addNewMsgCount2Image(1);
             default:
                 break;
         }
+    }
+
+    private void setLoaclMsgCount2Image(){
+        int count = EmmClientApplication.mDatabaseEngine.getUnReadMessageCount();
+        badge.setTargetView(findViewById(R.id.image_msg));
+        badge.setBadgeCount(count);
+    }
+
+    private void addNewMsgCount2Image(int newMsgCount){
+        int count = badge.getBadgeCount();
+        badge.setTargetView(findViewById(R.id.image_msg));
+        badge.setBadgeCount(count+newMsgCount);
     }
 
     static public Intent getMainActivityIntent(Context context){

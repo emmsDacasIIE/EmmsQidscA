@@ -45,7 +45,7 @@ public class ActivateDevice {
 
     private SharedPreferences settings = null;
 
-    public static boolean online = false;
+    public static volatile boolean online = false;
     public static long lastOnlineTime = 0;
     private String deviceType = null;
 

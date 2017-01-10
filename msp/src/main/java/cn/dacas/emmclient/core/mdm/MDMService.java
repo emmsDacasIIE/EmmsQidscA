@@ -13,8 +13,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.DeviceModel;
@@ -80,6 +81,7 @@ public class MDMService extends Service implements ControllerListener {
     private String owner;
 
     private MsgWorker mMsgWorker;
+    private volatile long lastMPServiceTime = 0;
 
 
     public interface CmdCode {
@@ -184,14 +186,24 @@ public class MDMService extends Service implements ControllerListener {
      * init RegMsgPush, -> init PushMsgManager
      */
     private void startMsgPush() {
+        long currentTime = System.currentTimeMillis();
+        Log.d(TAG, "startMsgPush: "+currentTime+":;"+lastMPServiceTime);
+        if((new Date(currentTime).getTime()-new Date(lastMPServiceTime).getTime())<1000*60) {
+            QDLog.d(TAG,"Too Frequently to start MsgPushService");
+            lastMPServiceTime = currentTime;
+            return;
+        }
+        lastMPServiceTime = currentTime;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Looper.prepare();
-                if(ActivateDevice.online || mMsgWorker.isWorking())
+                /*if(ActivateDevice.online || mMsgWorker.isWorking()) {
+                    QDLog.d(TAG,"MsgPushService is running!");
                     return;
+                }*/
                 String ip = AddressManager.getAddrMsg();
-                QDLog.d("MDMService", "MsgPush reg to " + ip);
+                QDLog.d(TAG, "MsgPush reg to " + ip);
                 QDLog.writeMsgPushLog("try to connect to" + ip);
                 String imei = PhoneInfoExtractor.getIMEI(MDMService.this);
                 QDLog.d(TAG, "IMEI: "+imei);

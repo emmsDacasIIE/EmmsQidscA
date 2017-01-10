@@ -104,6 +104,7 @@ public class HomeFragment extends Fragment {
                 if (model.isApk()) {
                     PackageManager pm = getActivity().getPackageManager();
                     try {
+                        //TODO
                         Intent intent = pm.getLaunchIntentForPackage(model.pkgName);
                         getActivity().startActivity(intent);
                     } catch (Exception e) {

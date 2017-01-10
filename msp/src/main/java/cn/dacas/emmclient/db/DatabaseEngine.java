@@ -3,7 +3,10 @@ package cn.dacas.emmclient.db;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.Collections;
+
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.model.McmMessageModel;
 import cn.dacas.emmclient.security.AESUtil;
 import cn.dacas.emmclient.util.PrefUtils;
 import cn.dacas.emmclient.core.mam.MApplicationManager;
@@ -250,6 +253,22 @@ public class DatabaseEngine {
     public Cursor getAllMessageData() {
         return mEmmClientDb.getAllItemsOfTableInOrder(
                 EmmClientDb.DEVICEMSG_DATABASE_TABLE, null,"time");
+    }
+
+    public int getUnReadMessageCount() {
+        int count = 0;
+        Cursor mCursor = mEmmClientDb.getAllItemsOfTableInOrder(
+                EmmClientDb.DEVICEMSG_DATABASE_TABLE, null,"time");
+        if ((mCursor != null) && (mCursor.getCount() > 0)) {
+            mCursor.moveToFirst();
+            int readedIdx = mCursor.getColumnIndexOrThrow("readed");
+            do {
+                if(mCursor.getInt(readedIdx)==0)
+                    count++;
+            } while (mCursor.moveToNext());
+            mCursor.close();
+        }
+        return count;
     }
 
     public void deleteDbItemByColumns(String msg,String time) {

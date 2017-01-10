@@ -51,7 +51,7 @@ public class MsgWorker {
     private Handler hdler = null;
     private McmController mcmController;
     private JobManager mJobManager;
-    private boolean working = false;
+    private volatile boolean working = false;
 
     /**
      * The constructor of MsgWorker,
@@ -189,6 +189,7 @@ public class MsgWorker {
         QDLog.i(MDMService.TAG,"========getMessages function==========");
         final int maxId= PrefUtils.getMsgMaxId();
         mcmController.FetchMessageList(maxId);
+        EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_MsgCount_Change));
         PrefUtils.addSecurityRecord("加密一条消息");
     }
 
@@ -255,8 +256,10 @@ public class MsgWorker {
                 public void onResponse(JSONObject response) {
                     try {
                         QDLog.d(CommandModel.TAG,response.toString());
-                        commandModel = new CommandModel(response);
-                        dealMessage(commandModel);
+                        if(response.length()!=0) {
+                            commandModel = new CommandModel(response);
+                            dealMessage(commandModel);
+                        }
                     } catch (Exception e) {
                         if(commandModel!=null)
                             sendStatusToServer("Error",commandModel.getCommandUUID(),null);
@@ -267,7 +270,7 @@ public class MsgWorker {
             errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    //sendHandlerCommend(MDMService.CmdCode.ERROR_MSG_SERVER);
+                    QDLog.e(MDMService.TAG,"sendStatusError",error);
                 }
             };
         }
