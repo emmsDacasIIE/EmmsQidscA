@@ -132,22 +132,27 @@ public class DownloadFileThread extends Thread {
                     progress = (int)((count * 1.0 / fileTotalSize) * 100);
                 }
                 //todo Due to the lack of Content Length in Http Response
-                else if(length == -1){ //没有读取到文件大小
+                /*else if(length == -1){ //没有读取到文件大小
                     progress ++;
                     if(progress > 100)
                         progress = 99;
                 } else {
                     progress = 0;
-                }
+                }*/
 
                 if (progress > 0 && progress>oldProgress) {
+                    QDLog.e(TAG,count+"/"+length);
                     sendMessage(DownLoadFileFromUrl.DOWNLOADING, progress);
                     oldProgress=progress;
+                }
+                else if (fileTotalSize == -1 && count>0 ){
+                    sendMessage(DownLoadFileFromUrl.DOWNLOADING_WITHOU_LENGTH, count);
                 }
 
                 // 更新进度
                 if (numread <= 0) {
                     // 下载完成
+                    QDLog.e(TAG,count+"/"+length);
                     EmmClientApplication.mSecureContainer.encryptFromFile(name);
                     PrefUtils.addSecurityRecord("加密一条数据");
                     sendMessage(DownLoadFileFromUrl.DOWNLOAD_FINISH, 100);

@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.core.update.UpdateManager;
 import cn.dacas.emmclient.manager.ActivityManager;
 import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.DeviceModel;
@@ -105,10 +106,12 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login, "");
         init();
+        final UpdateManager manager = new UpdateManager(UserLoginActivity.this);
+        // 检查软件更新
+        manager.checkClientUpdate();
     }
 
     public void onResume() {
@@ -320,6 +323,7 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                 if (mLoadingDialog!=null) {
                     mLoadingDialog.dismiss();
                 }
+                EmmClientApplication.mCheckAccount.setLogining(true);
                 String password = EmmClientApplication.mDatabaseEngine.getPatternPassword(mEmail);
                 if (!EmmClientApplication.mActivateDevice.isDeviceReported() && response.getOwner_account().equals(mEmail)) {
                     // go to BinderHitActivity

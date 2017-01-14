@@ -18,6 +18,7 @@ import com.android.volley.VolleyError;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.core.update.UpdateManager;
 import cn.dacas.emmclient.model.ActivateDevice;
 import cn.dacas.emmclient.model.DeviceModel;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
@@ -71,6 +72,9 @@ public class BindUserActivity extends BaseSlidingFragmentActivity {
         loginPassword = getIntent().getStringExtra("password");
 
         initView();
+        final UpdateManager manager = new UpdateManager(this);
+        // 检查软件更新
+        manager.checkClientUpdate();
     }
 
     @Override
@@ -171,6 +175,7 @@ public class BindUserActivity extends BaseSlidingFragmentActivity {
                 QdBusiness.login(loginEmail, loginPassword, new Response.Listener<DeviceModel>() {
                     @Override
                     public void onResponse(DeviceModel response) {
+                        EmmClientApplication.mCheckAccount.setLogining(true);
                         String str = EmmClientApplication.mDatabaseEngine.getPatternPassword(mEmail);
                         if (str == null) {
                             Intent intent = new Intent(BindUserActivity.this, GestureLockActivity.class);

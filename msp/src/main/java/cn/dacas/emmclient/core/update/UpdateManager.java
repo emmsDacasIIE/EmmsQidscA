@@ -320,6 +320,7 @@ public class UpdateManager
 				if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
 				{
 					// 获得存储卡的路径
+					QDLog.e("update","Start!");
 					String sdpath = Environment.getExternalStorageDirectory() + "/";
 					mSavePath = sdpath + "download";
 					URL url = new URL(appInfoModel.url);
@@ -351,16 +352,20 @@ public class UpdateManager
 						// 计算进度条位置
 						if(length > 0)
 							progress = (int) (((float) count / length) * 100);
-						else
-							progress ++;
+						else {
+							progress++;
+							if(progress >= 100)
+								progress = progress % 99;
+						}
 
-						progress = progress % 99;
+
 						// 更新进度
 						mHandler.sendEmptyMessage(DOWNLOAD);
 						if (numread <= 0)
 						{
 							// 下载完成
 							progress = 0;
+							QDLog.e("update","End!");
 							mHandler.sendEmptyMessage(DOWNLOAD_FINISH);
 							break;
 						}

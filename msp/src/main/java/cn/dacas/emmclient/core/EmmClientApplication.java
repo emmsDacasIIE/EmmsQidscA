@@ -98,11 +98,9 @@ public class EmmClientApplication extends Application {
 		mVolleyQueue= Volley.newRequestQueue(EmmClientApplication.getContext(),new SslHttpStack(false));
 		initImageLoader(this);
 		initIpSettings(this);
-		
-		Intent intentMDM = new Intent(this, MDMService.class);
-		configureJobManager();
-		this.startService(intentMDM);
 
+		configureJobManager();
+		this.startService(MDMService.getRestartIntent(this));
 
 //		UninstallMonitorFunc umFunc = new UninstallMonitorFunc(mContext);
 //		String pkg = this.getPackageName();

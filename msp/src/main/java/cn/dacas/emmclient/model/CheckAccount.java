@@ -21,6 +21,7 @@ public class CheckAccount {
 	private String currentAccount = null;
 	private String currentName = null;
 	private String currentPassword=null;
+	private boolean logining = false;
 
 
 	public static CheckAccount getCheckAccountInstance(Context context) {
@@ -116,6 +117,14 @@ public class CheckAccount {
 		this.setCurrentAccount(null);
 		this.setCurrentName(null);
         this.setCurrentPassword(null);
+		this.setLogining(false);
 		EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_StopForwarding));
+	}
+
+	public boolean isAccountLogin(){
+		return logining;
+	}
+	public void setLogining(boolean status){
+		this.logining = status;
 	}
 }

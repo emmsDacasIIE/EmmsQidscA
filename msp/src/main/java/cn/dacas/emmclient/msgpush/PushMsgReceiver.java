@@ -99,6 +99,11 @@ public class PushMsgReceiver extends BaseMessageReceiver{
     }
 
     @Override
+    protected int getLargeIcon() {
+        return R.mipmap.msp_home_msg;
+    }
+
+    @Override
     protected void onConnectionOk(Context context, String msg) {
         if(sMsgWorker !=null) {
             sMsgWorker.onState(true);

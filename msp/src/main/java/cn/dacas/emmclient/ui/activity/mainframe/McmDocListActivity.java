@@ -227,9 +227,14 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
             switch (msg.what) {
                 case DownLoadFileFromUrl.DOWNLOADING:
                     if (progressDialog!=null) {
-                        if (msg.arg1>=100) msg.arg1=99;
+                        if (msg.arg1>=100)
+                            msg.arg1=99;
                         progressDialog.setProgress(msg.arg1);
                     }
+                    break;
+                case DownLoadFileFromUrl.DOWNLOADING_WITHOU_LENGTH:
+                    String s = msg.arg1/1024 + "KB/?";
+                    progressDialog.setMessage("下载中："+s);
                     break;
                 case DownLoadFileFromUrl.DOWNLOAD_STOP:
                     if (progressDialog!=null) progressDialog.dismiss();

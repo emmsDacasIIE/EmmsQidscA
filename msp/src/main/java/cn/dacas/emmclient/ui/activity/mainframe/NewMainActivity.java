@@ -36,9 +36,11 @@ import cn.dacas.emmclient.core.mam.AppManager;
 import cn.dacas.emmclient.core.mdm.MDMService;
 import cn.dacas.emmclient.core.update.UpdateManager;
 import cn.dacas.emmclient.event.MessageEvent;
+import cn.dacas.emmclient.model.CheckAccount;
 import cn.dacas.emmclient.model.MamAppInfoModel;
 import cn.dacas.emmclient.model.UserModel;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
+import cn.dacas.emmclient.ui.activity.loginbind.UserLoginActivity;
 import cn.dacas.emmclient.ui.fragment.HomeFragment;
 import cn.dacas.emmclient.ui.fragment.MenuLeftFragment;
 import cn.dacas.emmclient.ui.fragment.OnMainPageChangedListener;
@@ -120,24 +122,18 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
         timer.schedule(mTimerTask, 700, 700);
 
-        final UpdateManager manager = new UpdateManager(NewMainActivity.this);
-        // 检查软件更新
-        //manager.checkUpdate();
-        manager.checkClientUpdate();
-
-        //初次加载展现合规页面
+        //初次加载
         if (NewMainActivity.isFirstCreated) {
             gotoComplianceActivity();
+            // 检查软件更新
+            final UpdateManager manager = new UpdateManager(NewMainActivity.this);
+            manager.checkClientUpdate();
             isFirstCreated = false;
         }
 
         layout_info_network=(LinearLayout)findViewById(cn.dacas.emmclient.R.id.layout_info_netwrok);
         layoutDots.setVisibility(View.VISIBLE);
-        /*if (NetworkUtils.isConnected(mContext))
-            layout_info_network.setVisibility(View.GONE);
-        else
-            layout_info_network.setVisibility(View.VISIBLE);
-         */
+
         EventBus.getDefault().register(this);
         //获取用户信息
         QdWebService.getUserInformation(new Response.Listener<UserModel>() {
@@ -159,16 +155,14 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         }
 
         badge = new BadgeView(this);
-//        WindowManager windowManager = getWindowManager();
-//        Display display = windowManager.getDefaultDisplay();
-//        int screenWidth = display.getWidth();
-//        int screenHeight =  display.getHeight();
-//        Toast.makeText(mContext,screenHeight+"*"+screenWidth,Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        CheckAccount checkAccount = EmmClientApplication.mCheckAccount;
+        if(checkAccount == null||!checkAccount.isAccountLogin())
+            startActivity(new Intent(this, UserLoginActivity.class));
         setHeadImage();
         showApppList();
     }
