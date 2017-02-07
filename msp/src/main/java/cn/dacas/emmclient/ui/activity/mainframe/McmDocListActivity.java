@@ -143,8 +143,6 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
                                 filterDataFromDb(allDbList,currentList);
                                 showDocList(true);
                             }
-
-
                             return;
                         }
                         break;
@@ -154,7 +152,8 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
                 break;
             default:
                 //response错误
-                showDocList(false);
+                Toast.makeText(this,"安全文件列表更新失败，请稍后重试",Toast.LENGTH_LONG).show();
+                showDocList(true);
         }
     }
 

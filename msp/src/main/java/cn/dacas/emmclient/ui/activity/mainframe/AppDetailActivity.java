@@ -230,6 +230,9 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
                             e.printStackTrace();
                         }
                     }
+                    if(appStatusStr.equals("删除")){
+                        AppManager.uninstallApp(AppDetailActivity.this,pkgNameStr);
+                    }
 
                 }
             }

@@ -61,6 +61,10 @@ import cn.dacas.emmclient.util.PrefUtils;
 import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.webservice.QdWebService;
 
+import static cn.dacas.emmclient.ui.base.CommonViewHolder.AppItemStatus.Open;
+import static cn.dacas.emmclient.ui.base.CommonViewHolder.AppItemStatus.StartDownload;
+import static cn.dacas.emmclient.ui.base.CommonViewHolder.AppItemStatus.Update;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -267,6 +271,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                 default:
                     noAppText.setVisibility(View.VISIBLE);
                     noAppText.setText("正在刷新应用列表...");
+                    //getAppListFromLocal();
                     getAppListFromServer();
                     break;
             }
@@ -277,13 +282,14 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
      * 用最新的接口,获取应用列表
      */
     private void getAppListFromServer() {
-        pushAppsArrayList.clear();
-        allAppList.clear();
-        refreshableView.finishRefreshing();
-        noAppText.setVisibility(View.GONE);
         QdWebService.getAppList(new Response.Listener<ArrayList<MamAppInfoModel>>() {
             @Override
             public void onResponse(ArrayList<MamAppInfoModel> response) {
+                pushAppsArrayList.clear();
+                allAppList.clear();
+                refreshableView.finishRefreshing();
+                noAppText.setVisibility(View.GONE);
+
                 PolicyContent policy= PolicyManager.getMPolicyManager(AppListFragment.this.getActivity()).getPolicy();
 
                 for (int i = 0; i< response.size(); i++) {
@@ -291,6 +297,9 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                     m.appType = AppListFragment.OPTIONAL_APP;
                     if (m.type.equalsIgnoreCase("WEB")) continue;
                     //设置appType
+                    if (m.appName.equals("计算器")||m.appName.equals("日历")||
+                            m.appName.equals("时钟")||m.appName.equals("相机"))
+                        continue;
                     if (policy.getBlackApps().contains(m.pkgName)) {
                             m.appType = AppListFragment.BLACK_APP;
                     } else if (policy.getMustApps().contains(m.pkgName)) {
@@ -301,14 +310,59 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                 }
                 Collections.sort(pushAppsArrayList);
                 Collections.sort(allAppList);
+                addCanceledAppList();
                 showAppList(true);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                showAppList(false);
+                addCanceledAppList();
+                if(allAppList.size()>0) {
+                    Toast.makeText(getActivity(), "应用列表加载失败", Toast.LENGTH_LONG).show();
+                    showAppList(true);
+                }
+                else
+                    showAppList(false);
             }
         });
+    }
+
+    private void addCanceledAppList(){
+        for (MamAppInfoModel canceledApp:PrefUtils.getCanceledAppList()) {
+            canceledApp.isCanceled = true;
+            pushAppsArrayList.add(0,canceledApp);
+            allAppList.add(0,canceledApp);
+        }
+    }
+
+    private void getAppListFromLocal(){
+        pushAppsArrayList.clear();
+        allAppList.clear();
+        refreshableView.finishRefreshing();
+        noAppText.setVisibility(View.GONE);
+        ArrayList<MamAppInfoModel> localAppList = PrefUtils.getAppList();
+        PolicyContent policy= PolicyManager
+                .getMPolicyManager(AppListFragment.this.getActivity()).getPolicy();
+        for (int i = 0; i< localAppList.size(); i++) {
+            MamAppInfoModel m = localAppList.get(i);
+            m.appType = AppListFragment.OPTIONAL_APP;
+            if (m.type.equalsIgnoreCase("WEB")) continue;
+            if (m.appName.equals("计算器")||m.appName.equals("日历")||
+                    m.appName.equals("时钟")||m.appName.equals("相机"))
+                continue;
+            //设置appType
+            if (policy.getBlackApps().contains(m.pkgName)) {
+                m.appType = AppListFragment.BLACK_APP;
+            } else if (policy.getMustApps().contains(m.pkgName)) {
+                m.appType = AppListFragment.NECESSARY_APP;
+            }
+            pushAppsArrayList.add(m);
+            allAppList.add(m);
+        }
+        Collections.sort(pushAppsArrayList);
+        Collections.sort(allAppList);
+        showAppList(true);
+
     }
 
     public void showAppList(boolean isNetworkOK) {
@@ -326,7 +380,6 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
             noAppText.setVisibility(View.GONE);
             refreshableView.setVisibility(View.VISIBLE);
         }
-
         //下面这个，不用也可以lizhongyi
         mSearchAdapter.notifyDataSetChanged();
     }
@@ -506,7 +559,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
             final MamAppInfoModel model = mDatas.get(position);
 
                 setHolderValue(holder, model, false);
-                setRightButtonText(holder, holder.status);
+                setRightButtonText(holder);
 
             //set onClickEvent
             holder.setOnClickListener(R.id.right_btn, new OnClickListener() {
@@ -570,6 +623,10 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            break;
+                        case Deleted:
+                            AppManager.uninstallApp(getActivity(),model.pkgName);
+                            break;
                     }
                 }
             });
@@ -618,8 +675,8 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
             });
         }
 
-        private void setRightButtonText(CommonViewHolder holder, CommonViewHolder.AppItemStatus status) {
-            switch (status) {
+        private void setRightButtonText(CommonViewHolder holder) {
+            switch (holder.status) {
                 case Open:
                     holder.setButtonText(R.id.right_btn, "打开");
                     break;
@@ -642,6 +699,9 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                 case Setup:
                     holder.setButtonText(R.id.right_btn, "安装");
                     break;
+                case Deleted:
+                    holder.setButtonText(R.id.right_btn,"删除");
+                    break;
                 default:
                     holder.setButtonText(R.id.right_btn, "下载");
                     break;
@@ -650,7 +710,6 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
         }
 
         public void setHolderValue(CommonViewHolder holder, MamAppInfoModel model, boolean isClick) {
-
 
             holder.setImageResource(R.id.imageview_left, R.mipmap.doc_audio); //left image
             holder.setText(R.id.textview_title_name, model.appName); //title
@@ -668,17 +727,22 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            if(model.isCanceled) {
+                holder.status = CommonViewHolder.AppItemStatus.Deleted;
+                holder.setText(R.id.textview_minor_title, "失效应用请卸载");
+                return;
+            }
 
             String curVersion = PhoneInfoExtractor.getPackageVersionName(mContext, model.pkgName);
             int curVersionCode = PhoneInfoExtractor.getPackageVersionCode(mContext, model.pkgName);
             int res = EmmClientApplication.mSecureContainer.getFileState(model.file_name);
             if (curVersion!=null && curVersionCode>=0) {
                 if ( curVersionCode == model.appVersionCode) {
-                    holder.status = CommonViewHolder.AppItemStatus.Open;
+                    holder.status = Open;
                 } else if (curVersionCode < model.appVersionCode) {
                     if (res==1)
                         holder.status = CommonViewHolder.AppItemStatus.Setup;
-                    else holder.status = CommonViewHolder.AppItemStatus.Update;
+                    else holder.status = Update;
                 } else if (curVersionCode > model.appVersionCode) {
                     //服务器版本比本地安装的版本低
                     holder.status = CommonViewHolder.AppItemStatus.LowVersion;
@@ -688,7 +752,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                 if (res == 1)
                     holder.status = CommonViewHolder.AppItemStatus.Setup;
                 else
-                    holder.status = CommonViewHolder.AppItemStatus.StartDownload;
+                    holder.status = StartDownload;
             }
         }
     }
