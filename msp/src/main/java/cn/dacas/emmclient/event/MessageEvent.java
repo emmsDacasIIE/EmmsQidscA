@@ -25,6 +25,8 @@ public class MessageEvent {
 	public static final int Event_Error_UpdateApk = 0x0702;
 
 	public static final int Event_MsgCount_Change = 0x801;
+
+	public static final int Event_APP_Deleted = 0x901;
 	// 0x0101-0x01FF for MDMService
 	public int type;
 	public Bundle params;

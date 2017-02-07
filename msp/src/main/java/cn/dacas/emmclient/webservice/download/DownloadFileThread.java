@@ -141,7 +141,7 @@ public class DownloadFileThread extends Thread {
                 }*/
 
                 if (progress > 0 && progress>oldProgress) {
-                    QDLog.e(TAG,count+"/"+length);
+                    //QDLog.e(TAG,count+"/"+length);
                     sendMessage(DownLoadFileFromUrl.DOWNLOADING, progress);
                     oldProgress=progress;
                 }

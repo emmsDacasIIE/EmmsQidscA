@@ -10,9 +10,6 @@ import cn.dacas.emmclient.model.MdmWifiModel;
  * Created by lenovo on 2016-1-21.
  */
 public  class PolicyContent implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     private long policyId;

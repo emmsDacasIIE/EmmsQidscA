@@ -65,12 +65,10 @@ public class DeviceAdminWorker {
 
 	//	@Override
 	public void finalize() {
-
 		try {
 			super.finalize();
 			EventBus.getDefault().unregister(this);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -134,6 +132,7 @@ public class DeviceAdminWorker {
 	}
 
 	// 打开、关闭数据连接
+	// 关于禁止数据网络连接，这个功能在Android 5 以上版本中，只有系统APP才能调用，也就是所设备必须root权限才可以使用
 	public int setDataConnection(boolean enable) {
 		//关于禁止数据网络连接，这个功能在Android 5 以上版本中，只有系统APP才能调用，也就是所设备必须root权限才可以使用，下面是具体的解释
 		// http://stackoverflow.com/questions/29340150/android-l-5-x-turn-on-off-mobile-data-programmatically
@@ -366,6 +365,7 @@ public class DeviceAdminWorker {
 		}
 	}
 
+	// TODO: 2017-2-7  策略信息中并没有该项
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public int setPasswordMinimumLetters(int value) {
 		if (isDeviceAdminActive()) {

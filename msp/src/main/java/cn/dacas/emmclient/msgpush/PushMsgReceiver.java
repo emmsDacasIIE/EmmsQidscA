@@ -95,7 +95,7 @@ public class PushMsgReceiver extends BaseMessageReceiver{
 
     @Override
     public int getIcon() {
-        return R.mipmap.emm_red_28_logo;
+        return R.mipmap.msp_lock_icon;
     }
 
     @Override

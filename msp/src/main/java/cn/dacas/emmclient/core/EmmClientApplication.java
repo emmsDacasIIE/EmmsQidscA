@@ -276,6 +276,9 @@ public class EmmClientApplication extends Application {
 						f.delete();
 					}
 				}
+			}else if(intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)){
+				String packName = intent.getDataString().substring(8);
+				QDLog.e(intent.getDataString() + "====", packName);
 			}
 		}
 	}

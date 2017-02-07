@@ -164,7 +164,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         if(checkAccount == null||!checkAccount.isAccountLogin())
             startActivity(new Intent(this, UserLoginActivity.class));
         setHeadImage();
-        showApppList();
+        showLoaclAppList();
+        getAndShowNewAppList();
     }
 
 
@@ -175,17 +176,59 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         super.onStop();
     }
 
-    private void showApppList() {
+    private void showLoaclAppList(){
+        ArrayList<MamAppInfoModel> localAppList = PrefUtils.getAppList();
+        refreshMainPage(localAppList);
+        mViewPager.setAdapter(new MyFrageStatePagerAdapter(getSupportFragmentManager()));
+        mViewPager.setCurrentItem(position);
+    }
+    private void getAndShowNewAppList() {
         QdWebService.getAppList(new Response.Listener<ArrayList<MamAppInfoModel>>() {
             @Override
             public void onResponse(ArrayList<MamAppInfoModel> response) {
                 //重新排序appList
                 if (response == null)
                     response = new ArrayList<>();
-                for (MamAppInfoModel app:buildInApps)
-                    response.add(0,app);
-                ArrayList<MamAppInfoModel> savedList = PrefUtils.getApplist();
+                for (MamAppInfoModel app: buildInApps) {
+                    response.add(0, app);
+                }
+                ArrayList<MamAppInfoModel> savedList = PrefUtils.getAppList();
                 ArrayList<MamAppInfoModel> newList = reorderAppList(response, savedList);
+
+                //PrefUtils.putCancelAppList(new ArrayList<MamAppInfoModel>());
+                ArrayList<MamAppInfoModel> canceledList = AppManager.updatedCanceledAppList(getApplicationContext(),newList);
+                if(canceledList.size()>0) {
+                    AlertDialog.Builder builder;
+                    AlertDialog alertDialog;
+                    builder = new AlertDialog.Builder(NewMainActivity.this);
+                    builder.setTitle("删除失效应用");
+                    builder.setMessage("有已安装的应有被取消分配，请即时删除。");
+
+                    builder.setPositiveButton("立刻删除", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(NewMainActivity.this,
+                                    MamAppListActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    builder.setNegativeButton("稍后删除", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    alertDialog = builder.create();
+                    alertDialog.getWindow().setType(
+                            (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
+                    alertDialog.show();
+                    //Toast.makeText(getApplicationContext(), "存在已被取消分配但已安装的应用:" + canceledList.toString(), Toast.LENGTH_LONG).show();
+                }
+
                 //将重排列的list存储到本地
                 PrefUtils.putAppList(newList);
                 refreshMainPage(newList);
@@ -199,7 +242,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         //获取重新排列的showList
         if(fragmentList.size() == 0||fragmentList==null)
             return;
-        ArrayList<MamAppInfoModel> showList=new ArrayList<>();
+        ArrayList<MamAppInfoModel> showList = new ArrayList<>();
         for (HomeFragment f:fragmentList) {
             if(f == null || f.getAdapter() == null || f.getAdapter().getCount()==0)
                 continue;
@@ -209,8 +252,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             }
         }
         //重新排列list
-        ArrayList<MamAppInfoModel> savedList =PrefUtils.getApplist();
-        ArrayList<MamAppInfoModel> newList=reorderAppList(savedList, showList);
+        ArrayList<MamAppInfoModel> savedList = PrefUtils.getAppList();
+        ArrayList<MamAppInfoModel> newList = reorderAppList(savedList, showList);
         PrefUtils.putAppList(newList);
     }
 
@@ -227,11 +270,11 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             }
         }
         HomeFragment fragment=null;
-        ArrayList<MamAppInfoModel> pageList=null;
+        ArrayList<MamAppInfoModel> pageList = null;
         int idx=0;
         for (int i=0;i<showList.size();i++) {
             if (i%HomeFragment.Max_Apps_Count==0) {
-                if (fragment!=null && pageList!=null)
+                if (fragment!=null && pageList!= null)
                     fragment.setContent(idx,pageList,NewMainActivity.this);
                 fragment=new HomeFragment();
                 pageList=new ArrayList<>();
@@ -246,7 +289,17 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         GuideDotsSelected(0);
     }
 
-    private ArrayList<MamAppInfoModel> reorderAppList(ArrayList<MamAppInfoModel> sourceList,ArrayList<MamAppInfoModel> orderList) {
+    /**
+     * reorder sourceList by the order of local-saved list (orderList)
+     * if apps have been in local-saved list, their relative order in orderList would not change,
+     * else they would be inserted into the end of list;
+     * Please pay attention to this point that app in local-saved list but not in sourceList
+     * will not been contained in returned list.
+     * @param sourceList a list of new app list
+     * @param orderList local-saved ordered list of apps
+     * @return a ordered list of apps which in the sourceList
+     */
+    public static ArrayList<MamAppInfoModel> reorderAppList(ArrayList<MamAppInfoModel> sourceList,ArrayList<MamAppInfoModel> orderList) {
         ArrayList<MamAppInfoModel> newList=new ArrayList<>();
         for (MamAppInfoModel app : orderList) {
             if (sourceList.contains(app)) {
@@ -695,9 +748,14 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
                 break;
             case MessageEvent.Event_MsgCount_Change:
                 addNewMsgCount2Image(1);
+                break;
+            case MessageEvent.Event_APP_Deleted:
             default:
                 break;
         }
+    }
+
+    public void deleteAPPAlertDialog(){
     }
 
     private void setLoaclMsgCount2Image(){

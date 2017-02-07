@@ -14,13 +14,20 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import cn.dacas.emmclient.model.MamAppInfoModel;
+import cn.dacas.emmclient.ui.activity.mainframe.NewMainActivity;
 import cn.dacas.emmclient.util.PhoneInfoExtractor;
+import cn.dacas.emmclient.util.PrefUtils;
+
+import static com.baidu.location.h.i.A;
 
 /**
  * Created by lizhongyi on 2015/12/16.
+ * Updated by Sun RX on 2017/1/22
  */
 public class AppManager {
 
@@ -213,5 +220,48 @@ public class AppManager {
         }
     }
 
+    static public ArrayList<MamAppInfoModel> updatedCanceledAppList(Context context, ArrayList<MamAppInfoModel> newAppList){
+        ArrayList<MamAppInfoModel> currentCanceledList = PrefUtils.getCanceledAppList();
+        ArrayList<MamAppInfoModel> currentAppList = PrefUtils.getAppList();
+        ArrayList<MamAppInfoModel> newCanceledList = new ArrayList<>();
 
+        for(Iterator it = newAppList.iterator(); it.hasNext();){
+            MamAppInfoModel newApp = (MamAppInfoModel)it.next();
+            if (currentCanceledList.contains(newApp))
+                currentCanceledList.remove(newApp);
+        }
+
+        for(MamAppInfoModel oldApp : currentAppList){
+            if((!newAppList.contains(oldApp))
+                    &&(!currentCanceledList.contains(oldApp))
+                    && oldApp.isApk()
+                    && AppManager.checkInstallResult(context, oldApp.pkgName)) {
+                oldApp.isCanceled = true;
+                newCanceledList.add(oldApp);
+            }
+        }
+        newCanceledList.addAll(currentCanceledList);
+        PrefUtils.putCancelAppList(newCanceledList);
+        return newCanceledList;
+    }
+
+    public List<ResolveInfo> queryUrlSchemeApp(Context context){
+        PackageManager pm = context.getPackageManager(); // 获得PackageManager对象
+        //Intent mainIntent = new Intent(Intent.ACTION_MAIN, Uri.parse("emms://auth_activity/*"));
+        Intent mainIntent = new Intent("emms.intent.action.check_authorization");
+        mainIntent.addCategory("emms.intent.category.authorization");
+        // 通过查询，获得所有ResolveInfo对象.
+        List<ResolveInfo> resolveInfos = pm
+                .queryIntentActivities(mainIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        // 调用系统排序 ， 根据name排序
+        // 该排序很重要，否则只能显示系统应用，而不能列出第三方应用程序
+        Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pm));
+        return resolveInfos;
+    }
+    static public void uninstallApp(Context context, String pkgName){
+        Intent uninstall_intent = new Intent();
+        uninstall_intent.setAction(Intent.ACTION_DELETE);
+        uninstall_intent.setData(Uri.parse("package:"+pkgName));
+        context.startActivity(uninstall_intent);
+    }
 }

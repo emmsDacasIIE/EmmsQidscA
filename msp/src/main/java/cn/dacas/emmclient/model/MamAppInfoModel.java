@@ -46,6 +46,8 @@ public class MamAppInfoModel implements Comparable {
 
     public transient int progress;
 
+    public transient boolean isCanceled = false;
+
     public MamAppInfoModel() {
 
     }
@@ -104,6 +106,7 @@ public class MamAppInfoModel implements Comparable {
                 ", appType=" + appType +
                 ", id='" + id + '\'' +
                 ", url='" + url + '\'' +
+                ", isCancel='" + isCanceled + '\'' +
                 '}';
     }
 

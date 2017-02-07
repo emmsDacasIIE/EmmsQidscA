@@ -137,7 +137,7 @@ public class MDMService extends Service implements ControllerListener {
 
     private PushMsgManager pushMsgManager;
 
-    private final int restartTime = 2;
+    private final int restartTime = 60;
 
     //接收EventBus发出的消息
     public void onEventBackgroundThread(MessageEvent event) {
@@ -313,14 +313,15 @@ public class MDMService extends Service implements ControllerListener {
     }
 
     private void showOnNotification(){
-        //PendingIntent pendingintent = PendingIntent.getActivity(this, 0,NewMainActivity.getMainActivityIntent(this), 0);
+        PendingIntent pendingintent = PendingIntent.getActivity(this, 0,NewMainActivity.getMainActivityIntent(this), 0);
         Resources res=getResources();
-        Bitmap bmp= BitmapFactory.decodeResource(res, R.mipmap.ic_launcher);
+        Bitmap bmp= BitmapFactory.decodeResource(res, R.mipmap.emm_red_60_logo);
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
-        builder.setLargeIcon(bmp).setSmallIcon(R.mipmap.emm_red_28_logo)
+        builder.setLargeIcon(bmp)
+                .setSmallIcon(R.mipmap.msp_lock_icon)
                 .setTicker(getApplicationInfo().name)
                 .setWhen(System.currentTimeMillis())
-                //.setContentIntent(pendingintent)
+                .setContentIntent(pendingintent)
                 .setContentTitle("EMMS 设备管理")
                 .setContentText("该设备正在被管控中");
         Notification notification = builder.build();
