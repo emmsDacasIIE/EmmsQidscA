@@ -133,14 +133,10 @@ public class MamAppListActivity extends BaseSlidingFragmentActivity {
     private void initViewPager() {
         mViewPager=(ViewPager) findViewById(R.id.viewPager);
 
-        fragmentList=new ArrayList<Fragment>();
+        fragmentList=new ArrayList<>();
 //        mAppListFragment=new AppListFragment();
-
-
+        //mAppListFragment.createSwipeMenu();
         fragmentList.add(mAppListFragment);
-
-
-
         mViewPager.setAdapter(new MyFrageStatePagerAdapter(getSupportFragmentManager()));
     }
 

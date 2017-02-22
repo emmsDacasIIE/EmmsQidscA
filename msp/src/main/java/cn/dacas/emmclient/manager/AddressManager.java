@@ -96,7 +96,7 @@ public class AddressManager {
 
 	public synchronized static void initIpSettings() {
 		ADDR_BDMAP="159.226.94.159:3000";//
-		ADDR_RG_MSG = "192.168.151.175:8000";
+		ADDR_RG_MSG = "192.168.151.175:8000";//192.168.151.175:8000
 		ADDR_FORWARD = PrefUtils.getAddrForward();
 		ADDR_MSG = PrefUtils.getAddrMsg();
 		ADDR_WEBSERVICE = PrefUtils.getAddrWebservice();

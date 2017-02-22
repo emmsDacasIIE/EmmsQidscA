@@ -13,6 +13,8 @@ import android.widget.AdapterView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.manager.UrlSchemeFactory;
 import cn.qdsc.dynamicgrid.BaseDynamicGridAdapter;
 import cn.qdsc.dynamicgrid.DynamicGridView;
 import cn.dacas.emmclient.R;
@@ -105,7 +107,13 @@ public class HomeFragment extends Fragment {
                     PackageManager pm = getActivity().getPackageManager();
                     try {
                         //TODO
-                        Intent intent = pm.getLaunchIntentForPackage(model.pkgName);
+                        Intent intent;
+                        if(model.sso){
+                            intent = new UrlSchemeFactory(getActivity().getApplicationContext())
+                                    .getUrlSchemeIntent(model.pkgName, EmmClientApplication.mCheckAccount);
+                        }else {
+                            intent = pm.getLaunchIntentForPackage(model.pkgName);
+                        }
                         getActivity().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();

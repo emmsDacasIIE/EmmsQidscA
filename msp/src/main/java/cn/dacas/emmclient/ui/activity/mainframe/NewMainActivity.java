@@ -143,14 +143,16 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             }
         },null);
 
-        buildInApps=new ArrayList<>();
-        ArrayList<MamAppInfoModel> installedList=AppManager.getInstalledApps(mContext,true);
+        buildInApps = new ArrayList<>();
+        ArrayList<MamAppInfoModel> installedList = AppManager.getInstalledApps(mContext,true);
         for (MamAppInfoModel app:installedList) {
             //system app
             if (app.appType==1) {
                 if (app.appName.equals("计算器")||app.appName.equals("日历")||
-                        app.appName.equals("时钟")||app.appName.equals("相机"))
+                        app.appName.equals("时钟")||app.appName.equals("相机")) {
+                    app.sso = false;
                     buildInApps.add(app);
+                }
             }
         }
 
@@ -196,7 +198,9 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
                 ArrayList<MamAppInfoModel> newList = reorderAppList(response, savedList);
 
                 //PrefUtils.putCancelAppList(new ArrayList<MamAppInfoModel>());
-                ArrayList<MamAppInfoModel> canceledList = AppManager.updatedCanceledAppList(getApplicationContext(),newList);
+                ArrayList<MamAppInfoModel> canceledList = new ArrayList<MamAppInfoModel>();
+                // TODO: 2017-2-21 暂时不管安装了但是被取消分配的应用；
+                //canceledList = AppManager.updatedCanceledAppList(getApplicationContext(),newList);
                 if(canceledList.size()>0) {
                     AlertDialog.Builder builder;
                     AlertDialog alertDialog;
@@ -303,7 +307,9 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         ArrayList<MamAppInfoModel> newList=new ArrayList<>();
         for (MamAppInfoModel app : orderList) {
             if (sourceList.contains(app)) {
-                newList.add(app);
+                // 保证列表信息更新
+                int index = sourceList.indexOf(app);
+                newList.add(sourceList.get(index));
                 sourceList.remove(app);
             }
         }

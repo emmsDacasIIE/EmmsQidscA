@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/my_information_background"
 
-    tools:context=".ui.fragment.DocListFragment_bak2" >
+    tools:context=".ui.fragment.AppListFragment" >
 
     <LinearLayout
         android:id="@+id/search_layout"
@@ -58,7 +58,7 @@
 
         android:layout_marginTop="5dp">
 
-        <ListView
+        <com.baoyz.swipemenulistview.SwipeMenuListView
             android:id="@+id/pushAppsListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

@@ -340,7 +340,8 @@ public class MDMService extends Service implements ControllerListener {
         }
         //Service前台可视化
         showOnNotification();
-        if(it.hasExtra("restart")&&it.getBooleanExtra("restart",false))
+        if(it != null && it.hasExtra("restart")
+                && it.getBooleanExtra("restart",false))
             restartMDMServiceAlarmTask();
         return START_STICKY;
     }

@@ -48,6 +48,8 @@ public class MamAppInfoModel implements Comparable {
 
     public transient boolean isCanceled = false;
 
+    public transient boolean sso = true;
+
     public MamAppInfoModel() {
 
     }

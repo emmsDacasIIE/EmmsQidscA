@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,15 +23,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -40,6 +46,9 @@ import java.util.Collections;
 import java.util.List;
 
 import cn.dacas.emmclient.R;
+import cn.dacas.emmclient.manager.UrlManager;
+import cn.dacas.emmclient.manager.UrlSchemeFactory;
+import cn.dacas.emmclient.util.BitMapUtil;
 import cn.dacas.emmclient.webservice.download.DownLoadFileFromUrl;
 import cn.dacas.emmclient.webservice.download.DownloadDataInfo;
 import cn.dacas.emmclient.webservice.download.DownloadFileThread;
@@ -61,6 +70,7 @@ import cn.dacas.emmclient.util.PrefUtils;
 import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.webservice.QdWebService;
 
+import static android.media.CamcorderProfile.get;
 import static cn.dacas.emmclient.ui.base.CommonViewHolder.AppItemStatus.Open;
 import static cn.dacas.emmclient.ui.base.CommonViewHolder.AppItemStatus.StartDownload;
 import static cn.dacas.emmclient.ui.base.CommonViewHolder.AppItemStatus.Update;
@@ -101,7 +111,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
 
 
     private RefreshableView refreshableView;
-    private ListView pushAppsListView = null;
+    private SwipeMenuListView pushAppsListView = null;
     private TextView noAppText = null;
 
     private View rootView;
@@ -139,7 +149,6 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mContext = getActivity();
     }
 
@@ -152,7 +161,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
         settings = this.getActivity().getSharedPreferences(PrefUtils.PREF_NAME,
                 0);
 
-        pushAppsListView = (ListView) rootView.findViewById(R.id.pushAppsListView);
+        pushAppsListView = (SwipeMenuListView) rootView.findViewById(R.id.pushAppsListView);
 
         searchView = (SearchView)rootView.findViewById(R.id.main_search_layout);
         //设置监听
@@ -204,10 +213,97 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
         //非常重要，设置adapter
         mSearchAdapter = new SearchAdapter(this.getActivity(), pushAppsArrayList, R.layout.msp_list_item_app1);
         pushAppsListView.setAdapter(mSearchAdapter);
-
+        createSwipeMenu();
         refreshHandler.sendMessage(Message.obtain());
         return rootView;
     }
+
+    public void createSwipeMenu() {
+        // step 1. create a MenuCreator
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        mContext.getApplicationContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(BitMapUtil.dp2px(mContext, 70));
+                // set a icon
+                deleteItem.setTitle("删 除");
+                deleteItem.setTitleSize(22);
+                deleteItem.setTitleColor(Color.WHITE);
+//                deleteItem.setIcon(R.mipmap.ic_delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+        // set creator
+        pushAppsListView.setMenuCreator(creator);
+
+        // step 2. listener item click event
+        pushAppsListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position,
+                                           SwipeMenu menu, int index) {
+                MamAppInfoModel item = pushAppsArrayList.get(position);
+                switch (index) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                }
+                return false;
+            }
+        });
+
+        // set SwipeListener
+        pushAppsListView.setOnSwipeListener(new SwipeMenuListView.OnSwipeListener() {
+
+            @Override
+            public void onSwipeStart(int position) {
+                // swipe start
+            }
+
+            @Override
+            public void onSwipeEnd(int position) {
+                // swipe end
+            }
+        });
+
+        // other setting
+        // listView.setCloseInterpolator(new BounceInterpolator());
+
+        pushAppsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+                                    long arg3) {
+//				Toast.makeText(getApplicationContext(),
+//						position + " onItemClick 2:", Toast.LENGTH_LONG).show();
+                String item = (String)arg0.getItemAtPosition(position);
+                //FishResultModel item = modelFishList.get(position);
+//                GetFishDetailByPid(item);
+//                Toast.makeText(mContext.getApplicationContext(),	position + "  click", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // test item long click
+        pushAppsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent,
+                                           View view, int position, long id) {
+//                        Toast.makeText(mContext.getApplicationContext(),
+//                                position + " long click", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+    } //end menu
 
     @Override
     public void onResume() {
@@ -599,8 +695,12 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                             PackageManager pm = mContext.getPackageManager();
                             Intent intent = new Intent();
                             try {
-                                intent = pm
-                                        .getLaunchIntentForPackage(model.pkgName);
+                                // TODO: 2017-2-21 SSO intent
+                                if(model.sso) {
+                                    intent = new UrlSchemeFactory(getActivity().getApplicationContext())
+                                            .getUrlSchemeIntent(model.pkgName,EmmClientApplication.mCheckAccount);
+                                } else
+                                    intent = pm.getLaunchIntentForPackage(model.pkgName);
                                 mContext.startActivity(intent);
 
                             } catch (Exception e) {
@@ -654,7 +754,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                     detailStr += "系统要求 : ";
                     detailStr += "需要Android4.0或更高以上版本";
 
-                    Button btnRight = (Button)holder.getView(R.id.right_btn);
+                    Button btnRight = holder.getView(R.id.right_btn);
                     String btnTextStr = btnRight.getText().toString();
 
                     bundle.putString(GlobalConsts.App_Detail, detailStr);
@@ -664,7 +764,7 @@ public class AppListFragment extends BaseFragment implements SearchView.SearchVi
                     bundle.putString(GlobalConsts.Pkg_Name, model.pkgName);
                     bundle.putString(GlobalConsts.App_File_Name,model.file_name);
                     bundle.putString(GlobalConsts.App_Download_Url,model.url);
-
+                    bundle.putBoolean(GlobalConsts.App_SSO,model.sso);
                     QDLog.println(TAG, model.iconUrl);
 
                     intent.putExtras(bundle);

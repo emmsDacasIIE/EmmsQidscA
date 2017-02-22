@@ -820,23 +820,6 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
             @Override
             public void create(SwipeMenu menu) {
-                // create "open" item
-//                SwipeMenuItem openItem = new SwipeMenuItem(mContext.getApplicationContext());
-//                // set item background
-//                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
-//                        0xCE)));
-//                // set item width
-//
-//                openItem.setWidth(BitMapUtil.dp2px(mContext, 70));
-//                // set item title
-//                openItem.setTitle("Open");
-//                // set item title fontsize
-//                openItem.setTitleSize(18);
-//                // set item title font color
-//                openItem.setTitleColor(Color.WHITE);
-//                // add to menu
-//                menu.addMenuItem(openItem);
-
                 // create "delete" item
                 SwipeMenuItem deleteItem = new SwipeMenuItem(
                         mContext.getApplicationContext());

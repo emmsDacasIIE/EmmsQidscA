@@ -56,7 +56,9 @@ public class PushMsgReceiver extends BaseMessageReceiver{
                         default:
                             break;
                     }
-                }else if(contJsn.has("mdm")) {
+                }
+                // MDM
+                else if(contJsn.has("mdm")) {
                     String uuid = contJsn.getString("mdm");
                     if (!uuid.equals(PhoneInfoExtractor.getIMEI(context)))
                         return;
@@ -79,7 +81,9 @@ public class PushMsgReceiver extends BaseMessageReceiver{
 
     @Override
     protected void onNotificationArrived(Context context, String msg) {
-        if(EmmClientApplication.mActivateDevice == null
+        //if the Device has been forbidden ( status == false),
+        // it should get messages and show them on Notification
+        if(EmmClientApplication.mDeviceModel == null
                 || !EmmClientApplication.mDeviceModel.isStatus())
             return;
 
