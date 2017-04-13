@@ -57,8 +57,8 @@ public class HeaderView extends LinearLayout {
 //		setLineFocus(false);
 
 		LayoutParams params = new LayoutParams(
-				LayoutParams.FILL_PARENT,
-				LayoutParams.FILL_PARENT);
+				LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT);
 		params.gravity = Gravity.CENTER;
 		v.setLayoutParams(params);
 		addView(v);

@@ -2,7 +2,6 @@ package cn.dacas.emmclient.util;
 
 import android.os.Environment;
 import android.util.Log;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.text.DateFormat;
@@ -66,6 +65,8 @@ public class QDLog {
 	}
 	
 	public static void print(String msg) {
+		if(!isOpenLog)
+			return;
 		try {
 			String file = "/sdcard/qdlog.out";
 			FileWriter writer = new FileWriter(file, true);
@@ -82,9 +83,10 @@ public class QDLog {
 	}
 	
 	public static void println(String tag, String msg) {
+		if(!isOpenLog)
+			return;
 		try {
 //			String file = "/sdcard/qdlog.out";
-
 			String file = SdcardManager.getSdcardPath();
 			String logPath = file + File.separator+ "qdlog.out";
 
@@ -103,6 +105,8 @@ public class QDLog {
 	}
 
 	public static void writeMsgPushLog(String msg) {
+		if(!isOpenLog)
+			return;
 		try {
 			String logPath = Environment.getExternalStorageDirectory().getPath() + "/msp/MsgPushLog.txt";
 			File dir=new File(Environment.getExternalStorageDirectory().getPath() + "/msp");

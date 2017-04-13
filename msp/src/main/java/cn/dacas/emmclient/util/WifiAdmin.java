@@ -6,8 +6,9 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager.WifiLock;
-import android.util.Log;
+import android.os.Build;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class WifiAdmin {
@@ -24,15 +25,14 @@ public class WifiAdmin {
 
 	public boolean openWifi() {//打开wifi
 		if (!mWifiManager.isWifiEnabled()) {
-			Log.i(TAG, "setWifiEnabled.....");
+			QDLog.i(TAG, "setWifiEnabled.....");
 			mWifiManager.setWifiEnabled(true);
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Log.i(TAG, "setWifiEnabled.....end");
+			QDLog.i(TAG, "setWifiEnabled.....end");
 		}
 		return mWifiManager.isWifiEnabled();
 	}
@@ -74,19 +74,19 @@ public class WifiAdmin {
 
 	public void startScan() {//wifi扫描
 		boolean scan = mWifiManager.startScan();
-		Log.i(TAG, "startScan result:" + scan);
+		QDLog.i(TAG, "startScan result:" + scan);
 		mWifiList = mWifiManager.getScanResults();
 		mWifiConfiguration = mWifiManager.getConfiguredNetworks();
 
 		if (mWifiList != null) {
-			Log.i(TAG, "startScan result:" + mWifiList.size());
+			QDLog.i(TAG, "startScan result:" + mWifiList.size());
 			for (int i = 0; i < mWifiList.size(); i++) {
 				ScanResult result = mWifiList.get(i);
-				Log.i(TAG, "startScan result[" + i + "]" + result.SSID + "," + result.BSSID);
+				QDLog.i(TAG, "startScan result[" + i + "]" + result.SSID + "," + result.BSSID);
 			}
-			Log.i(TAG, "startScan result end.");
+			QDLog.i(TAG, "startScan result end.");
 		} else {
-			Log.i(TAG, "startScan result is null.");
+			QDLog.i(TAG, "startScan result is null.");
 		}
 
 	}
@@ -135,7 +135,12 @@ public class WifiAdmin {
 		if(wcgID == -1){
 			return -1;
 		}
-		mWifiManager.enableNetwork(wcgID, false);
+		Method connectMethod = connectWifiByReflectMethod(wcgID);
+		if (connectMethod == null) {
+			QDLog.d(TAG, "connect wifi by enableNetwork method!");
+			// 通用API
+			mWifiManager.enableNetwork(wcgID, false);
+		}
 		return 0;
 	}
 
@@ -145,8 +150,9 @@ public class WifiAdmin {
 	}
 
 	public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type) {
-		Log.i(TAG, "SSID:" + SSID + ",password:" + Password);
+		QDLog.i(TAG, "SSID:" + SSID + ",password:" + Password);
 		WifiConfiguration config = new WifiConfiguration();
+
 		config.allowedAuthAlgorithms.clear();
 		config.allowedGroupCiphers.clear();
 		config.allowedKeyManagement.clear();
@@ -154,24 +160,24 @@ public class WifiAdmin {
 		config.allowedProtocols.clear();
 		config.SSID = "\"" + SSID + "\"";
 
-		WifiConfiguration tempConfig = this.IsExsits(SSID);
+		WifiConfiguration tempConfig = this.IsExist(SSID);
 
 		if (tempConfig != null) {
 			mWifiManager.removeNetwork(tempConfig.networkId);
 		} else {
-			Log.i(TAG, "IsExsits is null.");
+			QDLog.i(TAG, "IsExist is null.");
 		}
 
 		if (Type == 1) // WIFICIPHER_NOPASS
 		{
-			Log.i(TAG, "Type =1.");
+			QDLog.i(TAG, "Type = 1.");
 			config.wepKeys[0] = "";
 			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 			config.wepTxKeyIndex = 0;
 		}
 		if (Type == 2) // WIFICIPHER_WEP
 		{
-			Log.i(TAG, "Type =2.");
+			QDLog.i(TAG, "Type = 2.");
 			config.hiddenSSID = true;
 			config.wepKeys[0] = "\"" + Password + "\"";
 			config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
@@ -185,7 +191,7 @@ public class WifiAdmin {
 		if (Type == 3) // WIFICIPHER_WPA
 		{
 
-			Log.i(TAG, "Type =3.");
+			QDLog.i(TAG, "Type = 3.");
 			config.preSharedKey = "\"" + Password + "\"";
 
 			config.hiddenSSID = true;
@@ -201,13 +207,79 @@ public class WifiAdmin {
 		return config;
 	}
 
-	private WifiConfiguration IsExsits(String SSID) {// 查看以前是否已经配置过该SSID &nbsp;
+	private WifiConfiguration IsExist(String SSID) {// 查看以前是否已经配置过该SSID &nbsp;
 		List<WifiConfiguration> existingConfigs = mWifiManager.getConfiguredNetworks();
+		if(existingConfigs == null)
+			return null;
 		for (WifiConfiguration existingConfig : existingConfigs) {
 			if (existingConfig.SSID.equals("\"" + SSID + "\"")) {
 				return existingConfig;
 			}
 		}
 		return null;
+	}
+
+	private Method connectWifiByReflectMethod(int netId) {
+		Method connectMethod = null;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			QDLog.d(TAG, "connectWifiByReflectMethod road 1");
+			// 反射方法： connect(int, listener) , 4.2 <= phone's android version
+			for (Method methodSub : mWifiManager.getClass()
+					.getDeclaredMethods()) {
+				if ("connect".equalsIgnoreCase(methodSub.getName())) {
+					Class<?>[] types = methodSub.getParameterTypes();
+					if (types != null && types.length > 0) {
+						if ("int".equalsIgnoreCase(types[0].getName())) {
+							QDLog.d(TAG,"find connect method By Reflection!");
+							connectMethod = methodSub;
+						}
+					}
+				}
+			}
+			if (connectMethod != null) {
+				try {
+					connectMethod.invoke(mWifiManager, netId, null);
+				} catch (Exception e) {
+					e.printStackTrace();
+					QDLog.d(TAG, "connectWifiByReflectMethod Android "
+							+ Build.VERSION.SDK_INT + " error!");
+					return null;
+				}
+			}
+		} else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN) {
+			// 反射方法: connect(Channel c, int networkId, ActionListener listener)
+			// 暂时不处理4.1的情况 , 4.1 == phone's android version
+			QDLog.d(TAG, "connectWifiByReflectMethod road 2");
+		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
+				&& Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+			QDLog.d(TAG, "connectWifiByReflectMethod road 3");
+			// 反射方法：connectNetwork(int networkId) ,
+			// 4.0 <= phone's android version < 4.1
+			for (Method methodSub : mWifiManager.getClass()
+					.getDeclaredMethods()) {
+				if ("connectNetwork".equalsIgnoreCase(methodSub.getName())) {
+					Class<?>[] types = methodSub.getParameterTypes();
+					if (types != null && types.length > 0) {
+						if ("int".equalsIgnoreCase(types[0].getName())) {
+							connectMethod = methodSub;
+						}
+					}
+				}
+			}
+			if (connectMethod != null) {
+				try {
+					connectMethod.invoke(mWifiManager, netId);
+				} catch (Exception e) {
+					e.printStackTrace();
+					QDLog.d(TAG, "connectWifiByReflectMethod Android "
+							+ Build.VERSION.SDK_INT + " error!");
+					return null;
+				}
+			}
+		} else {
+			// < android 4.0
+			return null;
+		}
+		return connectMethod;
 	}
 }

@@ -24,10 +24,6 @@ import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.webservice.QdBusiness;
 import cn.dacas.emmclient.webservice.qdvolley.LicenceError;
 
-//import cn.dacas.emmclient.R;
-//import cn.dacas.emmclient.gesturelock.GestureLockActivity;
-//import cn.dacas.emmclient.main.EmmClientApplication;
-
 public class BinderSelectorActivity extends BaseSlidingFragmentActivity {
 
     private final static String TAG ="BinderSelectorActivity";

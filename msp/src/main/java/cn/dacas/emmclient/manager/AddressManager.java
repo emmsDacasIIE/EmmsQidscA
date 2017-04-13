@@ -8,19 +8,19 @@ import cn.dacas.emmclient.util.PrefUtils;
 public class AddressManager {
 
 	// 安全接入服务器地址
-	private static String ADDR_FORWARD;
+	private static volatile String ADDR_FORWARD;
 
 	// 消息推送服务器地址
-	private static String ADDR_MSG;
-	private static String ADDR_RG_MSG;
+	private static volatile String ADDR_MSG;
+	private static volatile String ADDR_RG_MSG;
 
 	// webservice服务器地址
-	private static String ADDR_WEBSERVICE ;
+	private static volatile String ADDR_WEBSERVICE ;
 
 	// baidu 地图
-	private static String ADDR_BDMAP;
+	private static volatile String ADDR_BDMAP;
 
-	private static String ADDR_UPDATE;
+	private static volatile String ADDR_UPDATE;
 
 	/**
 	 *
@@ -43,60 +43,60 @@ public class AddressManager {
 	}
 
 
-	public static String getAddrForward() {
+	synchronized public static String getAddrForward() {
 		return ADDR_FORWARD;
 	}
 
-	public static void setAddrForward(String addrForward) {
+	synchronized public static void setAddrForward(String addrForward) {
 		ADDR_FORWARD = addrForward;
 		PrefUtils.setAddrForward(addrForward);
 	}
 
-	public static String getAddrRgMsg() {
+	synchronized public static String getAddrRgMsg() {
 		return ADDR_RG_MSG;
 	}
 
-	public static String getAddrMsg() {
+	synchronized public static String getAddrMsg() {
 		return ADDR_MSG;
 	}
 
-	public static void setAddrMsg(String addrMsg) {
+	public synchronized static void setAddrMsg(String addrMsg) {
 		ADDR_MSG = addrMsg;
 		PrefUtils.setAddrMsg(addrMsg);
 	}
 
-	public static String getAddrWebservice() {
+	public synchronized static String getAddrWebservice() {
 		return ADDR_WEBSERVICE;
 	}
-	public static String getAddrCommandServer(){
+	public synchronized static String getAddrCommandServer(){
 		return  getAddrWebservice();
 	}
 
-	public static void setAddrWebservice(String addrWebservice) {
+	public synchronized static void setAddrWebservice(String addrWebservice) {
 		ADDR_WEBSERVICE = addrWebservice;
 		PrefUtils.setAddrWebservice(addrWebservice);
 	}
 
-	public static String getAddrBdmap() {
+	public synchronized static String getAddrBdmap() {
 		return ADDR_BDMAP;
 	}
 
-	public static void setAddrBdmap(String addrBdmap) {
+	public synchronized static void setAddrBdmap(String addrBdmap) {
 		ADDR_BDMAP = addrBdmap;
 	}
 
-	public static String getAddrUpdate() {
+	public synchronized static String getAddrUpdate() {
 		return ADDR_UPDATE;
 	}
 
-	public static void setAddrUpdate(String addrUpdate) {
+	public synchronized static void setAddrUpdate(String addrUpdate) {
 		ADDR_UPDATE = addrUpdate;
 		PrefUtils.setAddrUpdate(addrUpdate);
 	}
 
-	public static void initIpSettings() {
+	public synchronized static void initIpSettings() {
 		ADDR_BDMAP="159.226.94.159:3000";//
-		ADDR_RG_MSG = "192.168.151.175:8000";
+		ADDR_RG_MSG = "192.168.151.175:8000";//192.168.151.175:8000
 		ADDR_FORWARD = PrefUtils.getAddrForward();
 		ADDR_MSG = PrefUtils.getAddrMsg();
 		ADDR_WEBSERVICE = PrefUtils.getAddrWebservice();
@@ -132,7 +132,6 @@ public class AddressManager {
 				if (i != size - 1)
 					ans += "/";
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

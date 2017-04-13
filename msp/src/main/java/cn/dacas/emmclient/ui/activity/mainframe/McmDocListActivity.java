@@ -39,6 +39,7 @@ import cn.dacas.emmclient.controller.ControllerListener;
 import cn.dacas.emmclient.controller.McmController;
 import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.core.mcm.FileOpener;
+import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.McmDocInfoModel;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
@@ -57,6 +58,10 @@ import cn.dacas.emmclient.webservice.download.DownLoadFileFromUrl;
 import cn.dacas.emmclient.webservice.download.DownloadDataInfo;
 import cn.dacas.emmclient.webservice.download.DownloadFileThread;
 import cn.dacas.emmclient.webservice.download.MyDownloadListener;
+import de.greenrobot.event.EventBus;
+
+import static com.baidu.location.h.i.T;
+import static com.baidu.location.h.i.V;
 
 //import android.widget.RelativeLayout;
 
@@ -138,8 +143,6 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
                                 filterDataFromDb(allDbList,currentList);
                                 showDocList(true);
                             }
-
-
                             return;
                         }
                         break;
@@ -149,7 +152,8 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
                 break;
             default:
                 //response错误
-                showDocList(false);
+                Toast.makeText(this,"安全文件列表更新失败，请稍后重试",Toast.LENGTH_LONG).show();
+                showDocList(true);
         }
     }
 
@@ -188,7 +192,15 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
 
         refreshHandler.sendMessage(Message.obtain());
+        EventBus.getDefault().register(this);
+    }
 
+    public void onEventMainThread(MessageEvent event) {
+        if (event.type == MessageEvent.Event_FILEOPEN_FAILED){
+            Toast.makeText(this,
+                    "无法打开该文件，文件损坏或是文件类型不支持",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -202,17 +214,26 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
     private Handler refreshHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
-
             switch (msg.what) {
                 case DownLoadFileFromUrl.DOWNLOADING:
                     if (progressDialog!=null) {
-                        if (msg.arg1>=100) msg.arg1=99;
+                        if (msg.arg1>=100)
+                            msg.arg1=99;
                         progressDialog.setProgress(msg.arg1);
                     }
+                    break;
+                case DownLoadFileFromUrl.DOWNLOADING_WITHOU_LENGTH:
+                    String s = msg.arg1/1024 + "KB/?";
+                    progressDialog.setMessage("下载中："+s);
                     break;
                 case DownLoadFileFromUrl.DOWNLOAD_STOP:
                     if (progressDialog!=null) progressDialog.dismiss();
@@ -235,7 +256,7 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
 //        mLeftHeaderView.setTextVisibile(false);
 //        mLeftHeaderView.setImageVisibile(true);
-        mLeftHeaderView.setImageView(R.mipmap.msp_titlebar_leftarrow_icon);
+        mLeftHeaderView.setImageView(R.mipmap.back_advanced);
 
         mMiddleHeaderView.setText(mContext.getString(R.string.title_security_doc));
 //        mMiddleHeaderView.setTextVisibile(true);
@@ -799,23 +820,6 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
             @Override
             public void create(SwipeMenu menu) {
-                // create "open" item
-//                SwipeMenuItem openItem = new SwipeMenuItem(mContext.getApplicationContext());
-//                // set item background
-//                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
-//                        0xCE)));
-//                // set item width
-//
-//                openItem.setWidth(BitMapUtil.dp2px(mContext, 70));
-//                // set item title
-//                openItem.setTitle("Open");
-//                // set item title fontsize
-//                openItem.setTitleSize(18);
-//                // set item title font color
-//                openItem.setTitleColor(Color.WHITE);
-//                // add to menu
-//                menu.addMenuItem(openItem);
-
                 // create "delete" item
                 SwipeMenuItem deleteItem = new SwipeMenuItem(
                         mContext.getApplicationContext());
@@ -1158,7 +1162,7 @@ public class McmDocListActivity extends BaseSlidingFragmentActivity implements C
 
                 try {
                     EmmClientApplication.mSecureContainer.delete(docsArrayList.get(pos).fileName);
-                    docsArrayList.remove(pos);
+                    //docsArrayList.remove(pos);
                     mSearchAdapter.notifyDataSetChanged();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();

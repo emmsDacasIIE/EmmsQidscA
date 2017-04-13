@@ -3,6 +3,7 @@ package cn.dacas.emmclient.util;
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -27,7 +28,11 @@ import java.util.TimerTask;
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.core.mcm.FileOpener;
+import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.ui.qdlayout.QdLoadingDialog;
+import de.greenrobot.event.EventBus;
+
+import static com.baidu.location.h.i.B;
 
 /**
  * 有关文件操作的工具类
@@ -871,22 +876,39 @@ public class FileEngine {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
+               try {
+                    Boolean isOpenFile = true;
                     final String plainFilePath = EmmClientApplication.mSecureContainer.decryptToFile(name);
                     FileOpener opener = new FileOpener(ctx);
-                    opener.openFile(new File(plainFilePath));
-                    long time = 30 * 1000;
-                    if (FileOpener.checkEndsWithInStringArray(plainFilePath, ctx.getResources().getStringArray(R.array.fileEndingVideo)))
-                        time = 60 * 60 * 1000;
-                    Timer mTimer = new Timer(true);
-                    TimerTask mTimerTask = new TimerTask() {
-                        public void run() {
-                            File file = new File(plainFilePath);
-                            if (file.exists())
-                                file.delete();
-                        }
-                    };
-                    mTimer.schedule(mTimerTask, time);
+                    File decryptFile = new File(plainFilePath);
+                    try {
+                        opener.openFile(decryptFile);
+                    } catch (Exception e){
+                        //There are something wrong when opening The decrypted file
+                        //so that the decrypted file should be deleted right now!
+                        isOpenFile = false;
+                        if(decryptFile.exists())
+                            decryptFile.delete();
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_FILEOPEN_FAILED));
+                    }
+
+                   // if the decrypted file has been opened successfully,
+                   // start a timer task to delete it
+                   if(isOpenFile) {
+                       long time = 30 * 1000; // 30s
+                       if (FileOpener.checkEndsWithInStringArray(plainFilePath, ctx.getResources().getStringArray(R.array.fileEndingVideo)))
+                           time = 60 * 60 * 1000;
+
+                       Timer mTimer = new Timer(true);
+                       TimerTask mTimerTask = new TimerTask() {
+                           public void run() {
+                               File file = new File(plainFilePath);
+                               if (file.exists())
+                                   file.delete();
+                           }
+                       };
+                       mTimer.schedule(mTimerTask, time);
+                   }
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

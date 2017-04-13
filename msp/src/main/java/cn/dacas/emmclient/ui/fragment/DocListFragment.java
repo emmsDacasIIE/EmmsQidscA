@@ -285,6 +285,10 @@ public class DocListFragment extends BaseFragment implements ControllerListener,
                             progressDialog.setProgress(msg.arg1);
                     }
                     break;
+                case DownLoadFileFromUrl.DOWNLOADING_WITHOU_LENGTH:
+                    String s = msg.arg1/1024 + "KB/?";
+                    progressDialog.setMessage("下载中："+s);
+                    break;
                 case DownLoadFileFromUrl.DOWNLOAD_STOP:
                     if (progressDialog!=null) progressDialog.dismiss();
                     Toast.makeText(mContext,"下载失败",Toast.LENGTH_SHORT).show();
@@ -1040,9 +1044,9 @@ public class DocListFragment extends BaseFragment implements ControllerListener,
                         refreshableView.onRefreshComplete();
 //                        morePrg.setVisibility(View.GONE);
 //                        // GetMyFish();
-                        Log.i(TAG, "URL+刷新==================");
-                        Log.i(TAG, "URL+刷新==================");
-                        Log.i(TAG, "URL+刷新==================");
+                        QDLog.i(TAG, "URL+刷新==================");
+                        QDLog.i(TAG, "URL+刷新==================");
+                        QDLog.i(TAG, "URL+刷新==================");
                         // adapter = new NewsAdapter(MyFishListFA.this,
                         // list);
                         // newsListView.setAdapter(adapter);
@@ -1072,7 +1076,7 @@ public class DocListFragment extends BaseFragment implements ControllerListener,
                 .setOnLastItemVisibleListener(new PullToRefreshBase.OnLastItemVisibleListener() {
                     @Override
                     public void onLastItemVisible() {
-                        Log.i(TAG, "setOnLastItemVisibleListener==xxxxx======");
+                        QDLog.i(TAG, "setOnLastItemVisibleListener==xxxxx======");
                         Toast.makeText(mContext, "下拉刷新！", Toast.LENGTH_SHORT).show();
 //                        if (pageIndex <= modelTotalPage) {
 //                            morePrg.setVisibility(View.VISIBLE);

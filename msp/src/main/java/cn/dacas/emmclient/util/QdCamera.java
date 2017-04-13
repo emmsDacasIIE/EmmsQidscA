@@ -56,20 +56,20 @@ public class QdCamera {
             if (!outDir.exists()) {
                 outDir.mkdirs();
             }
-            Log.i(TAG, "outDir=================================== " + outDir);
+            QDLog.i(TAG, "outDir=================================== " + outDir);
 
             String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
             File outFile = new File(outDir, date + ".jpg");
             oldPicFileFullName = outFile.getAbsolutePath();
             //oldPicFileFullName = outDir + File.separator + date + ".jpg";
-            Log.i(TAG, "outDir====outFile======= " + oldPicFileFullName);
+            QDLog.i(TAG, "outDir====outFile======= " + oldPicFileFullName);
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outFile));
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
             mActivity.startActivityForResult(intent, Take_IMAGE_ACTIVITY_REQUEST_CODE);
         } else {
             Toast.makeText(mActivity, "无SDcard！", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "请确认已经插入SD卡");
+            QDLog.e(TAG, "请确认已经插入SD卡");
         }
     }
 

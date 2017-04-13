@@ -1,5 +1,8 @@
 package cn.dacas.emmclient.ui.activity.mainframe;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,14 +10,18 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Response;
+import com.jauker.widget.BadgeView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import java.io.File;
@@ -26,11 +33,14 @@ import java.util.TimerTask;
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
 import cn.dacas.emmclient.core.mam.AppManager;
+import cn.dacas.emmclient.core.mdm.MDMService;
 import cn.dacas.emmclient.core.update.UpdateManager;
 import cn.dacas.emmclient.event.MessageEvent;
+import cn.dacas.emmclient.model.CheckAccount;
 import cn.dacas.emmclient.model.MamAppInfoModel;
 import cn.dacas.emmclient.model.UserModel;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
+import cn.dacas.emmclient.ui.activity.loginbind.UserLoginActivity;
 import cn.dacas.emmclient.ui.fragment.HomeFragment;
 import cn.dacas.emmclient.ui.fragment.MenuLeftFragment;
 import cn.dacas.emmclient.ui.fragment.OnMainPageChangedListener;
@@ -54,7 +64,7 @@ import de.greenrobot.event.EventBus;
 public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMainPageChangedListener {
 
     private static final String TAG = "NewMainActivity";
-
+    private static int position = 0;
     private static boolean isFirstCreated = true;
     private static final int Handler_Flag_StartActivity = 1;
     private static final int Handler_Flag_Timer = 2;
@@ -62,6 +72,9 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     private static int UpdateLockTwice = 0;
 
     LinearLayout layout_info_network;
+
+    //LinearLayout layoutDots;
+    private ImageView[] mImageViews;
     /**
      * 作为页面容器的ViewPager
      */
@@ -79,6 +92,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
     private ArrayList<MamAppInfoModel> buildInApps;
 
+    private BadgeView badge;
+
 
     @Override
     protected HearderView_Style setHeaderViewStyle() {
@@ -88,7 +103,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newmain, "");
+        setContentView(cn.dacas.emmclient.R.layout.activity_newmain, "");
 
         //初始化header
         initHeader();
@@ -107,21 +122,18 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
         timer.schedule(mTimerTask, 700, 700);
 
-        final UpdateManager manager = new UpdateManager(NewMainActivity.this);
-        // 检查软件更新
-        manager.checkUpdate();
-
-        //初次加载展现合规页面
+        //初次加载
         if (NewMainActivity.isFirstCreated) {
             gotoComplianceActivity();
+            // 检查软件更新
+            final UpdateManager manager = new UpdateManager(NewMainActivity.this);
+            manager.checkClientUpdate();
             isFirstCreated = false;
         }
 
-        layout_info_network=(LinearLayout)findViewById(R.id.layout_info_netwrok);
-        if (NetworkUtils.isConnected(mContext))
-            layout_info_network.setVisibility(View.GONE);
-        else
-            layout_info_network.setVisibility(View.VISIBLE);
+        layout_info_network=(LinearLayout)findViewById(cn.dacas.emmclient.R.id.layout_info_netwrok);
+        layoutDots.setVisibility(View.VISIBLE);
+
         EventBus.getDefault().register(this);
         //获取用户信息
         QdWebService.getUserInformation(new Response.Listener<UserModel>() {
@@ -131,68 +143,121 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             }
         },null);
 
-        buildInApps=new ArrayList<>();
-        ArrayList<MamAppInfoModel> installedList=AppManager.getInstalledApps(mContext,true);
+        buildInApps = new ArrayList<>();
+        ArrayList<MamAppInfoModel> installedList = AppManager.getInstalledApps(mContext,true);
         for (MamAppInfoModel app:installedList) {
             //system app
             if (app.appType==1) {
                 if (app.appName.equals("计算器")||app.appName.equals("日历")||
-                        app.appName.equals("时钟")||app.appName.equals("相机"))
+                        app.appName.equals("时钟")||app.appName.equals("相机")) {
+                    app.sso = false;
                     buildInApps.add(app);
+                }
             }
         }
 
-//        WindowManager windowManager = getWindowManager();
-//        Display display = windowManager.getDefaultDisplay();
-//        int screenWidth = display.getWidth();
-//        int screenHeight =  display.getHeight();
-//        Toast.makeText(mContext,screenHeight+"*"+screenWidth,Toast.LENGTH_SHORT).show();
+        badge = new BadgeView(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        CheckAccount checkAccount = EmmClientApplication.mCheckAccount;
+        if(checkAccount == null||!checkAccount.isAccountLogin())
+            startActivity(new Intent(this, UserLoginActivity.class));
         setHeadImage();
-        showApppList();
+        showLoaclAppList();
+        getAndShowNewAppList();
     }
+
+
 
     @Override
     public void onStop() {
-        super.onStop();
         saveAppList();
+        super.onStop();
     }
 
-    private void showApppList() {
+    private void showLoaclAppList(){
+        ArrayList<MamAppInfoModel> localAppList = PrefUtils.getAppList();
+        refreshMainPage(localAppList);
+        mViewPager.setAdapter(new MyFrageStatePagerAdapter(getSupportFragmentManager()));
+        mViewPager.setCurrentItem(position);
+    }
+    private void getAndShowNewAppList() {
         QdWebService.getAppList(new Response.Listener<ArrayList<MamAppInfoModel>>() {
             @Override
             public void onResponse(ArrayList<MamAppInfoModel> response) {
                 //重新排序appList
                 if (response == null)
                     response = new ArrayList<>();
-                for (MamAppInfoModel app:buildInApps)
-                    response.add(0,app);
-                ArrayList<MamAppInfoModel> savedList = PrefUtils.getApplist();
+                for (MamAppInfoModel app: buildInApps) {
+                    response.add(0, app);
+                }
+                ArrayList<MamAppInfoModel> savedList = PrefUtils.getAppList();
                 ArrayList<MamAppInfoModel> newList = reorderAppList(response, savedList);
+
+                //PrefUtils.putCancelAppList(new ArrayList<MamAppInfoModel>());
+                ArrayList<MamAppInfoModel> canceledList = new ArrayList<MamAppInfoModel>();
+                // TODO: 2017-2-21 暂时不管安装了但是被取消分配的应用；
+                //canceledList = AppManager.updatedCanceledAppList(getApplicationContext(),newList);
+                if(canceledList.size()>0) {
+                    AlertDialog.Builder builder;
+                    AlertDialog alertDialog;
+                    builder = new AlertDialog.Builder(NewMainActivity.this);
+                    builder.setTitle("删除失效应用");
+                    builder.setMessage("有已安装的应有被取消分配，请即时删除。");
+
+                    builder.setPositiveButton("立刻删除", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(NewMainActivity.this,
+                                    MamAppListActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    builder.setNegativeButton("稍后删除", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    alertDialog = builder.create();
+                    alertDialog.getWindow().setType(
+                            (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
+                    alertDialog.show();
+                    //Toast.makeText(getApplicationContext(), "存在已被取消分配但已安装的应用:" + canceledList.toString(), Toast.LENGTH_LONG).show();
+                }
+
                 //将重排列的list存储到本地
                 PrefUtils.putAppList(newList);
                 refreshMainPage(newList);
                 mViewPager.setAdapter(new MyFrageStatePagerAdapter(getSupportFragmentManager()));
+                mViewPager.setCurrentItem(position);
             }
         }, null);
     }
 
     private void saveAppList() {
         //获取重新排列的showList
-        ArrayList<MamAppInfoModel> showList=new ArrayList<>();
+        if(fragmentList.size() == 0||fragmentList==null)
+            return;
+        ArrayList<MamAppInfoModel> showList = new ArrayList<>();
         for (HomeFragment f:fragmentList) {
+            if(f == null || f.getAdapter() == null || f.getAdapter().getCount()==0)
+                continue;
             for (Object obj: f.getAdapter().getItems()) {
                 MamAppInfoModel app=(MamAppInfoModel)obj;
                 showList.add(app);
             }
         }
         //重新排列list
-        ArrayList<MamAppInfoModel> savedList =PrefUtils.getApplist();
-        ArrayList<MamAppInfoModel> newList=reorderAppList(savedList, showList);
+        ArrayList<MamAppInfoModel> savedList = PrefUtils.getAppList();
+        ArrayList<MamAppInfoModel> newList = reorderAppList(savedList, showList);
         PrefUtils.putAppList(newList);
     }
 
@@ -209,11 +274,11 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             }
         }
         HomeFragment fragment=null;
-        ArrayList<MamAppInfoModel> pageList=null;
+        ArrayList<MamAppInfoModel> pageList = null;
         int idx=0;
         for (int i=0;i<showList.size();i++) {
             if (i%HomeFragment.Max_Apps_Count==0) {
-                if (fragment!=null && pageList!=null)
+                if (fragment!=null && pageList!= null)
                     fragment.setContent(idx,pageList,NewMainActivity.this);
                 fragment=new HomeFragment();
                 pageList=new ArrayList<>();
@@ -224,13 +289,27 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         if (fragment!=null) {
             fragment.setContent(idx, pageList, NewMainActivity.this);
         }
+
+        GuideDotsSelected(0);
     }
 
-    private ArrayList<MamAppInfoModel> reorderAppList(ArrayList<MamAppInfoModel> sourceList,ArrayList<MamAppInfoModel> orderList) {
+    /**
+     * reorder sourceList by the order of local-saved list (orderList)
+     * if apps have been in local-saved list, their relative order in orderList would not change,
+     * else they would be inserted into the end of list;
+     * Please pay attention to this point that app in local-saved list but not in sourceList
+     * will not been contained in returned list.
+     * @param sourceList a list of new app list
+     * @param orderList local-saved ordered list of apps
+     * @return a ordered list of apps which in the sourceList
+     */
+    public static ArrayList<MamAppInfoModel> reorderAppList(ArrayList<MamAppInfoModel> sourceList,ArrayList<MamAppInfoModel> orderList) {
         ArrayList<MamAppInfoModel> newList=new ArrayList<>();
         for (MamAppInfoModel app : orderList) {
             if (sourceList.contains(app)) {
-                newList.add(app);
+                // 保证列表信息更新
+                int index = sourceList.indexOf(app);
+                newList.add(sourceList.get(index));
                 sourceList.remove(app);
             }
         }
@@ -243,8 +322,18 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     @Override
     public void onResume() {
         super.onResume();
+        if (NetworkUtils.isConnected(mContext))
+            layout_info_network.setVisibility(View.GONE);
+        else
+            layout_info_network.setVisibility(View.VISIBLE);
+        setLoaclMsgCount2Image();
     }
 
+    @Override
+    public void onPause(){
+        position = mViewPager.getCurrentItem();
+        super.onPause();
+    }
     protected void onDestroy ( ) {
 
         if (timer != null) {
@@ -253,8 +342,8 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
 
             timer = null;
         }
+        EventBus.getDefault().unregister(this);
         super.onDestroy( );
-
     }
 
     private void gotoComplianceActivity() {
@@ -295,7 +384,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     };
 
     private void updateRightImage() {
-        if (UpdateLockTwice <=10000000)  {
+        if (UpdateLockTwice <= 10000000)  {
             if (UpdateLockTwice %2 == 0) {
                 mRightHeaderView.setImageView(R.mipmap.msp_lock_icon);
             }else {
@@ -346,6 +435,29 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
         });
     }
 
+    private void GuideDotsSelected(int index){
+        if(index<0 || index >fragmentList.size()-1)
+            return;
+        if(layoutDots==null)
+            return;
+        layoutDots.removeAllViews();
+        mImageViews = new ImageView[fragmentList.size()];
+        for (int i = 0; i < fragmentList.size(); i++) {
+            mImageViews[i] = new ImageView(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20,20);
+            // 设置边界
+            params.setMargins(7, 10, 7, 10);
+            mImageViews[i].setLayoutParams(params);
+            if (index == i) {
+                mImageViews[i].setBackgroundResource(cn.dacas.emmclient.R.mipmap.dot_red_light);
+            } else {
+                mImageViews[i].setBackgroundResource(cn.dacas.emmclient.R.mipmap.dot_grey);
+            }
+            layoutDots.addView(mImageViews[i]);
+        }
+    }
+
+
     private void initRightMenu()
     {
         Fragment leftMenuFragment = new MenuLeftFragment();
@@ -386,6 +498,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     private void initViewPager() {
         mViewPager=(ViewPager) findViewById(R.id.viewPager);
         fragmentList=new ArrayList<HomeFragment>();
+        mViewPager.addOnPageChangeListener(new onPageChangeListener());
     }
 
     /**
@@ -437,6 +550,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             fragmentList.get(idx-1).getAdapter().remove(modelToExchange);
             fragmentList.get(idx-1).getAdapter().add(model);
             mViewPager.setCurrentItem(idx-1,true);
+            //GuideDotsSelected(idx-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -452,6 +566,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
             fragmentList.get(idx+1).getAdapter().remove(modelToExchange);
             fragmentList.get(idx+1).getAdapter().add(model);
             mViewPager.setCurrentItem(idx+1,true);
+            //GuideDotsSelected(idx+1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -463,10 +578,20 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
      */
     class MyFrageStatePagerAdapter extends FragmentStatePagerAdapter
     {
-
+        PagerTabStrip pagerTabStrip;
         public MyFrageStatePagerAdapter(FragmentManager fm)
         {
             super(fm);
+            //pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
+            //pagerTabStrip.setTabIndicatorColorResource(R.color.gold);
+            //pagerTabStrip.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            //return position+"/"+getCount();
+            return super.getPageTitle(position);
+            //return "Title:" + String.valueOf(position);
         }
 
         @Override
@@ -591,7 +716,7 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
     }
 
 
-    ////网络状态
+    ////网络状态以及消息提醒
     public void onEventMainThread(MessageEvent event)
     {
         switch (event.type)
@@ -604,9 +729,74 @@ public class NewMainActivity extends BaseSlidingFragmentActivity implements OnMa
                 else {
                     layout_info_network.setVisibility(View.VISIBLE);
                 }
+                break;
+            case MessageEvent.Event_Show_alertDialog:
+                String title = event.params.getString("title");
+                String message = event.params.getString("message");
+                if(title==null || message ==null)
+                    return;
+
+                AlertDialog.Builder builder;
+                AlertDialog alertDialog;
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle(title);
+                builder.setMessage(message);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog = builder.create();
+                alertDialog.getWindow().setType(
+                        (WindowManager.LayoutParams.TYPE_SYSTEM_ALERT));
+                alertDialog.show();
+                break;
+            case MessageEvent.Event_MsgCount_Change:
+                addNewMsgCount2Image(1);
+                break;
+            case MessageEvent.Event_APP_Deleted:
             default:
                 break;
         }
     }
 
+    public void deleteAPPAlertDialog(){
+    }
+
+    private void setLoaclMsgCount2Image(){
+        int count = EmmClientApplication.mDatabaseEngine.getUnReadMessageCount();
+        badge.setTargetView(findViewById(R.id.image_msg));
+        badge.setBadgeCount(count);
+    }
+
+    private void addNewMsgCount2Image(int newMsgCount){
+        int count = badge.getBadgeCount();
+        badge.setTargetView(findViewById(R.id.image_msg));
+        badge.setBadgeCount(count+newMsgCount);
+    }
+
+    static public Intent getMainActivityIntent(Context context){
+        Intent intent = new Intent(context, NewMainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return intent;
+    }
+
+
+    private class onPageChangeListener implements ViewPager.OnPageChangeListener {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            GuideDotsSelected(position);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
+    }
 }

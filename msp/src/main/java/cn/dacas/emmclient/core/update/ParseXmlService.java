@@ -11,6 +11,7 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+@Deprecated
 public class ParseXmlService
 {
 	public HashMap<String, String> parseXml(InputStream inStream) throws Exception

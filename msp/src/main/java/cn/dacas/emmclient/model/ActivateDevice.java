@@ -34,8 +34,6 @@ public class ActivateDevice {
      * singleton
      */
 
-    static Context mContext;
-
     private static ActivateDevice mActivateDevice = null;
 
     public static ActivateDevice getActivateDeviceInstance(Context context) {
@@ -47,13 +45,11 @@ public class ActivateDevice {
 
     private SharedPreferences settings = null;
 
-    public static boolean online = false;
+    public static volatile boolean online = false;
     public static long lastOnlineTime = 0;
     private String deviceType = null;
 
     private ActivateDevice(Context context) {
-
-        mContext = context.getApplicationContext();
         settings = context.getSharedPreferences(PrefUtils.PREF_NAME, 0);
 
         this.deviceReported = settings.getBoolean(PrefUtils.DEVICE_REPORTED,
@@ -165,7 +161,7 @@ public class ActivateDevice {
                                                 JSONObject params=new JSONObject(map);
                                                 //将设备和责任人进行绑定，在服务器端添加设备
                                                 JsonObjectRequest requestAddDevice = new JsonObjectRequest(Request.Method.POST,
-                                                        UrlManager.getWebServiceUrl() + "/user/devices/" + PhoneInfoExtractor.getIMEI(mContext) + "?access_token=" + token,params,
+                                                        UrlManager.getWebServiceUrl() + "/user/devices/" + PhoneInfoExtractor.getIMEI(EmmClientApplication.getContext()) + "?access_token=" + token,params,
                                                         new Response.Listener<JSONObject>() {
                                                             @Override
                                                             public void onResponse(JSONObject resultAddDevice) {

@@ -35,6 +35,7 @@ import cn.dacas.emmclient.business.BusinessListener;
 import cn.dacas.emmclient.controller.ControllerListener;
 import cn.dacas.emmclient.controller.McmController;
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.model.McmMessageModel;
 import cn.dacas.emmclient.ui.activity.mainframe.MdmMsgListActivity;
 import cn.dacas.emmclient.ui.activity.mainframe.MsgDetailActivity;
@@ -47,6 +48,7 @@ import cn.dacas.emmclient.util.DateTimeUtil;
 import cn.dacas.emmclient.util.GlobalConsts;
 import cn.dacas.emmclient.util.PrefUtils;
 import cn.dacas.emmclient.util.QDLog;
+import de.greenrobot.event.EventBus;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -129,7 +131,7 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 
 
 //		registerBroadcastReceiver();
-//		EventBus.getDefault().register(this.getActivity());
+//		EventBus.getDefault().register(this);
 	}
 
 	@Override
@@ -603,10 +605,6 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 		//update list
 		mResultArrayList.clear();
 		mResultArrayList.addAll(modelList);
-
-		//updateUI
-
-
 	}
 
 	// 存储未读条数
@@ -650,7 +648,6 @@ public class MsgListFragment extends BaseFragment implements ControllerListener,
 		for (int i = 0; i<mResultArrayList.size();i++) {
 			McmMessageModel m = mResultArrayList.get(i);
 			m.isCheck = isCheck;
-
 		}
 	}
 

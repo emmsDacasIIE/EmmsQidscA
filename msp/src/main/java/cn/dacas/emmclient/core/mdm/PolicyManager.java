@@ -34,10 +34,10 @@ import cn.dacas.emmclient.webservice.qdvolley.UpdateTokenRequest;
 //目前执行的策略被保存在一个配置文件中 policy.last
 public class PolicyManager {
     private static PolicyManager mPolicyManager = null;
-    private static PolicyContent DEFAULT_POLICY = new PolicyContent();
+    private static PolicyContent DEFAULT_POLICY = PolicyContent.getDefaultPolicyContent();
 
 
-    static {
+    /*static {
         DEFAULT_POLICY.setPolicyId(0);
         DEFAULT_POLICY.setName("默认");
         DEFAULT_POLICY.setType("Organization");
@@ -70,7 +70,7 @@ public class PolicyManager {
         DEFAULT_POLICY.setBlackApps(null);
         DEFAULT_POLICY.setWhiteApps(null);
         DEFAULT_POLICY.setMustApps(null);
-    }
+    }*/
 
     public static final String PASSWD_POLICY = "锁屏密码";
     public static final String MUST_APP_POLICY = "需要安装下列应用";
@@ -159,7 +159,6 @@ public class PolicyManager {
                     try {
                         oos.close();
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -170,7 +169,8 @@ public class PolicyManager {
     // 实施策略，policy:null说明重新执行当前策略
     @SuppressLint("InlinedApi")
     private void enforcePolicy() {
-        DeviceAdminWorker mDeviceAdminWorker=DeviceAdminWorker.getDeviceAdminWorker(mContext);
+        DeviceAdminWorker mDeviceAdminWorker =
+                DeviceAdminWorker.getDeviceAdminWorker(mContext);
 
         mDeviceAdminWorker.setCameraDisabled(curPolicy.isDisableCamera());
 
@@ -307,9 +307,12 @@ public class PolicyManager {
             return curPolicy;
         }
         try {
-            policy.setType("Organization");
-            policy.setEffectTimeStart(jPolicy.getString("effectTimeStart"));
-            policy.setEffectTimeEnd(jPolicy.getString("effectTimeEnd"));
+            if(jPolicy.has("Organization"))
+                policy.setType("Organization");
+            if(jPolicy.has("effectTimeStart"))
+                policy.setEffectTimeStart(jPolicy.getString("effectTimeStart"));
+            if(jPolicy.has("effectTimeEnd"))
+                policy.setEffectTimeEnd(jPolicy.getString("effectTimeEnd"));
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -587,7 +590,7 @@ public class PolicyManager {
         mustItem.score=20;
         StringBuilder mustSb = new StringBuilder("");
         for (String pkgName:curPolicy.getMustApps()) {
-            if (AppManager.checkInstallResult(mContext,pkgName)) {
+            if (!AppManager.checkInstallResult(mContext,pkgName)) {
                 mustSb.append("  " + pkgName + "\n");
                 if (mustItem.score>=10) mustItem.score=mustItem.score-10;
             }

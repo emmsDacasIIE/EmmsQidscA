@@ -15,6 +15,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,9 +32,25 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import cn.dacas.emmclient.R;
+import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.event.MessageEvent;
 import cn.dacas.emmclient.manager.AddressManager;
+import cn.dacas.emmclient.manager.UrlManager;
+import cn.dacas.emmclient.model.MamAppInfoModel;
+import cn.dacas.emmclient.security.ssl.IgnoreCertTrustManager;
+import cn.dacas.emmclient.util.PrefUtils;
+import cn.dacas.emmclient.util.QDLog;
+import cn.dacas.emmclient.webservice.qdvolley.MyJsonObjectRequest;
+import cn.dacas.emmclient.webservice.qdvolley.UpdateTokenRequest;
+import de.greenrobot.event.EventBus;
+
+import static android.R.attr.id;
+import static com.baidu.location.h.i.A;
 
 
 public class UpdateManager
@@ -36,8 +61,8 @@ public class UpdateManager
 	private static final int DOWNLOAD_FINISH = 2;
 
 	private static final int UPDATE_AVAILBLE = 3;
-	/* 保存解析的XML信息 */
-	HashMap<String, String> mHashMap;
+
+	private MamAppInfoModel appInfoModel;
 	/* 下载保存路径 */
 	private String mSavePath;
 	/* 记录进度条数量 */
@@ -68,13 +93,13 @@ public class UpdateManager
 				installApk();
 				break;
 			case UPDATE_AVAILBLE:
-                    break;
+				// 显示提示对话框
+				showNoticeDialog();
+				break;
 			default:
-                // 显示提示对话框
-                showNoticeDialog();
 				break;
 			}
-		};
+		}
 	};
 
 	public UpdateManager(Context context)
@@ -85,6 +110,7 @@ public class UpdateManager
 	/**
 	 * 检测软件更新
 	 */
+	@Deprecated
 	public void checkUpdate()
 	{
 		// 把version.xml放到网络上，然后获取文件信息
@@ -92,8 +118,7 @@ public class UpdateManager
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
-				InputStream inStream;
+				/*InputStream inStream;
 				try {
 					String ip = AddressManager.getAddrUpdate();
 					if(ip == null)
@@ -126,13 +151,52 @@ public class UpdateManager
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
+				}*/
 			}});
 		checkVersionThread.start();
 	}
-	
+
+	public void checkClientUpdate(){
+		String url = UrlManager.getUpdateUrl()
+				+"?access_token=" + PrefUtils.getDeviceToken().getAccessToken()
+				+"&platform=android";
+		JsonObjectRequest request = new JsonObjectRequest(
+				Request.Method.GET,
+				url,
+				new Response.Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						QDLog.d("update",response.toString());
+						appInfoModel = new MamAppInfoModel();
+						try {
+							appInfoModel.pkgName = response.getString("package_name");
+							appInfoModel.appName = response.getString("name");
+							appInfoModel.url = response.getString("url");
+							appInfoModel.appVersionCode = response.getInt("version_code");
+							if(!appInfoModel.pkgName.equals(EmmClientApplication.getContext().getPackageName()))
+								throw new Exception("pkgName isn't consistent!");
+							if(appInfoModel.appVersionCode > getVersionCode(EmmClientApplication.getContext()))
+								//EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_NO_UpdateApk));
+								mHandler.sendEmptyMessage(UPDATE_AVAILBLE);
+							else
+								EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_NO_UpdateApk));
+						} catch (Exception e) {
+							QDLog.e("update",e.toString());
+						}
+					}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						QDLog.e("update",error.toString());
+						EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_Error_UpdateApk));
+					}
+				}
+		);
+
+		EmmClientApplication.mVolleyQueue.add(request);
+	}
 	/*
 	 * 从url得到输入流
 	 */
@@ -256,11 +320,13 @@ public class UpdateManager
 				if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
 				{
 					// 获得存储卡的路径
+					QDLog.e("update","Start!");
 					String sdpath = Environment.getExternalStorageDirectory() + "/";
 					mSavePath = sdpath + "download";
-					URL url = new URL(mHashMap.get("url"));
+					URL url = new URL(appInfoModel.url);
 					// 创建连接
-					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+					IgnoreCertTrustManager.allowAllSSL();
+					HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 					conn.connect();
 					// 获取文件大小
 					int length = conn.getContentLength();
@@ -273,7 +339,7 @@ public class UpdateManager
 					{
 						file.mkdir();
 					}
-					File apkFile = new File(mSavePath, mHashMap.get("name"));
+					File apkFile = new File(mSavePath, appInfoModel.appName);
 					FileOutputStream fos = new FileOutputStream(apkFile);
 					int count = 0;
 					// 缓存
@@ -284,12 +350,22 @@ public class UpdateManager
 						int numread = is.read(buf);
 						count += numread;
 						// 计算进度条位置
-						progress = (int) (((float) count / length) * 100);
+						if(length > 0)
+							progress = (int) (((float) count / length) * 100);
+						else {
+							progress++;
+							if(progress >= 100)
+								progress = progress % 99;
+						}
+
+
 						// 更新进度
 						mHandler.sendEmptyMessage(DOWNLOAD);
 						if (numread <= 0)
 						{
 							// 下载完成
+							progress = 0;
+							QDLog.e("update","End!");
 							mHandler.sendEmptyMessage(DOWNLOAD_FINISH);
 							break;
 						}
@@ -316,7 +392,7 @@ public class UpdateManager
 	 */
 	private void installApk()
 	{
-		File apkfile = new File(mSavePath, mHashMap.get("name"));
+		File apkfile = new File(mSavePath, appInfoModel.appName);
 		if (!apkfile.exists())
 		{
 			return;

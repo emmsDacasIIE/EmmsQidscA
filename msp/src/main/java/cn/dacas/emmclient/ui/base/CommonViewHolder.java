@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import static com.umeng.analytics.Gender.Unknown;
+
 public class CommonViewHolder
 {
 	private SparseArray<View> mViews;
@@ -38,8 +40,8 @@ public class CommonViewHolder
 		Open,
 		Update,
 		LowVersion,
+		Deleted,
 		Unknown
-
 	}
 
 	public CommonViewHolder(Context context, ViewGroup parent, int layoutId,

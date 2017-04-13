@@ -28,6 +28,8 @@ import org.json.JSONObject;
 
 import cn.dacas.emmclient.R;
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.core.update.UpdateManager;
+import cn.dacas.emmclient.manager.ActivityManager;
 import cn.dacas.emmclient.manager.AddressManager;
 import cn.dacas.emmclient.model.DeviceModel;
 import cn.dacas.emmclient.ui.activity.base.BaseSlidingFragmentActivity;
@@ -39,6 +41,8 @@ import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.webservice.QdBusiness;
 import cn.dacas.emmclient.webservice.QdWebService;
 import cn.dacas.emmclient.webservice.qdvolley.DeviceforbiddenError;
+
+import static cn.dacas.emmclient.core.EmmClientApplication.mDatabaseEngine;
 
 /**
  * @author Wang
@@ -102,10 +106,12 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login, "");
         init();
+        final UpdateManager manager = new UpdateManager(UserLoginActivity.this);
+        // 检查软件更新
+        manager.checkClientUpdate();
     }
 
     public void onResume() {
@@ -244,6 +250,7 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
+                        //TODO How it works!
                         JSONObject message_broker = response.getJSONObject("message_broker");
                         JSONObject secure_access = response.getJSONObject("secure_access");
                         JSONObject android_app = response.getJSONObject("android_app");
@@ -316,24 +323,31 @@ public class UserLoginActivity extends BaseSlidingFragmentActivity{
                 if (mLoadingDialog!=null) {
                     mLoadingDialog.dismiss();
                 }
+                EmmClientApplication.mCheckAccount.setLogining(true);
+                String password = EmmClientApplication.mDatabaseEngine.getPatternPassword(mEmail);
                 if (!EmmClientApplication.mActivateDevice.isDeviceReported() && response.getOwner_account().equals(mEmail)) {
                     // go to BinderHitActivity
                     Intent intent = new Intent(mContext, BinderSelectorActivity.class);
                     intent.putExtra("default_bind_flag", true);
                     startActivity(intent);
                     finish();
-                } else if (EmmClientApplication.mDatabaseEngine.getPatternPassword(mEmail) == null) {
+                } else if (password == null || password.equals("")) {
                     Intent intent = new Intent(mContext, GestureLockActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    //goto NewMainActivity
-                    Intent intent = new Intent(mContext, NewMainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                    finish();
+                    if(ActivityManager.isLocking) {
+                        ActivityManager.isLocking = false;
+                        finish();
+                    }else {
+                        //goto NewMainActivity
+                        Intent intent = new Intent(mContext, NewMainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
             }
         }, new Response.ErrorListener() {

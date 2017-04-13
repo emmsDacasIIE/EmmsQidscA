@@ -28,9 +28,8 @@ import cn.dacas.emmclient.manager.ActivityManager;
 public abstract class BaseSlidingFragmentActivity extends SlidingFragmentActivity  {
 
 	protected Context mContext;
-	
 	protected LayoutInflater mInflater;
-
+	protected LinearLayout layoutDots;
 	/**
 	 * 当点击左边的功能键时触发的事件，子类实现该接口即可
 	 */
@@ -91,6 +90,7 @@ public abstract class BaseSlidingFragmentActivity extends SlidingFragmentActivit
 
 		setHeaderView();
 		titleTest();
+		layoutDots = (LinearLayout) findViewById(R.id.llyt_dots);
 		//NavigationBar透明化
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			Window window = getWindow();

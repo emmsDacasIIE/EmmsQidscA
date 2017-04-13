@@ -9,6 +9,7 @@ import java.security.SecureRandom;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import cn.qdsc.utils.PrefUtils;
@@ -68,7 +69,7 @@ public abstract  class QdAesCipher extends QdCipher {
 
     public abstract  int getKeySize();
 
-    private  byte[] getRawKey(byte[] seed) throws Exception {
+    protected   byte[] getRawKey(byte[] seed) throws Exception {
         KeyGenerator kgen = KeyGenerator.getInstance("AES");
         // SHA1PRNG 强随机种子算法, 要区别4.2以上版本的调用方法
         SecureRandom sr = null;
@@ -89,16 +90,18 @@ public abstract  class QdAesCipher extends QdCipher {
 
     private byte[] doEncrypt(byte[] key, byte[] data) throws Exception {
         SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+        Cipher cipher = Cipher.getInstance("AES/CFB/NoPadding");
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec,new IvParameterSpec(
+                new byte[cipher.getBlockSize()]));
         byte[] encrypted = cipher.doFinal(data);
         return encrypted;
     }
 
     private  byte[] doDecrypt(byte[] key, byte[] data) throws Exception {
         SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
-        cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+        Cipher cipher = Cipher.getInstance("AES/CFB/NoPadding");
+        cipher.init(Cipher.DECRYPT_MODE, skeySpec,new IvParameterSpec(
+                new byte[cipher.getBlockSize()]));
         byte[] decrypted = cipher.doFinal(data);
         return decrypted;
     }

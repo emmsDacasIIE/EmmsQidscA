@@ -39,12 +39,16 @@ import java.io.LineNumberReader;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
+
+import cn.dacas.emmclient.core.EmmClientApplication;
 
 /**
  * 提取手机信息逻辑类；
@@ -56,14 +60,12 @@ public class PhoneInfoExtractor {
 
 	private static PhoneInfoExtractor phoneInfoExtractor = null;
 
-	private Context context = null;
-
 	// IMEI号
-	private String imei = null;
+	static private String imei = null;
 
 	// 生产商
 	private String manufacturer = null;
-	private TelephonyManager telephonyManager = null;
+	static private TelephonyManager telephonyManager = null;
 
 	// 设备型号
 	private String deviceModel = null;
@@ -130,16 +132,14 @@ public class PhoneInfoExtractor {
 	}
 
 	private PhoneInfoExtractor(Context ctx) {
-		context = ctx.getApplicationContext();
-
 		//监听wifi状态的变化，实时修改当前的SSID、最后连接时间等信息
 		IntentFilter mFilter = new IntentFilter();
 		mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		context.registerReceiver(mReceiver, mFilter);
+		ctx.registerReceiver(mReceiver, mFilter);
 	}
 
-	private  String macAddress;
-	public  String getMacAddress() {
+	static private  String macAddress;
+	static public  String getMacAddress() {
 		if (macAddress==null) {
 			String macSerial = null;
 			String str = "";
@@ -223,13 +223,47 @@ public class PhoneInfoExtractor {
 //		return manufacturer;
 	}
 
+	static private String getMessageDigest(String m_szLongID){
+		MessageDigest m = null;
+		try {
+			m = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		}
+		m.update(m_szLongID.getBytes(),0,m_szLongID.length());
+		// get md5 bytes
+		byte p_md5Data[] = m.digest();
+		// create a hex string
+		String m_szUniqueID = new String();
+		for (int i=0;i<p_md5Data.length;i++) {
+			int b =  (0xFF & p_md5Data[i]);
+			// if it is a single digit, make sure it have 0 in front (proper padding)
+			if (b <= 0xF)
+				m_szUniqueID+="0";
+			// add number to string
+			m_szUniqueID+=Integer.toHexString(b);
+		}   // hex string to uppercase
+		m_szUniqueID = m_szUniqueID.toUpperCase(Locale.ENGLISH);
+		return m_szUniqueID;
+	}
 	// 获取IMEI
 	public static String getIMEI(Context context) {
-
-		TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-		String imei = tm.getDeviceId();
 		if (imei == null) {
-			imei = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+			if (telephonyManager == null) {
+				telephonyManager = (TelephonyManager) context
+						.getSystemService(Context.TELEPHONY_SERVICE);
+			}
+			imei = telephonyManager.getDeviceId();
+			if (imei == null) {
+				imei = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+			}
+			if(imei == null){
+				//WifiManager wm = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+				//wm.getConnectionInfo().getMacAddress()
+				String m_szWLANMAC = getMacAddress();
+				imei = getMessageDigest(m_szWLANMAC);
+			}
 		}
 		return imei;
 	}
@@ -237,10 +271,10 @@ public class PhoneInfoExtractor {
 	// 获取IMEI
 	public  String getIMEI() {
 		if (imei==null) {
-			TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+			TelephonyManager tm = (TelephonyManager) EmmClientApplication.getContext().getSystemService(Context.TELEPHONY_SERVICE);
 			imei = tm.getDeviceId();
 			if (imei == null) {
-				imei = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+				imei = Secure.getString(EmmClientApplication.getContext().getContentResolver(), Secure.ANDROID_ID);
 			}
 		}
 		return imei;
@@ -359,7 +393,7 @@ public class PhoneInfoExtractor {
 	public String getPhoneNumber() {
 
 		if (telephonyManager == null) {
-			telephonyManager = (TelephonyManager) context
+			telephonyManager = (TelephonyManager) EmmClientApplication.getContext()
 					.getSystemService(Context.TELEPHONY_SERVICE);
 		}
 		String phoneNumber = telephonyManager.getLine1Number();
@@ -374,7 +408,7 @@ public class PhoneInfoExtractor {
 
 		if (iccid == null) {
 			if (telephonyManager == null) {
-				telephonyManager = (TelephonyManager) context
+				telephonyManager = (TelephonyManager) EmmClientApplication.getContext()
 						.getSystemService(Context.TELEPHONY_SERVICE);
 			}
 			iccid = telephonyManager.getSimSerialNumber();
@@ -391,7 +425,7 @@ public class PhoneInfoExtractor {
 	public boolean isRoaming() {
 
 		if (telephonyManager == null) {
-			telephonyManager = (TelephonyManager) context
+			telephonyManager = (TelephonyManager) EmmClientApplication.getContext()
 					.getSystemService(Context.TELEPHONY_SERVICE);
 		}
 		return telephonyManager.isNetworkRoaming();
@@ -413,7 +447,7 @@ public class PhoneInfoExtractor {
 		ArrayList<String> accountNameList = new ArrayList<String>();
 
 		Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-		Account[] accounts = AccountManager.get(context).getAccounts();
+		Account[] accounts = AccountManager.get(EmmClientApplication.getContext()).getAccounts();
 		for (Account account : accounts) {
 			if (emailPattern.matcher(account.name).matches()) {
 				accountNameList.add(account.name);
@@ -505,7 +539,7 @@ public class PhoneInfoExtractor {
 	// 获得剩余内存,KB
 	public long getAvailMem() {
 		if (activityManager == null) {
-			activityManager = (ActivityManager) context
+			activityManager = (ActivityManager) EmmClientApplication.getContext()
 					.getSystemService(Context.ACTIVITY_SERVICE);
 		}
 		ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
@@ -519,7 +553,7 @@ public class PhoneInfoExtractor {
 		if (totalMem == 0) {
 			if (API_LEVEL >= 16) {
 				if (activityManager == null) {
-					activityManager = (ActivityManager) context
+					activityManager = (ActivityManager) EmmClientApplication.getContext()
 							.getSystemService(Context.ACTIVITY_SERVICE);
 				}
 				ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
@@ -588,7 +622,7 @@ public class PhoneInfoExtractor {
 
 		if (display == null) {
 			DisplayMetrics dm = new DisplayMetrics();
-			dm = context.getResources().getDisplayMetrics();
+			dm = EmmClientApplication.getContext().getResources().getDisplayMetrics();
 			display = dm.heightPixels + "x" + dm.widthPixels;
 		}
 		return display;
@@ -599,7 +633,7 @@ public class PhoneInfoExtractor {
 
 		if (displayInch == 0) {
 			DisplayMetrics dm = new DisplayMetrics();
-			dm = context.getResources().getDisplayMetrics();
+			dm = EmmClientApplication.getContext().getResources().getDisplayMetrics();
 
 			int width = dm.widthPixels;
 			int height = dm.heightPixels;
@@ -638,7 +672,7 @@ public class PhoneInfoExtractor {
 	public String getIMSI() {
 		if (imsi == null) {
 			if (telephonyManager == null) {
-				telephonyManager = (TelephonyManager) context
+				telephonyManager = (TelephonyManager) EmmClientApplication.getContext()
 						.getSystemService(Context.TELEPHONY_SERVICE);
 			}
 			// return null if not available
@@ -652,7 +686,7 @@ public class PhoneInfoExtractor {
 	public String getNetworkOperator() {
 		if (networkOpetator == null) {
 			if (telephonyManager == null) {
-				telephonyManager = (TelephonyManager) context
+				telephonyManager = (TelephonyManager) EmmClientApplication.getContext()
 						.getSystemService(Context.TELEPHONY_SERVICE);
 			}
 			networkOpetator = telephonyManager.getNetworkOperatorName();
@@ -669,7 +703,7 @@ public class PhoneInfoExtractor {
 
 		if (simOperator == null) {
 			if (telephonyManager == null) {
-				telephonyManager = (TelephonyManager) context
+				telephonyManager = (TelephonyManager) EmmClientApplication.getContext()
 						.getSystemService(Context.TELEPHONY_SERVICE);
 			}
 			simOperator = telephonyManager.getSimOperatorName();
@@ -698,7 +732,7 @@ public class PhoneInfoExtractor {
 	public boolean isConnected() {
 
 		boolean isConnected = false;
-		ConnectivityManager conManager = (ConnectivityManager) context
+		ConnectivityManager conManager = (ConnectivityManager) EmmClientApplication.getContext()
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo network = conManager.getActiveNetworkInfo();
 		if (network != null) {
@@ -711,7 +745,7 @@ public class PhoneInfoExtractor {
 	public String getNetworkType() {
 
 		String type = null;
-		ConnectivityManager conManager = (ConnectivityManager) context
+		ConnectivityManager conManager = (ConnectivityManager) EmmClientApplication.getContext()
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo network = conManager.getActiveNetworkInfo();
 		if (network != null) {
@@ -726,7 +760,7 @@ public class PhoneInfoExtractor {
 		try {
 			if (wifiNetworkInfo == null) {
 				// 如果广播没有对它进行初始化，则直接从当前wifi连接中读取
-				WifiManager wifiManager = (WifiManager) context
+				WifiManager wifiManager = (WifiManager) EmmClientApplication.getInstance().getApplicationContext()
 						.getSystemService(Context.WIFI_SERVICE);
 				WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 

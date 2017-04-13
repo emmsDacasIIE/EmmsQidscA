@@ -162,21 +162,21 @@ public class McmParser extends BaseParser{
         try {
             for (int i = 0; i < jsonArray.length() ; i++) {
                 JSONObject json = (JSONObject) jsonArray.get(i);
-                String accessStr = json.getString("secureAccesses");
-                JSONArray accessArr = new JSONArray(accessStr);
-
-                for (int idx = 0; idx < accessArr.length(); idx++) {
-                    JSONObject obj = (JSONObject) accessArr.get(idx);
-                    String localPort = (String) obj.get("localPort");
-                    String remoteIp = (String) obj.get("remoteIp");
-                    String remotePort = (String) obj.get("remotePort");
-                    map.put(Integer.parseInt(localPort), remoteIp + ":"
-                            + remotePort);
+                String accessStr ="";
+                if(json.has("secureAccesses")) {
+                    accessStr = json.getString("secureAccesses");
+                    JSONArray accessArr = new JSONArray(accessStr);
+                    for (int idx = 0; idx < accessArr.length(); idx++) {
+                        JSONObject obj = (JSONObject) accessArr.get(idx);
+                        String localPort = (String) obj.get("localPort");
+                        String remoteIp = (String) obj.get("remoteIp");
+                        String remotePort = (String) obj.get("remotePort");
+                        map.put(Integer.parseInt(localPort), remoteIp + ":"
+                                + remotePort);
+                    }
                 }
             }
-
             QDLog.i(TAG,"parseForwarding========" + map);
-
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

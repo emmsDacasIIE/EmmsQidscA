@@ -45,17 +45,19 @@ public class PrefUtils {
 
 
 	//------------------服务器地址-----------------------//
-	private static final String ADDR_WEBSERVICE="WEBSERVICEADDRESS";
-	private static final String ADDR_MSG="MSGADDRESS";
-	private static final String ADDR_FORWARD="FORWARDADDRESS";
-	private static final String ADDR_UPDATE="UPDATEADDRESS";
+	private static final String ADDR_WEBSERVICE = "WEBSERVICEADDRESS";
+	private static final String ADDR_MSG        = "MSGADDRESS";
+	private static final String ADDR_FORWARD    = "FORWARDADDRESS";
+	private static final String ADDR_UPDATE		= "UPDATEADDRESS";
 
 	static String[] addressList = {
 			"192.168.151.175:8443", //ADDR_WEBSERVICE
-			"192.168.151.175:1883",//ADDR_MSG 192.168.151.175:3544
-			"192.168.0.23:43546",//ADDR_FORWARD
-			"192.168.151.137:8080" //ADDR_UPDATE
+			"192.168.151.175:1883", //ADDR_MSG    192.168.151.175:3544
+			"192.168.151.175:43546",   //ADDR_FORWARD
+			"192.168.151.175:8443"  //ADDR_UPDATE
 	};
+
+	//public static void
 
     public static void setAddrWebservice(String addr) {
         spHelper.putString(ADDR_WEBSERVICE,addr);
@@ -160,18 +162,37 @@ public class PrefUtils {
 	}
 
 	//------------存储appList----------------//
-	public static final String APPLIST = "AppList";
+	public static final String APP_LIST = "AppList";
+	public static final String CANCEL_APP_LIST = "CancelAppList";
 
 	public static  void putAppList(ArrayList<MamAppInfoModel> list) {
 		Gson gson = new Gson();
 		String listStr = gson.toJson(list);
-		spHelper.putString(APPLIST,listStr);
+		spHelper.putString(APP_LIST,listStr);
 	}
 
-	public static ArrayList<MamAppInfoModel> getApplist() {
+	public static ArrayList<MamAppInfoModel> getAppList() {
 		ArrayList<MamAppInfoModel> list=new ArrayList<>();
-		String listStr= spHelper.getString(APPLIST, null);
+		String listStr= spHelper.getString(APP_LIST, null);
 		if (listStr!=null) {
+			try {
+				list=QdParser.parseAppList(new JSONArray(listStr));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
+	public static void putCancelAppList(ArrayList<MamAppInfoModel> list) {
+		Gson gson = new Gson();
+		String listStr = gson.toJson(list);
+		spHelper.putString(CANCEL_APP_LIST,listStr);
+	}
+	public static ArrayList<MamAppInfoModel> getCanceledAppList() {
+		ArrayList<MamAppInfoModel> list=new ArrayList<>();
+		String listStr= spHelper.getString(CANCEL_APP_LIST, null);
+		if (listStr != null) {
 			try {
 				list=QdParser.parseAppList(new JSONArray(listStr));
 			} catch (JSONException e) {

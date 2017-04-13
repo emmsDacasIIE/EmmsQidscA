@@ -91,13 +91,13 @@ public class MyFeedbackActivity extends BaseSlidingFragmentActivity {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                Toast.makeText(mContext, "反馈成功", Toast.LENGTH_SHORT);
+                                Toast.makeText(mContext, "反馈成功", Toast.LENGTH_SHORT).show();
                                 MyFeedbackActivity.this.finish();
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(mContext, "反馈失败", Toast.LENGTH_SHORT);
+                                Toast.makeText(mContext, "反馈失败", Toast.LENGTH_SHORT).show();
                             }
                         });
             }

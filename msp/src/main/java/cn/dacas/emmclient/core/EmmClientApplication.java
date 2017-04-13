@@ -7,10 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.config.Configuration;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -47,11 +48,15 @@ public class EmmClientApplication extends Application {
 	public static CheckAccount mCheckAccount = null;
 	public static PhoneInfoExtractor mPhoneInfoExtractor=null;
 	public static DatabaseEngine mDatabaseEngine=null;
+	//SDK
 	public static QdSecureContainer mSecureContainer=null;
+
 	ArrayList<String> packagNameList;
 	private MyReceiver receiver;
-	private static Context mContext;
+	//private static Context mContext;
 	public static RequestQueue mVolleyQueue;
+	private JobManager jobManager;
+
 	public static int intervals=0;  //使用时长
 	public static int foregroundIntervals=0;  //前台无操作时长
     public static boolean runningBackground=false;
@@ -62,11 +67,21 @@ public class EmmClientApplication extends Application {
 	public static boolean isFloating=false;
 
 	public static String imei;
+
+	public static EmmClientApplication instance;
+
+	public EmmClientApplication(){
+		instance = this;
+	}
+
+	static public EmmClientApplication getInstance(){
+		return instance;
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
-		mContext=EmmClientApplication.this;
+		instance = EmmClientApplication.this;
 		PrefUtils.Init(EmmClientApplication.this);
 		String json="{\"vpnGatewayAddress\": \"192.168.0.100:443\"}";
 		imei = PhoneInfoExtractor.getIMEI(this);
@@ -81,12 +96,11 @@ public class EmmClientApplication extends Application {
         mSecureContainer=QdSecureContainer.getInstance(EmmClientApplication.this);
 
 		mVolleyQueue= Volley.newRequestQueue(EmmClientApplication.getContext(),new SslHttpStack(false));
-		initImageLoader(mContext);
-		initIpSettings(mContext);
-		
-		Intent intentMDM = new Intent(mContext, MDMService.class);
-		this.startService(intentMDM);
+		initImageLoader(this);
+		initIpSettings(this);
 
+		configureJobManager();
+		this.startService(MDMService.getRestartIntent(this));
 
 //		UninstallMonitorFunc umFunc = new UninstallMonitorFunc(mContext);
 //		String pkg = this.getPackageName();
@@ -95,7 +109,7 @@ public class EmmClientApplication extends Application {
 		String logOUt = SdcardManager.getSdcardPath();
 		QDLog.i(TAG, "onCreate========logOUt===========" + logOUt);
 		QDLog.i(TAG,"onCreate===================");
-
+		//getJobManager().addJobInBackground(new BasedMDMJobTask("JOB Test!"));
 
 		/*PushMsgManager pushMsgManager = new PushMsgManager(this, UrlManager.getMsgPushUrl());
 		try {
@@ -120,7 +134,8 @@ public class EmmClientApplication extends Application {
 
 	public static Context getContext()
 	{
-		return mContext;
+		//return mContext;
+		return instance.getApplicationContext();
 	}
 
 	public static void initImageLoader(Context context) {
@@ -216,6 +231,22 @@ public class EmmClientApplication extends Application {
 
 	}
 
+	private void configureJobManager() {
+		Configuration configuration = new Configuration.Builder(this)
+				.minConsumerCount(1)//always keep at least one consumer alive
+				.maxConsumerCount(3)//up to 3 consumers at a time
+				.loadFactor(3)//3 jobs per consumer
+				.consumerKeepAlive(120)//wait 2 minute
+				.build();
+		jobManager = new JobManager(configuration);
+	}
+
+	public JobManager getJobManager(){
+		if(jobManager == null)
+			configureJobManager();
+		return jobManager;
+	}
+
 	/**
 	 * clear mCheckAccount and mUserModel
 	 * @return Intent to UserLoginActivity
@@ -223,7 +254,7 @@ public class EmmClientApplication extends Application {
 	public static Intent getExitApplicationIntent(){
 		mCheckAccount.clearCurrentAccount();
 		mUserModel = null;
-		Intent intent = new Intent(mContext, UserLoginActivity.class);
+		Intent intent = new Intent(getContext(), UserLoginActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		return intent;
@@ -233,7 +264,7 @@ public class EmmClientApplication extends Application {
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)) {
 				String packName = intent.getDataString().substring(8);
-				Log.e(intent.getDataString() + "====", packName);
+				QDLog.e(intent.getDataString() + "====", packName);
 				// packName为所安装的程序的包名
 				packagNameList.add(packName.toLowerCase());
 
@@ -245,6 +276,9 @@ public class EmmClientApplication extends Application {
 						f.delete();
 					}
 				}
+			}else if(intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)){
+				String packName = intent.getDataString().substring(8);
+				QDLog.e(intent.getDataString() + "====", packName);
 			}
 		}
 	}

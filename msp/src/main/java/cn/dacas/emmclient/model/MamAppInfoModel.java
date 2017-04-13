@@ -1,5 +1,7 @@
 package cn.dacas.emmclient.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -11,38 +13,42 @@ public class MamAppInfoModel implements Comparable {
     public String id;  //从网络请求得到的值，做为唯一标识进行数据库的插入。
 
     @SerializedName("name")
-    public String appName;
+    public String appName = "";
 
     @SerializedName("description")
-    public String appDesc;
+    public String appDesc = "";
 
     @SerializedName("version_code")
     public int appVersionCode;
 
     @SerializedName("version_name")
-    public String appVersion;
+    public String appVersion = "";
 
     @SerializedName("package_name")
-    public String pkgName;
+    public String pkgName = "";
 
-    public String file_name;
+    public String file_name= "";
 
     @SerializedName("icon_path")
-    public String iconUrl;
+    public String iconUrl = "";
 
     @SerializedName("created_at")
-    public String created_time;
+    public String created_time = "";
     @SerializedName("updated_at")
-    public String updated_time;
+    public String updated_time = "";
 
-    public String type; //APK;WEB
+    public String type = "" ; //APK;WEB
 
     @SerializedName("url")
-    public String url;
+    public String url = "";
 
     public transient int  appType;   //企业应用、个人应用
 
     public transient int progress;
+
+    public transient boolean isCanceled = false;
+
+    public transient boolean sso = true;
 
     public MamAppInfoModel() {
 
@@ -50,8 +56,7 @@ public class MamAppInfoModel implements Comparable {
 
 
     @Override
-    public int compareTo(Object another) {
-        // TODO Auto-generated method stub
+    public int compareTo(@NonNull Object another) {
         MamAppInfoModel tgt = (MamAppInfoModel) another;
         if (type.equalsIgnoreCase(tgt.type)) {
             if (tgt.isApk())
@@ -65,15 +70,21 @@ public class MamAppInfoModel implements Comparable {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof  MamAppInfoModel) {
-            MamAppInfoModel app=(MamAppInfoModel)obj;
+            MamAppInfoModel app = (MamAppInfoModel)obj;
             if (type.equalsIgnoreCase(app.type)) {
-                if (app.isApk())
-                    return pkgName.equals(((MamAppInfoModel) obj).pkgName);
-                else
-                    return file_name.equals(((MamAppInfoModel) obj).file_name);
+                if (app.isApk()) {
+                    if(pkgName == null || app.pkgName == null)
+                        return false;
+                    return pkgName.equals(app.pkgName);
+                }
+                else {
+                    if(file_name == null || app.file_name ==null)
+                        return false;
+                    return file_name.equals(app.file_name);
+                }
             }
         }
-         return false;
+        return false;
     }
 
     public boolean isApk() {
@@ -97,6 +108,7 @@ public class MamAppInfoModel implements Comparable {
                 ", appType=" + appType +
                 ", id='" + id + '\'' +
                 ", url='" + url + '\'' +
+                ", isCancel='" + isCanceled + '\'' +
                 '}';
     }
 

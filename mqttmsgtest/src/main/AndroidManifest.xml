@@ -30,13 +30,13 @@
 
         <receiver android:name=".MyMsgReceiver">
             <intent-filter>
-                <action android:name="cn.ac.iie.emms.PushMsg.ERROR"/>
+                <action android:name="com.example.mqttmsgtest.MsgPush.ERROR"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="cn.ac.iie.emms.PushMsg.RECEIVE_MESSAGE"/>
+                <action android:name="com.example.mqttmsgtest.MsgPush.RECEIVE_MESSAGE"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="cn.ac.iie.emms.PushMsg.RECEIVE_NOTIFICATION"/>
+                <action android:name="com.example.mqttmsgtest.MsgPush.RECEIVE_NOTIFICATION"/>
             </intent-filter>
         </receiver>
 

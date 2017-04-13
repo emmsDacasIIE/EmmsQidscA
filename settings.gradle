@@ -1,1 +1,1 @@
-include ':qdpulltorefreshswipmenulistview', ':msp', ':dynamicgrid', ':listviewlibrary', ':qdSlidemenuLib', ':mspsdk', ':pushmessagesdk', ':mqttmsgtest', ':emmsupdatesdk'
+include ':qdpulltorefreshswipmenulistview', ':msp', ':dynamicgrid', ':listviewlibrary', ':qdSlidemenuLib', ':mspsdk', ':pushmessagesdk', ':mqttmsgtest'//':emmsupdatesdk', ':aestestdemo'

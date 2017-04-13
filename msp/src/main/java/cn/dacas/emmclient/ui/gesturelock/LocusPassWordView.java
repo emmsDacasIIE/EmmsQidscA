@@ -16,6 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.dacas.emmclient.R;
+import cn.dacas.emmclient.util.QDLog;
 
 public class LocusPassWordView extends View {
 	private float width = 0;
@@ -189,7 +190,7 @@ public class LocusPassWordView extends View {
 		mPoints[2][2] = new Point(x + middleX + dotPadding, y + middleY
 				+ dotPadding, 9);
 
-		Log.d("jerome", "canvas width:" + width);
+		QDLog.d("jerome", "canvas width:" + width);
 		dotRadius = width / 10;
 		isCache = true;
 
@@ -359,7 +360,7 @@ public class LocusPassWordView extends View {
 			if (task != null) {
 				task.cancel();
 				task = null;
-				Log.d("task", "touch cancel()");
+				QDLog.d("task", "touch cancel()");
 			}
 			//
 			reset();
@@ -488,7 +489,7 @@ public class LocusPassWordView extends View {
 		if (time > 1) {
 			if (task != null) {
 				task.cancel();
-				Log.d("task", "clearPassword cancel()");
+				QDLog.d("task", "clearPassword cancel()");
 			}
 			postInvalidate();
 			task = new TimerTask() {
@@ -497,7 +498,7 @@ public class LocusPassWordView extends View {
 					postInvalidate();
 				}
 			};
-			Log.d("task", "clearPassword schedule(" + time + ")");
+			QDLog.d("task", "clearPassword schedule(" + time + ")");
 			timer.schedule(task, time);
 		} else {
 			reset();

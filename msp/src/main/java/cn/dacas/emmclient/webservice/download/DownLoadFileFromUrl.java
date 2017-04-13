@@ -23,7 +23,7 @@ public class DownLoadFileFromUrl {
     public  static final int DOWNLOADING = 1;
     /* 下载结束 */
     public static final int DOWNLOAD_FINISH = 2;
-
+    public static final int DOWNLOADING_WITHOU_LENGTH = 4;
     /* 下载出现异常，中断 */
     public static final int DOWNLOAD_STOP = 3;
 

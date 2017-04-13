@@ -23,11 +23,17 @@ public class QdParser {
         Gson gson = new Gson();
         ArrayList<MamAppInfoModel>  appList = gson.fromJson(array.toString(), new TypeToken<ArrayList<MamAppInfoModel>>(){}.getType());
         try {
-            for (int i=0;i<appList.size();i++) {
-                MamAppInfoModel app=appList.get(i);
-                JSONObject obj=(JSONObject)array.get(i);
-                if (app.isWeb() && obj.has("url"))
+            for (int i = appList.size()-1; i>=0 ;i--) {
+                MamAppInfoModel app = appList.get(i);
+                JSONObject obj = (JSONObject)array.get(i);
+                if(app.isWeb() && obj.has("url"))
                     app.file_name=obj.getString("url");
+
+                //clear unavailable data
+                if(app.isApk() && app.pkgName ==null)
+                    appList.remove(i);
+                if(app.isWeb() && app.file_name == null)
+                    appList.remove(i);
             }
         } catch (JSONException e) {
             throw  e;

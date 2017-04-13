@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 
@@ -16,8 +17,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import cn.dacas.emmclient.util.QDLog;
 import cn.dacas.emmclient.util.WifiAdmin;
 import de.greenrobot.event.EventBus;
+
+import static android.R.attr.enabled;
 
 
 public class DeviceAdminWorker {
@@ -61,12 +65,10 @@ public class DeviceAdminWorker {
 
 	//	@Override
 	public void finalize() {
-
 		try {
 			super.finalize();
 			EventBus.getDefault().unregister(this);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -112,10 +114,17 @@ public class DeviceAdminWorker {
 	public void disconnectWifi() {
 		android.net.wifi.WifiManager wifiManager = (android.net.wifi.WifiManager) mContext
 				.getSystemService(Context.WIFI_SERVICE);
-		wifiManager.disconnect();
+		wifiManager.getConnectionInfo().getNetworkId();
+		WifiAdmin wifiAdmin = new WifiAdmin(mContext);
+		wifiAdmin.disconnectWifi(wifiManager.getConnectionInfo().getNetworkId());
+		//wifiManager.disconnect();
 	}
 
 
+	/**
+	 * 得到数据连接状态
+	 * @return
+     */
 	public int getDataConnection() {
 		TelephonyManager telephonyManager = (TelephonyManager) mContext
 				.getSystemService(Context.TELEPHONY_SERVICE);
@@ -123,28 +132,34 @@ public class DeviceAdminWorker {
 	}
 
 	// 打开、关闭数据连接
+	// 关于禁止数据网络连接，这个功能在Android 5 以上版本中，只有系统APP才能调用，也就是所设备必须root权限才可以使用
 	public int setDataConnection(boolean enable) {
-		ConnectivityManager connManager = (ConnectivityManager) mContext
+		//关于禁止数据网络连接，这个功能在Android 5 以上版本中，只有系统APP才能调用，也就是所设备必须root权限才可以使用，下面是具体的解释
+		// http://stackoverflow.com/questions/29340150/android-l-5-x-turn-on-off-mobile-data-programmatically
+		try {
+			TelephonyManager telephonyService = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+			Method setMobileDataEnabledMethod = telephonyService.getClass().getDeclaredMethod("setDataEnabled", boolean.class);
+			if (null != setMobileDataEnabledMethod)
+			{
+				setMobileDataEnabledMethod.invoke(telephonyService, enable);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		/*ConnectivityManager connManager = (ConnectivityManager) mContext
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		Class<?> cmClass = connManager.getClass();
 		Class<?>[] argClasses = new Class[1];
 		argClasses[0] = boolean.class;
-
 		// 反射ConnectivityManager中hide的方法setMobileDataEnabled，可以开启和关闭GPRS网络
 		Method method;
 		try {
 			method = cmClass.getMethod("setMobileDataEnabled", argClasses);
 			method.invoke(connManager, enable);
 			return 0;
-		} catch (NoSuchMethodException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		}*/
 		return ERROR_UNSUPPORTED;
 	}
 
@@ -161,9 +176,15 @@ public class DeviceAdminWorker {
 		else{
 			typeInt = 1;
 		}
+		WifiManager wifiManager =(android.net.wifi.WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+		QDLog.d("[WifiAdmin]",wifiManager.getConnectionInfo().getSSID()+"<>"+"\"" + ssid + "\"");
+		if(wifiManager.getConnectionInfo().getSSID().equals("\"" + ssid + "\"")) {
+			QDLog.d("[WifiAdmin]","Has been connecting Wifi:"+ssid);
+			return 0;
+		}
 		WifiAdmin wifiAdmin = new WifiAdmin(mContext);
-		return wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, typeInt)) == -1 ? ERROR_UNSUPPORTED
-				: 0;
+		return (wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(ssid, passwd, typeInt)) == -1)
+				? ERROR_UNSUPPORTED : 0;
 	}
 
 	// 设置静音
@@ -344,6 +365,7 @@ public class DeviceAdminWorker {
 		}
 	}
 
+	// TODO: 2017-2-7  策略信息中并没有该项
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public int setPasswordMinimumLetters(int value) {
 		if (isDeviceAdminActive()) {

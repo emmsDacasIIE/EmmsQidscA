@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.io.File;
 
 import cn.dacas.emmclient.R;
+import cn.dacas.emmclient.manager.UrlSchemeFactory;
 import cn.dacas.emmclient.webservice.download.DownLoadFileFromUrl;
 import cn.dacas.emmclient.webservice.download.DownloadDataInfo;
 import cn.dacas.emmclient.webservice.download.DownloadFileThread;
@@ -46,6 +47,7 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
     String appName;
     String appFileName;
     String downloadUrl;
+    boolean SSO;
 
     private TextView mAppNameTextView;
     private TextView mAppTypeTextView;
@@ -102,6 +104,10 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
                         if (msg.arg1 >= 100) msg.arg1 = 99;
                         progressDialog.setProgress(msg.arg1);
                     }
+                    break;
+                case DownLoadFileFromUrl.DOWNLOADING_WITHOU_LENGTH:
+                    String s = msg.arg1/1024 + "KB/?";
+                    progressDialog.setMessage("下载中："+s);
                     break;
                 case DownLoadFileFromUrl.DOWNLOAD_STOP:
                     if (progressDialog != null) progressDialog.dismiss();
@@ -163,17 +169,9 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
 
     ////////////////自定义函数////////////
     private void initMyView() {
-
-//        mLeftHeaderView.setTextVisibile(false);
-//        mLeftHeaderView.setImageVisibile(true);
-        mLeftHeaderView.setImageView(R.mipmap.msp_titlebar_leftarrow_icon);
-
+        mLeftHeaderView.setImageView(R.mipmap.back_advanced);
         mMiddleHeaderView.setText(mContext.getString(R.string.app_detail_title));
-//        mMiddleHeaderView.setTextVisibile(true);
         mMiddleHeaderView.setImageVisibile(false);
-
-//        mRightHeaderView.setTextVisibile(false);
-//        mRightHeaderView.setImageVisibile(false);
 
         mImageView = (ImageView)findViewById(R.id.imageview_left);
 
@@ -195,10 +193,14 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
                         PackageManager pm = mContext.getPackageManager();
                         Intent intent = new Intent();
                         try {
-                            intent = pm
-                                    .getLaunchIntentForPackage(pkgNameStr);
+                            // TODO: SSO
+                            if(SSO){
+                                intent = (new UrlSchemeFactory(getApplicationContext())
+                                        .getUrlSchemeIntent(pkgNameStr,EmmClientApplication.mCheckAccount));
+                            }else {
+                                intent = pm.getLaunchIntentForPackage(pkgNameStr);
+                            }
                             mContext.startActivity(intent);
-
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(
@@ -232,6 +234,9 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    }
+                    if(appStatusStr.equals("删除")){
+                        AppManager.uninstallApp(AppDetailActivity.this,pkgNameStr);
                     }
 
                 }
@@ -272,6 +277,7 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
         appStatusStr = bundle.getString(GlobalConsts.App_Status);
         pkgNameStr = bundle.getString(GlobalConsts.Pkg_Name);
         appFileName=bundle.getString(GlobalConsts.App_File_Name);
+        SSO = bundle.getBoolean(GlobalConsts.App_SSO,false);
 
         String appIconUrlStr = bundle.getString(GlobalConsts.App_Icon_Url);
 
@@ -290,3 +296,5 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
     }
 
 }
+
+

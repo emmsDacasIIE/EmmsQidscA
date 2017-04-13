@@ -2,12 +2,18 @@ package cn.dacas.emmclient.core.mcm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Looper;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.List;
 
 import cn.dacas.emmclient.R;
+import cn.dacas.emmclient.manager.ActivityManager;
+
+import static com.baidu.location.h.i.T;
 
 public class FileOpener {
 
@@ -20,7 +26,7 @@ public class FileOpener {
     public static Intent getHtmlFileIntent(File file)
     {
         Uri uri = Uri.parse(file.toString()).buildUpon().encodedAuthority("com.android.htmlfileprovider").scheme("content").encodedPath(file.toString()).build();
-        Intent intent = new Intent("android.intent.action.DCSVIEW");
+        Intent intent = new Intent("android.intent.action.VIEW");
         intent.setDataAndType(uri, "text/html");
         return intent;
     }
@@ -92,7 +98,7 @@ public class FileOpener {
     //android获取一个用于打开Word文件的intent
     public static Intent getWordFileIntent(File file)
     {
-        Intent intent = new Intent("android.intent.action.DCSVIEW");
+        Intent intent = new Intent("android.intent.action.VIEW");
         intent.addCategory("android.intent.category.DEFAULT");
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Uri uri = Uri.fromFile(file);
@@ -144,15 +150,15 @@ public class FileOpener {
             String fileName = currentPath.toString();
             Intent intent;
             if(checkEndsWithInStringArray(fileName, context.getResources().getStringArray(R.array.fileEndingImage))){
-                intent = getImageFileIntent(currentPath);
-                context.startActivity(intent);
+//                intent = getImageFileIntent(currentPath);
+//                context.startActivity(intent);
+                ActivityManager.openWordFile(context,fileName,"OnMark");
             }else if(checkEndsWithInStringArray(fileName,context.getResources().getStringArray(R.array.fileEndingWebText))){
                 intent = getHtmlFileIntent(currentPath);
                 context.startActivity(intent);
             } else if (checkEndsWithInStringArray(fileName,context.getResources().getStringArray(R.array.fileEndingApk))){
                 intent = getApkFileIntent(currentPath);
                 context.startActivity(intent);
-
             } else if(checkEndsWithInStringArray(fileName,context.getResources().getStringArray(R.array.fileEndingAudio))){
                 intent = getAudioFileIntent(currentPath);
                 context.startActivity(intent);
@@ -163,11 +169,14 @@ public class FileOpener {
                 intent = getTextFileIntent(currentPath);
                 context.startActivity(intent);
             } else if (checkEndsWithInStringArray(fileName, context.getResources().getStringArray(R.array.fileEndingPdf))){
-                intent = getPdfFileIntent(currentPath);
-                context.startActivity(intent);
-            } else if (checkEndsWithInStringArray(fileName, context.getResources().getStringArray(R.array.fileEndingWord))){
-                intent = getWordFileIntent(currentPath);
-                context.startActivity(intent);
+//                intent = getPdfFileIntent(currentPath);
+//                context.startActivity(intent);
+                ActivityManager.openPdfFile(context, fileName,"OnMark");
+            } else if (checkEndsWithInStringArray(fileName,
+                    context.getResources().getStringArray(R.array.fileEndingWord))){
+//                intent = getWordFileIntent(currentPath);
+//                context.startActivity(intent);
+                ActivityManager.openWordFile(context,fileName,"OnMark");
             } else if (checkEndsWithInStringArray(fileName, context.getResources().getStringArray(R.array.fileEndingExcel))){
                 intent = getExcelFileIntent(currentPath);
                 context.startActivity(intent);
@@ -180,6 +189,22 @@ public class FileOpener {
         }else{
             Toast.makeText(context.getApplicationContext(), "没有需要打开的文件", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void checkIntentAndStartActivity(Intent intent){
+        try {
+            context.startActivity(intent);
+        } catch (Exception e){
+            Toast.makeText(context.getApplicationContext(),"打开失败,没有应用可以打开该类型文件",Toast.LENGTH_LONG).show();
+        }
+    }
+    static public boolean isIntentAvailable(Context context, Intent intent) {
+        if(intent==null)
+            return false;
+        final PackageManager packageManager = context.getPackageManager();
+        List list = packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
     }
 
 

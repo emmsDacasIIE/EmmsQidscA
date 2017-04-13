@@ -74,7 +74,7 @@ public class QdProgressDialog extends Dialog {
         if (progressBar!=null) {
             progressBar.setProgress(progress);
             if (progressBar.getProgress() == progressBar.getMax()) {
-               button.setText("确认");
+                button.setText("确认");
                 button.setBackground(mContext.getResources().getDrawable(R.mipmap.button_progress_confirm));
             }
         }

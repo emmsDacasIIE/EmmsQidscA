@@ -48,9 +48,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getJson.setOnClickListener(this);
         deleteAlias.setOnClickListener(this);
 
-        PushMsgManager.refleshMsgNotification(this,getIntent());
-
-        pushMsgManager = new PushMsgManager(this,serverUri);
+        /*pushMsgManager = new PushMsgManager(this,serverUri);
         pushMsgManager.setExtTopics(true);
         try {
             //1. 注册APP，如果发现已经有reg_id则直接请求要关注的主题
@@ -61,11 +59,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }catch (Exception e)
         {
             e.printStackTrace();
+        }*/
+
+        try {
+            pushMsgManager = new PushMsgManager.Builder(this,serverUri)
+                    .setRegServerUrl("http://192.168.151.175:8000/client/devices")
+                    .setClientIdAndKey("046e2930-7cc2-4398-9b1c-65852317de29",// client_id
+                            "6668b6a3-8486-4165-a418-374194ad47d3")// client_secret)
+                    .setExtTopic(true)
+                    .buildAndRun();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     protected void onResume() {
+        if(pushMsgManager!=null)
+            pushMsgManager.refreshMsgNotification(this,getIntent());
         super.onResume();
     }
 

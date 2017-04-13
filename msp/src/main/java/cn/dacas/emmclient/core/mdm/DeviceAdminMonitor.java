@@ -136,7 +136,7 @@ public class DeviceAdminMonitor {
     }
 
     public void showDisableToast() {
-        Toast.makeText(mContext, "该功能已经被禁用", Toast.LENGTH_SHORT).show();
+        Toast.makeText(EmmClientApplication.getContext(), "该功能已经被禁用", Toast.LENGTH_SHORT).show();
     }
 
     public void onEventBackgroundThread(MessageEvent event) {

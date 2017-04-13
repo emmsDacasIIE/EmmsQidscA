@@ -13,6 +13,8 @@ import android.widget.AdapterView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.manager.UrlSchemeFactory;
 import cn.qdsc.dynamicgrid.BaseDynamicGridAdapter;
 import cn.qdsc.dynamicgrid.DynamicGridView;
 import cn.dacas.emmclient.R;
@@ -104,7 +106,14 @@ public class HomeFragment extends Fragment {
                 if (model.isApk()) {
                     PackageManager pm = getActivity().getPackageManager();
                     try {
-                        Intent intent = pm.getLaunchIntentForPackage(model.pkgName);
+                        //TODO
+                        Intent intent;
+                        if(model.sso){
+                            intent = new UrlSchemeFactory(getActivity().getApplicationContext())
+                                    .getUrlSchemeIntent(model.pkgName, EmmClientApplication.mCheckAccount);
+                        }else {
+                            intent = pm.getLaunchIntentForPackage(model.pkgName);
+                        }
                         getActivity().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -142,42 +151,36 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
 //		System.out.println("OneFragment  onPause");
-        // TODO Auto-generated method stub
         super.onPause();
     }
 
     @Override
     public void onResume() {
 //		System.out.println("OneFragment  onResume");
-        // TODO Auto-generated method stub
         super.onResume();
     }
 
     @Override
     public void onDestroy() {
 //		System.out.println("OneFragment  onDestroy");
-        // TODO Auto-generated method stub
         super.onDestroy();
     }
 
     @Override
     public void onDestroyView() {
 //		System.out.println("OneFragment  onDestroyView");
-        // TODO Auto-generated method stub
         super.onDestroyView();
     }
 
     @Override
     public void onStop() {
 //		System.out.println("OneFragment  onStop");
-        // TODO Auto-generated method stub
         super.onStop();
     }
 
     @Override
     public void onStart() {
 //		System.out.println("OneFragment  onStart");
-        // TODO Auto-generated method stub
         super.onStart();
     }
 }

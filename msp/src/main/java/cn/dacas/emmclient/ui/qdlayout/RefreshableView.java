@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import cn.dacas.emmclient.R;
+import cn.dacas.emmclient.util.QDLog;
 
 
 /**
@@ -229,7 +230,7 @@ public class RefreshableView extends LinearLayout implements OnTouchListener {
 				float xMove=event.getRawX();
 				int distance = (int) (yMove - yDown);
 				int distanceX=(int)(xLeft-xMove);
-				Log.i("refrensh:","onTouch===================" + distance);
+				QDLog.i("refrensh:","onTouch===================" + distance);
 
 
 				// 如果手指是下滑状态，并且下拉头是完全隐藏的，就屏蔽下拉事件

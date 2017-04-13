@@ -18,7 +18,7 @@ import cn.dacas.emmclient.ui.qdlayout.ListItemData;
 import cn.dacas.emmclient.util.QDLog;
 
 /**
- * 隐私设置
+ * 手势密码
  * @author QIDSC
  */
 public class MyHandPasswordActivity extends BaseListActivity {
@@ -29,7 +29,7 @@ public class MyHandPasswordActivity extends BaseListActivity {
     boolean[] isCheckedArr = {false,false,false};
 
     //向右的箭头
-    private int ArrowID = R.mipmap.msp_right_arrow_gray;
+    private int ArrowID = R.mipmap.back_advanced;
 
 
     @Override
@@ -144,8 +144,8 @@ public class MyHandPasswordActivity extends BaseListActivity {
                     if (position == 0) {
                         holder.mCheckBox.setChecked(data.isChecked);
                         holder.mCheckBox.setVisibility(View.VISIBLE);
-                        int loginType=EmmClientApplication.mDatabaseEngine.getCurrentLoginType();
-                        holder.mCheckBox.setChecked(loginType==1?true:false);
+                        int loginType = EmmClientApplication.mDatabaseEngine.getCurrentLoginType();
+                        holder.mCheckBox.setChecked(loginType==1);
                         holder.mExpandImage.setVisibility(View.GONE);
 
                         holder.mCheckBox.setEnabled(true);
@@ -188,6 +188,7 @@ public class MyHandPasswordActivity extends BaseListActivity {
                                 if (!holder.mCheckBox.isEnabled()) {
                                     EmmClientApplication.mDatabaseEngine.setPatternPassword(EmmClientApplication.mCheckAccount.getCurrentAccount(),null);
                                     Intent it=new Intent(MyHandPasswordActivity.this, UserLoginActivity.class);
+                                    it.putExtra("resetHandPassword",true);
                                     MyHandPasswordActivity.this.startActivity(it);
                                     finish();
                                 }

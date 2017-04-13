@@ -42,3 +42,31 @@ local.properties
 
 # Log Files
 *.log
+.idea/dictionaries/
+.idea/inspectionProfiles/
+.idea/markdown-exported-files.xml
+.idea/markdown-navigator.xml
+emmsupdatesdk/libs/
+emmsupdatesdk/src/main/res/drawable/
+mspsdk/libs/armeabi-v7a/
+projectFilesBackup/
+/aestestdemo/
+aestestdemo/.gitignore
+aestestdemo/build.gradle
+aestestdemo/proguard-rules.pro
+aestestdemo/src/androidTest/
+aestestdemo/src/main/AndroidManifest.xml
+aestestdemo/src/main/res/drawable/
+aestestdemo/src/main/res/mipmap-hdpi/
+aestestdemo/src/main/res/mipmap-mdpi/
+aestestdemo/src/main/res/mipmap-xhdpi/
+aestestdemo/src/main/res/mipmap-xxhdpi/
+aestestdemo/src/main/res/mipmap-xxxhdpi/
+aestestdemo/src/main/res/values/colors.xml
+aestestdemo/src/main/res/values/strings.xml
+aestestdemo/src/main/res/values/styles.xml
+aestestdemo/src/test/
+msp/src/main/res/drawable/ic_launcher.png
+msp/src/main/res/drawable/ic_launcher2.png
+msp/src/main/res/mipmap-hdpi/emms_core.jpg
+msp/src/main/res/mipmap-hdpi/msp_titlebar_leftarrow_icon1.png

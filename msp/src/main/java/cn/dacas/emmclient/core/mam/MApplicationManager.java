@@ -24,10 +24,20 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.dacas.emmclient.util.QDLog;
+
 public class MApplicationManager {
 	private static MApplicationManager myActivityManager = null;
 
 	private Context context = null;
+	private String TAG = "UpdateAppInfo";
+	private volatile int counter = 0 ;
+	private volatile int pkgnum = 0;
+
+	private void clearCounter(){
+		counter = 0;
+		pkgnum = 0;
+	}
 
 	/**
 	 * get an instance of Class ApplicationManager
@@ -55,20 +65,18 @@ public class MApplicationManager {
 
 	private PackageManager packageManager = null;
 	private ActivityManager activityManager = null;
-	private List<AppInfo> allPackages = null;
-	private List<RunningServiceInfo> runningServices = null;
+	private volatile List<AppInfo> allPackages = null;
+	private volatile List<RunningServiceInfo> runningServices = null;
 
 	/**
 	 * set List<RunningServiceInfo> runningServices
 	 */
 	public void getRunningServices() {
-		if (runningServices == null) {
-			if (activityManager == null) {
-				activityManager = (ActivityManager) context
-						.getSystemService(Context.ACTIVITY_SERVICE);
-			}
-			runningServices = activityManager.getRunningServices(100);
+		if (activityManager == null) {
+			activityManager = (ActivityManager) context
+					.getSystemService(Context.ACTIVITY_SERVICE);
 		}
+		runningServices = activityManager.getRunningServices(100);
 	}
 
 	/**
@@ -76,15 +84,15 @@ public class MApplicationManager {
 	 * @return a list of AppInfo, with content Info of all installed Packages
      */
 	public List<AppInfo> getAllInstalledPkgs() {
-		if (allPackages == null) {
+		if (allPackages == null || allPackages.size() == 0) {
 			List<PackageInfo> tmpPackages;
 			if (packageManager == null) {
 				packageManager = context.getPackageManager();
 			}
 			tmpPackages = packageManager.getInstalledPackages(0);
+			pkgnum = tmpPackages.size();
 
 			allPackages = new ArrayList<AppInfo>();
-
 			boolean noSuchMethod = false;
 			for (PackageInfo pkg : tmpPackages) {
 				AppInfo app = new AppInfo();
@@ -106,6 +114,16 @@ public class MApplicationManager {
 				allPackages.add(app);
 			}
 		}
+
+		while(counter < pkgnum) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		QDLog.d(TAG,"Pkg num:"+counter);
+		clearCounter();
 		return allPackages;
 	}
 
@@ -264,12 +282,15 @@ public class MApplicationManager {
 			this.appInfo = appInfo;
 		}
 
+		@Override
 		public void onGetStatsCompleted(PackageStats pStats, boolean succeeded)
 				throws RemoteException {
 			if (appInfo != null) {
 				appInfo.setCachesize(pStats.cacheSize); //B
 				appInfo.setCodesize(pStats.codeSize);   //B
 				appInfo.setDatasize(pStats.dataSize);   //B
+				//QDLog.d(TAG,appInfo.toString());
+				counter++;
 			}
 		}
 	}
@@ -284,30 +305,36 @@ public class MApplicationManager {
 		JSONObject jsonApps = new JSONObject();
 		JSONArray appArray = new JSONArray();
 
-			getAllInstalledPkgs();
+		QDLog.d(TAG,"Begin computing size!");
+		getAllInstalledPkgs();
+		QDLog.d(TAG,"Begin generate Json");
+		if(allPackages == null)
+			return jsonApps.toString();
 
-			for (int idx = 0; idx < allPackages.size(); idx++) {
-				AppInfo appInfo = allPackages.get(idx);
-				JSONObject app = new JSONObject();
-				try {
-					app.put("N", appInfo.getAppLabel()); // String
-					app.put("I", appInfo.getAppUid()); // int
-					app.put("V", appInfo.getVersion()); // String
-					app.put("AS", appInfo.getCodesize()); // long
-					app.put("DS", appInfo.getDatasize()); // long
-					app.put("T", appInfo.getType()); // int
-					appArray.put(app);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		for (int idx = 0; idx < allPackages.size(); idx++) {
+			AppInfo appInfo = allPackages.get(idx);
+			JSONObject app = new JSONObject();
+			try {
+				app.put("N", appInfo.getAppLabel()); // String name
+				app.put("I", appInfo.getPackageName()); // String
+				app.put("V", appInfo.getVersion()); // String
+				app.put("AS", appInfo.getCodesize()); // long
+				app.put("DS", appInfo.getDatasize()); // long
+				app.put("T", appInfo.getType()); // int
+				appArray.put(app);
+				//QDLog.d(TAG,app.toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
 		try {
 			jsonApps.put("A", appArray);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//
+		allPackages.clear();
 		return jsonApps.toString();
 	}
 
@@ -427,6 +454,11 @@ public class MApplicationManager {
 		}
 
 		public AppInfo() {
+		}
+
+		@Override
+		public String toString(){
+			return getAppLabel()+":"+getCachesize()/1024+"/"+getCodesize()/1024+"/"+getDatasize()/1024;
 		}
 
 		public PackageInfo getPkgInfo() {
