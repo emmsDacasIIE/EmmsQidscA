@@ -209,6 +209,8 @@ public class WifiAdmin {
 
 	private WifiConfiguration IsExist(String SSID) {// 查看以前是否已经配置过该SSID &nbsp;
 		List<WifiConfiguration> existingConfigs = mWifiManager.getConfiguredNetworks();
+		if(existingConfigs == null)
+			return null;
 		for (WifiConfiguration existingConfig : existingConfigs) {
 			if (existingConfig.SSID.equals("\"" + SSID + "\"")) {
 				return existingConfig;

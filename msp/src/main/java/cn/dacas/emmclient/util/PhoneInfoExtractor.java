@@ -39,6 +39,8 @@ import java.io.LineNumberReader;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,11 +61,11 @@ public class PhoneInfoExtractor {
 	private static PhoneInfoExtractor phoneInfoExtractor = null;
 
 	// IMEI号
-	private String imei = null;
+	static private String imei = null;
 
 	// 生产商
 	private String manufacturer = null;
-	private TelephonyManager telephonyManager = null;
+	static private TelephonyManager telephonyManager = null;
 
 	// 设备型号
 	private String deviceModel = null;
@@ -136,8 +138,8 @@ public class PhoneInfoExtractor {
 		ctx.registerReceiver(mReceiver, mFilter);
 	}
 
-	private  String macAddress;
-	public  String getMacAddress() {
+	static private  String macAddress;
+	static public  String getMacAddress() {
 		if (macAddress==null) {
 			String macSerial = null;
 			String str = "";
@@ -221,13 +223,47 @@ public class PhoneInfoExtractor {
 //		return manufacturer;
 	}
 
+	static private String getMessageDigest(String m_szLongID){
+		MessageDigest m = null;
+		try {
+			m = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		}
+		m.update(m_szLongID.getBytes(),0,m_szLongID.length());
+		// get md5 bytes
+		byte p_md5Data[] = m.digest();
+		// create a hex string
+		String m_szUniqueID = new String();
+		for (int i=0;i<p_md5Data.length;i++) {
+			int b =  (0xFF & p_md5Data[i]);
+			// if it is a single digit, make sure it have 0 in front (proper padding)
+			if (b <= 0xF)
+				m_szUniqueID+="0";
+			// add number to string
+			m_szUniqueID+=Integer.toHexString(b);
+		}   // hex string to uppercase
+		m_szUniqueID = m_szUniqueID.toUpperCase(Locale.ENGLISH);
+		return m_szUniqueID;
+	}
 	// 获取IMEI
 	public static String getIMEI(Context context) {
-
-		TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-		String imei = tm.getDeviceId();
 		if (imei == null) {
-			imei = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+			if (telephonyManager == null) {
+				telephonyManager = (TelephonyManager) context
+						.getSystemService(Context.TELEPHONY_SERVICE);
+			}
+			imei = telephonyManager.getDeviceId();
+			if (imei == null) {
+				imei = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+			}
+			if(imei == null){
+				//WifiManager wm = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+				//wm.getConnectionInfo().getMacAddress()
+				String m_szWLANMAC = getMacAddress();
+				imei = getMessageDigest(m_szWLANMAC);
+			}
 		}
 		return imei;
 	}
@@ -724,7 +760,7 @@ public class PhoneInfoExtractor {
 		try {
 			if (wifiNetworkInfo == null) {
 				// 如果广播没有对它进行初始化，则直接从当前wifi连接中读取
-				WifiManager wifiManager = (WifiManager) EmmClientApplication.getContext()
+				WifiManager wifiManager = (WifiManager) EmmClientApplication.getInstance().getApplicationContext()
 						.getSystemService(Context.WIFI_SERVICE);
 				WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 

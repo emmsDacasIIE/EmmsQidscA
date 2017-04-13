@@ -277,6 +277,9 @@
 
         <activity android:name="cn.dacas.emmclient.ui.activity.mainframe.BackupAndRestoreActivity">
         </activity>
+        <activity android:name=".ui.activity.mainframe.PdfViewerActivity">
+        </activity>
+        <activity android:name=".ui.activity.mainframe.WebViewerActivity"/>
     </application>
 
 </manifest>

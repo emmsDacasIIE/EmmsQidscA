@@ -889,7 +889,6 @@ public class FileEngine {
                         isOpenFile = false;
                         if(decryptFile.exists())
                             decryptFile.delete();
-                        //TODO How show the message that it is failed to open the file.
                         EventBus.getDefault().post(new MessageEvent(MessageEvent.Event_FILEOPEN_FAILED));
                     }
 

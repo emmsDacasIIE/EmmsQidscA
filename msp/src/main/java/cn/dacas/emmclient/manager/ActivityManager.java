@@ -1,9 +1,16 @@
 package cn.dacas.emmclient.manager;
 
+import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
+
+import java.io.File;
 
 import cn.dacas.emmclient.core.EmmClientApplication;
+import cn.dacas.emmclient.core.mcm.FileOpener;
 import cn.dacas.emmclient.ui.activity.loginbind.UserLoginActivity;
+import cn.dacas.emmclient.ui.activity.mainframe.PdfViewerActivity;
+import cn.dacas.emmclient.ui.activity.mainframe.WebViewerActivity;
 import cn.dacas.emmclient.ui.gesturelock.UnlockActivity;
 
 /**
@@ -35,5 +42,21 @@ public class ActivityManager {
                 EmmClientApplication.getContext().startActivity(intent);
             }
         }
+    }
+
+    public static void openPdfFile(Context mContext, String fileFullName, String type) {
+        Intent intent = new Intent(mContext, PdfViewerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("fileFullName", fileFullName);
+        intent.putExtra("file_type", type);
+        mContext.startActivity(intent);
+    }
+
+    public static void openWordFile(Context mContext, String fileFullName, String type) {
+        Intent intent = new Intent(mContext, WebViewerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("fileFullName", fileFullName);
+        intent.putExtra("file_type", type);
+        mContext.startActivity(intent);
     }
 }

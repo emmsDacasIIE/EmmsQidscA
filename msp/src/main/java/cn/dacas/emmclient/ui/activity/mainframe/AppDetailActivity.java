@@ -296,3 +296,5 @@ public class AppDetailActivity extends BaseSlidingFragmentActivity {
     }
 
 }
+
+
